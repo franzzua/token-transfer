@@ -1,0 +1,1 @@
+Array.prototype.at ??= function (index){return this[(this.length + index) % this.length];}

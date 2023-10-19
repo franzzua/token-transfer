@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "lib": [
+      "ESNext",
+      "dom"
+    ],
+    "paths": {
+    },
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "types": [
+      "preact",
+      "node"
+    ]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.json"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

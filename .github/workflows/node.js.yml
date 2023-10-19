@@ -1,0 +1,61 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: 'true'
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20.x
+        cache: 'npm'
+    - name: deploy contracts
+      working-directory: ./hardhat
+      env:
+        MUMBAI_PRIVATE_KEY: '${{ secrets.MUMBAI_PRIVATE_KEY }}'
+      run: |
+        npm i
+        npx hardhat deploy --network mumbai
+    - name: build app
+      run: |
+        npm i
+        npm run build
+        cp .scripts/routes.json dist/staticwebapp.config.json
+        mkdir out
+        cp public out -r
+        cp dist out -r
+
+    - name: Azure Static Web Apps Deploy
+      uses: Azure/static-web-apps-deploy@v1
+      with:
+        # Action to perform
+        action: upload
+        # Directory location of the application source code
+        app_location: out
+        # Required token
+        azure_static_web_apps_api_token: '${{ secrets.AZURE_DEPLOY_TOKEN }}'
+        # Custom command for Oryx to run when building Azure Functions source code
+        # api_build_command: # optional
+        # Directory location of the Azure Functions source code
+        # api_location: # optional
+        # Identical in use to output_location
+        app_artifact_location: out
+        # Directory location of the compiled application code after building
+        output_location: out
+        # Directory location where the routes.json file can be found in the source code
+        # routes_location: dist
+        # Skips the build step for the application source code if set to true.
+        skip_app_build: true
+        skip_api_build: true
