@@ -1,8 +1,6 @@
 "use strict";
-import { ServiceWorkerAction } from "./actions";
 
-// @ts-ignore
-const sw = process.env.NODE_ENV == "production" ? "/sw.min.js" : "/sw.js";
+const sw = "/dist/sw/index.js";
 if (navigator.serviceWorker && !location.href.match("(localhost)")) {
   const handle = (globalThis.ServiceWorkerHandle = {
     event: null as BeforeInstallPromptEvent,
