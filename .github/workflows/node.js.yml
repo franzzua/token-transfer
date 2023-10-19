@@ -21,13 +21,7 @@ jobs:
       with:
         node-version: 20.x
         cache: 'npm'
-    - name: deploy contracts
-      working-directory: ./hardhat
-      env:
-        MUMBAI_PRIVATE_KEY: '${{ secrets.MUMBAI_PRIVATE_KEY }}'
-      run: |
-        npm i
-        npx hardhat deploy --network mumbai
+
     - name: build app
       run: |
         npm i
