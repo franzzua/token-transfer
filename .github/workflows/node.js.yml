@@ -30,6 +30,7 @@ jobs:
         cp public out -r
         cp dist out -r
         cp .scripts/routes.json out/staticwebapp.config.json
+        cp dist/index.html out
 
     - name: Azure Static Web Apps Deploy
       uses: Azure/static-web-apps-deploy@v1
