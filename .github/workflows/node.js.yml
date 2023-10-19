@@ -47,7 +47,7 @@ jobs:
         # Identical in use to output_location
         app_artifact_location: out
         # Directory location of the compiled application code after building
-        output_location: out
+        output_location: .
         # Directory location where the routes.json file can be found in the source code
         # routes_location: dist
         # Skips the build step for the application source code if set to true.
