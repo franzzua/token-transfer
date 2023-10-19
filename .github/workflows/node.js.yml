@@ -26,10 +26,10 @@ jobs:
         npm i
         npm run build
         mkdir out
-        cp ./public ./out -r
-        mv ./dist ./out -r
-        cp ./.scripts/routes.json ./out/staticwebapp.config.json
+        cp ./public ./out/ -r
         cp ./dist/index.html ./out
+        mv ./dist ./out/
+        cp ./.scripts/routes.json ./out/staticwebapp.config.json
         mv out dist
 
     - name: Azure Static Web Apps Deploy
