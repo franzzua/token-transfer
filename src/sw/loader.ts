@@ -1,7 +1,9 @@
 "use strict";
 
-const sw = "/dist/sw/index.js";
+const sw = "/sw.js";
 if (navigator.serviceWorker && !location.href.match("(localhost)")) {
+  const upgradeInterval = 5*60*1000; // 5 minutes
+
   const handle = (globalThis.ServiceWorkerHandle = {
     event: null as BeforeInstallPromptEvent,
     worker: navigator.serviceWorker.controller,
@@ -26,7 +28,7 @@ if (navigator.serviceWorker && !location.href.match("(localhost)")) {
       handle.worker?.postMessage({
         action: "check",
       }),
-    5 * 1000
+      upgradeInterval
   );
 
   // const isFirstInstall = !(
@@ -118,10 +120,10 @@ if (navigator.serviceWorker && !location.href.match("(localhost)")) {
   init().catch(console.error);
 }
 async function init() {
-  const assets = await fetch("/dist/assets.json").then(x => x.json()) as string[];
+  const assets = await fetch("/assets.json").then(x => x.json()) as string[];
   const elements = [] as Array<HTMLScriptElement | HTMLLinkElement>;
   for (let asset of assets) {
-    if (asset.startsWith('/dist/sw'))
+    if (['/loader.js', '/sw.js'].includes(asset))
       continue;
     if (asset.endsWith("css")) {
       const link = document.createElement("link");

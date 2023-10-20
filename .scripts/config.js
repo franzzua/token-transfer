@@ -2,13 +2,17 @@ import { htmlPlugin } from '@craftamap/esbuild-plugin-html';
 import {readFileSync, writeFileSync} from "node:fs";
 import * as path from "node:path";
 export const getConfig = ({prod, watch}) => ({
-    entryPoints: ['src/index.tsx', 'src/global.css', 'src/sw/index.ts', 'src/sw/loader.ts'],
+    entryPoints: [
+        { out: 'main', in: 'src/index.tsx'},
+        { out: 'global', in: 'src/global.css'},
+        { out: 'loader', in: 'src/sw/loader.ts'},
+        { out: 'sw', in: 'src/sw/index.ts'},
+    ],
     bundle: true,
     minify: !!prod,
     sourcemap: !prod,
     target: ['chrome88', 'safari14', 'firefox88'],
     outdir: 'dist',
-    publicPath: '/dist',
     metafile: true,
     treeShaking: prod,
     tsconfig: 'tsconfig.json',
@@ -40,7 +44,7 @@ function metafilePlugin(){
                     writeFileSync(
                         path.join(build.initialOptions.outdir, 'assets.json'),
                         JSON.stringify(Object.keys(result.metafile.outputs)
-                            .map(x => x.replace(build.initialOptions.outdir, build.initialOptions.publicPath))
+                            .map(x => x.replace(build.initialOptions.outdir, build.initialOptions.publicPath ?? ''))
                         ),
                     );
                 }

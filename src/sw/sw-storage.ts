@@ -7,7 +7,6 @@ import assetsAndroid from "./assets.android.json";
 import assetsIOS from "./assets.ios.json";
 
 const versionUrl = "/public/root.version";
-
 export class SwStorage {
   resolve: () => void;
   loading = new Promise<void>((resolve) => (this.resolve = resolve));
@@ -123,15 +122,15 @@ export class SwStorage {
       throw new Error(`Failed load ` + request.url + ", status: " + res.status);
     }
     const clone = res.clone();
-    const blob = await clone.blob();
+    const blob = await res.blob();
     await this.sendAll({
       action: "loading" as ServiceWorkerAction,
       size: blob.size,
       cache: this.name,
       url: request.url,
     });
-    await this.cache.put(request, res);
-    return res;
+    await this.cache.put(request, clone.clone());
+    return clone;
   }
 
   private fetchRetry(request: Request, counter = 0){
@@ -146,10 +145,10 @@ export class SwStorage {
   }
 
   async getResponse(request: Request) {
-    if (new URL(request.url).pathname.match(/^\/(api|db|webapi|kibana|grafana)/))
+    if (new URL(request.url).pathname.match(/^\/(esbuild|api|db|webapi|kibana|grafana)/))
       return fetch(request);
     // routes with extensions: .js, .css, .json...
-    if (request.url.match(/\.\w+$/)) return this.getFromCacheOrFetch(request);
+    if (request.url.match(/\.\w+$/)) return this.getFromCacheOrFetch(request).catch(console.warn);
     // routes without extension: /, /map, /info, ...
     return this.getFromCacheOrFetch(new Request("/"));
   }

@@ -26,12 +26,8 @@ jobs:
         npm i
         npm run build
         mkdir out
-        cp ./public ./out/ -r
-        cp ./dist/index.html ./out
-        mv ./dist ./out/
-        cp ./.scripts/routes.json ./out/staticwebapp.config.json
-        mv out dist
-        ls dist
+        cp ./public ./dist/ -r
+        cp ./.scripts/routes.json ./dist/staticwebapp.config.json
 
     - name: Azure Static Web Apps Deploy
       uses: Azure/static-web-apps-deploy@v1
@@ -42,16 +38,5 @@ jobs:
         app_location: dist
         # Required token
         azure_static_web_apps_api_token: '${{ secrets.AZURE_DEPLOY_TOKEN }}'
-        # Custom command for Oryx to run when building Azure Functions source code
-        # api_build_command: # optional
-        # Directory location of the Azure Functions source code
-        # api_location: # optional
-        # Identical in use to output_location
-        app_artifact_location: dist
-        # Directory location of the compiled application code after building
-        output_location: dist
-        # Directory location where the routes.json file can be found in the source code
-        # routes_location: dist
-        # Skips the build step for the application source code if set to true.
         skip_app_build: true
         skip_api_build: true
