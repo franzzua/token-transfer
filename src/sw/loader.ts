@@ -99,7 +99,9 @@ if (navigator.serviceWorker && !location.href.match("(localhost)")) {
       // break;
 
       case "init":
-        init().catch(console.error);
+        setTimeout(() => {
+          init().catch(console.error);
+        }, Math.max(3000 - performance.now(), 0))
         break;
       case "new-version":
         console.log("app has new version");
@@ -146,10 +148,8 @@ async function init() {
               })
       )
   );
-  setTimeout(() =>{
     // animateLoading(0);
-    window.dispatchEvent(new CustomEvent("init"));
-  }, Math.max(3000 - performance.now(), 0))
+  window.dispatchEvent(new CustomEvent("init"));
 }
 
 type BeforeInstallPromptEvent = Event & {

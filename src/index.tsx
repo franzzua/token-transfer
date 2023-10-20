@@ -1,8 +1,9 @@
 import "./polyfills";
 import {render} from "preact";
+import {Main} from "./pages/main";
 
 window.addEventListener('init', async () => {
-  render(<>Hello</>, document.getElementById('root'));
+  render(<Main/>, document.getElementById('root'));
   document.getElementById("start").remove();
   document.getElementById('root').style.display = 'initial';
 });
