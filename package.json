@@ -13,6 +13,7 @@
   "dependencies": {
     "@cmmn/cell": "1.8.2",
     "@metamask/detect-provider": "2.0.0",
+    "@metamask/sdk": "^0.10.0",
     "ethers": "6.8.0",
     "preact": "10.18.1"
   },

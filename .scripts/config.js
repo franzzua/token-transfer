@@ -7,6 +7,7 @@ export const getConfig = ({prod, watch}) => ({
         { out: 'global', in: 'src/global.css'},
         { out: 'loader', in: 'src/sw/loader.ts'},
         { out: 'sw', in: 'src/sw/index.ts'},
+        { out: 'connect', in: 'src/connect.ts'},
     ],
     bundle: true,
     minify: !!prod,
@@ -20,7 +21,8 @@ export const getConfig = ({prod, watch}) => ({
     plugins: [
         htmlPlugin({
             files: [{
-                entryPoints: [],
+                entryPoints: ['src/connect.ts'],
+                inline: true,
                 filename: 'index.html',
                 htmlTemplate: readFileSync('./src/index.html'),
                 extraScripts: watch ? [
