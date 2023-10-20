@@ -40,7 +40,7 @@ if (navigator.serviceWorker && !location.href.match("(localhost)")) {
       .getRegistration()
       .then((x) => x?.unregister())
       .catch()
-      .then((x) => indexedDB.databases())
+      .then(() => indexedDB.databases())
       .then((x) => {
         for (let db of x) {
           indexedDB.deleteDatabase(db.name);
@@ -104,7 +104,7 @@ if (navigator.serviceWorker && !location.href.match("(localhost)")) {
         navigator.serviceWorker
           .getRegistration()
           .then((x) => x?.unregister())
-          .then((x) => location.reload());
+          .then(() => location.reload());
         break;
     }
   });
@@ -144,8 +144,10 @@ async function init() {
               })
       )
   );
-  // animateLoading(0);
-  window.dispatchEvent(new CustomEvent("init"));
+  setTimeout(() =>{
+    // animateLoading(0);
+    window.dispatchEvent(new CustomEvent("init"));
+  }, Math.max(3000 - performance.now(), 0))
 }
 
 type BeforeInstallPromptEvent = Event & {
