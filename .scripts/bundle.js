@@ -1,7 +1,7 @@
 import * as esbuild from 'esbuild';
 
 await esbuild.build({
-    entryPoints: ['./lib.ts'],
+    entryPoints: ['./src/lib.ts'],
     bundle: true,
     outdir: 'dist',
     metafile: true,

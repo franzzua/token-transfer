@@ -4,22 +4,35 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "compile-contracts": "typechain --target ethers-v6 --out-dir ./contracts/ts/ contracts/token/erc20.json",
+    "compile": "tsc --watch",
     "watch": "PORT=3209 node .scripts/watch.js",
     "bundle": "node .scripts/bundle.js",
     "build": "node .scripts/build.js",
-    "test": "node test/game.spec.js"
+    "test": "node --experimental-vm-modules "
   },
   "type": "module",
   "dependencies": {
-    "@cmmn/cell": "1.8.2",
-    "@metamask/detect-provider": "2.0.0",
-    "@metamask/sdk": "^0.10.0",
+    "@cmmn/cell": "1.8.4",
+    "@cmmn/tools": "^1.8.1",
+    "@metamask/sdk": "0.10.0",
     "ethers": "6.8.0",
     "preact": "10.18.1"
   },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/typings/lib.d.ts"
+      ]
+    }
+  },
   "devDependencies": {
     "@craftamap/esbuild-plugin-html": "0.6.1",
-    "esbuild": "0.19.4"
+    "erc20-compiled": "^1.0.0",
+    "esbuild": "0.19.5",
+    "esbuild-register": "^3.5.0",
+    "ganache": "^7.9.1",
+    "ts-node": "^10.9.1"
   },
   "author": "",
   "license": "ISC"

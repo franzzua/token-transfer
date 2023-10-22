@@ -15,6 +15,7 @@ export const getConfig = ({prod, watch}) => ({
     target: ['chrome88', 'safari14', 'firefox88'],
     outdir: 'dist',
     metafile: true,
+    platform: 'browser',
     treeShaking: prod,
     tsconfig: 'tsconfig.json',
     jsx: 'automatic',

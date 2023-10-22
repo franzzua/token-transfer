@@ -1,8 +1,12 @@
+import {useContext} from "preact/compat";
+import {DiContext} from "../app/di-context";
+import {AddTransferForm} from "../components/add-transfer-form";
+import {Layout} from "../components/layout";
 import {useCell} from "../helpers/use-cell";
-import {transactionStore} from "../stores/transaction.store";
 
 
 export function Main(){
+    const {transactionStore} = useContext(DiContext);
     const transactions = useCell(transactionStore.Transactions);
     return <>
         <table>
@@ -10,12 +14,13 @@ export function Main(){
             {transactions.map(x => <tr key={x._id}>
                 <td>{x.from}</td>
                 <td>{x.to}</td>
-                <td>{x.amount} {x.token}</td>
+                <td>{x.amount} {x.tokenAddress}</td>
                 <td>{x.state}</td>
             </tr>)}
             </tbody>
         </table>
 
         <button onClick={transactionStore.add}>Add</button>
+        <AddTransferForm/>
     </>
 }

@@ -1,18 +1,30 @@
 import "./polyfills";
 import {render} from "preact";
-import {Main} from "./pages/main";
+import {App} from "./app/app";
 
 const start = document.getElementById("start");
 const root = document.getElementById('root');
 
 window.addEventListener('accountsChanged', async (e: CustomEvent<string[]>) => {
   if (e.detail.length > 0 && root.style.display == 'none') {
-    render(<Main/>, root);
-    start.remove();
-    root.style.display = 'initial';
+    show();
   }
   if (e.detail.length == 0 && root.style.display == 'initial') {
-    document.body.appendChild(start);
-    root.style.display = 'none';
+    hide();
   }
 });
+function show(){
+  render(<App/>, root);
+  start.remove();
+  root.style.display = 'initial';
+}
+
+ function hide(){
+   document.body.appendChild(start);
+   root.style.display = 'none';
+ }
+(async function (){
+  const accounts = await window.ethereum.request({method: "eth_accounts"}) as string[];
+  if (accounts.length > 0)
+    show();
+})();

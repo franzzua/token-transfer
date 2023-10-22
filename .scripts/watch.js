@@ -24,7 +24,7 @@ let { host, port } = await context.serve({
     host: '0.0.0.0',
     fallback: 'index.html',
     onRequest(arg){
-        console.log(`[${arg.method}] ${arg.path}: ${arg.timeInMS}`);
+       // console.log(`[${arg.method}] ${arg.path}: ${arg.timeInMS}`);
     }
 });
 console.log(`server is running on http://${host}:${port}`)

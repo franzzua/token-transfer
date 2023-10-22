@@ -1,4 +1,4 @@
-import {bind, EventEmitter, Fn} from "@cmmn/cell/lib";
+import {EventEmitter, Fn} from "@cmmn/cell/lib";
 import { IndexedDatabase } from "./indexedDatabase";
 
 export class ObservableDB<T extends { _id: string }> extends EventEmitter<{
@@ -15,28 +15,9 @@ export class ObservableDB<T extends { _id: string }> extends EventEmitter<{
   protected items = new Map<string, T & { version: string }>();
 
   public isLoaded: Promise<void> = this.onceAsync("loaded");
-  private channel = new BroadcastChannel(this.name);
-  public emitAndBroadcast(key, event = null){
-    this.emit(key, event);
-    this.channel.postMessage({
-      key, event
-    });
-  }
   constructor(public name: string) {
     super();
     globalThis[name] = this;
-    if (location.pathname.match(/\.reload/)) {
-      this.clear();
-    }
-    this.channel.addEventListener('message', async e => {
-      if (e.data?.key != 'change') return;
-      switch (e.data.event?.type){
-        case "addOrUpdate":
-          await this.addOrUpdate(e.data.event.value, true);
-          this.emit("change", e.data.event.value);
-          break;
-      }
-    })
     this.init();
   }
 
@@ -59,7 +40,7 @@ export class ObservableDB<T extends { _id: string }> extends EventEmitter<{
   async clear() {
     await this.db.purge();
     this.items.clear();
-    this.emitAndBroadcast("change", {
+    this.emit("change", {
       type: "delete",
       key: undefined,
     });
@@ -78,7 +59,7 @@ export class ObservableDB<T extends { _id: string }> extends EventEmitter<{
     };
     await this.set(valueWithVersion);
     if (!skipChange) {
-      this.emitAndBroadcast("change", {
+      this.emit("change", {
         type: "addOrUpdate",
         key: value._id,
         value,
