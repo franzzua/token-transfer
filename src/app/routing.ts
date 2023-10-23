@@ -1,7 +1,8 @@
-import {Cell, compare} from "@cmmn/cell/lib";
+import {Cell} from "@cmmn/cell";
+import {compare} from "@cmmn/core";
 import {useEffect} from "react";
 import {useCell} from "../helpers/use-cell";
-import {routes} from "./pages";
+import {routes} from "./pages/routes";
 
 export type RoutePath =
   | [keyof typeof routes, ...Array<string | number>]

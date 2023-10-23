@@ -1,6 +1,6 @@
 import {Layout} from "./layout";
 import {container} from "./container";
-import {DiContainer, AppContext} from "../contexts/app-context";
+import {DiContainer, AppContext} from "./contexts/app-context";
 import {useRouter} from "./routing";
 
 export const App = () => {

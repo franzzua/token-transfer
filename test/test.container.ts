@@ -1,4 +1,4 @@
-import { Container } from "@cmmn/cell/lib";
+import { Container } from "@cmmn/cell";
 import {BrowserProvider} from "ethers";
 import {Wallet} from "ethers";
 import ganache from "ganache";

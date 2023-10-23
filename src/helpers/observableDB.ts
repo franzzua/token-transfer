@@ -1,4 +1,4 @@
-import {EventEmitter, Fn} from "@cmmn/cell/lib";
+import {EventEmitter, Fn} from "@cmmn/core";
 import { IndexedDatabase } from "./indexedDatabase";
 
 export class ObservableDB<T extends { _id: string }> extends EventEmitter<{
@@ -13,12 +13,28 @@ export class ObservableDB<T extends { _id: string }> extends EventEmitter<{
   private db = new IndexedDatabase(this.name);
 
   protected items = new Map<string, T & { version: string }>();
+  private channel = new BroadcastChannel(this.name);
 
   public isLoaded: Promise<void> = this.onceAsync("loaded");
   constructor(public name: string) {
     super();
     globalThis[name] = this;
     this.init();
+    this.channel.addEventListener('message', async e => {
+      if (e.data?.key != 'change') return;
+      switch (e.data.event?.type){
+        case "addOrUpdate":
+          await this.addOrUpdate(e.data.event.value, true);
+          super.emit("change", e.data.event.value);
+          break;
+      }
+    })
+  }
+  public emit(key, event?){
+    super.emit(key, event);
+    this.channel.postMessage({
+      key, event
+    });
   }
 
   async init() {

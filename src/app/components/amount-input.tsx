@@ -1,7 +1,7 @@
 import {Flex, Input} from "antd";
 import {FC, useContext} from "react";
 import {TransferContext} from "../contexts/transfer-context";
-import {useCell} from "../helpers/use-cell";
+import {useCell} from "../../helpers/use-cell";
 
 export const AmountInput: FC = () => {
     const transferStore = useContext(TransferContext);

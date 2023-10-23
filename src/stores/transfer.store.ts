@@ -1,4 +1,5 @@
-import {AsyncCell, bind, Cell, cell, compare, Fn} from "@cmmn/cell/lib";
+import {bind,compare, Container, Fn} from "@cmmn/core";
+import {AsyncCell, Cell, cell} from "@cmmn/cell";
 import {Timer} from "../helpers/timer";
 import {getTokenByAddress} from "../services/token.info";
 import {TransferApi} from "../services/transfer.api";
@@ -19,7 +20,7 @@ export class TransferStore {
 
     public async patch(diff: Partial<Transfer>){
         await this.transfers.patchTransfer({
-           _id: this.id, ...diff
+           ...this.Transfer, ...diff
         });
     }
 
