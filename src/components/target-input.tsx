@@ -1,12 +1,11 @@
-import {Input, InputProps} from "antd";
-import {FunctionComponent} from "react";
+import {Input} from "antd";
+import {useContext} from "react";
+import {TransferContext} from "../contexts/transfer-context";
+import {useCell} from "../helpers/use-cell";
 
-export type TargetInputProps = {
-    target: string;
-    onChange(target: string): void;
-} & Omit<InputProps, "value"|"onChange">
-export const TargetInput: FunctionComponent<TargetInputProps> = ({target,onChange,...props}) => {
-    return <Input {...props}
-                  value={target}
-                  onChange={e => onChange(e.currentTarget.value)}/>
+export const TargetInput = () => {
+    const transferStore = useContext(TransferContext);
+    const transfer = useCell(() => transferStore.Transfer);
+    return <Input value={transfer.to}
+                  onChange={e => transferStore.patch({to: e.currentTarget.value})}/>
 }

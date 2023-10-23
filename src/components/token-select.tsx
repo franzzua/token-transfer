@@ -1,17 +1,19 @@
-import {Image, Select, SelectProps, Flex} from "antd";
+import {Image, Select, Flex} from "antd";
 import {BaseOptionType} from "antd/es/select";
-import {FC, useEffect} from "react";
+import {FC, useContext, useEffect} from "react";
 import {useMemo} from "react";
+import {AppContext} from "../contexts/app-context";
+import {TransferContext} from "../contexts/transfer-context";
+import {useCell} from "../helpers/use-cell";
 import {getTokensByChainId, TokenInfo} from "../services/token.info";
 
 const TypedSelect = Select<TokenInfo, TokenInfo & BaseOptionType>;
 
-export type TokenSelectProps = {
-    chainId: number;
-    value?: string;
-    onChange?(value: string): void;
-} & Omit<SelectProps<TokenInfo, TokenInfo & BaseOptionType>, "onSelect"|"value">;
-export const TokenSelect: FC<TokenSelectProps> = ({chainId,value, onChange, ...selectProps}) => {
+export const TokenSelect: FC = () => {
+    const {accountStore} = useContext(AppContext);
+    const transferStore = useContext(TransferContext);
+    const chainId = useCell(() => accountStore.chainId);
+    const transfer = useCell(() => transferStore.Transfer);
     const tokens = useMemo(() => getTokensByChainId(chainId), [chainId]);
     const options = tokens.map(t => ({
         ...t,
@@ -22,17 +24,16 @@ export const TokenSelect: FC<TokenSelectProps> = ({chainId,value, onChange, ...s
             {t.name}
         </Flex>
     } as TokenInfo & BaseOptionType))
-    const selected = options.find(x => x.address === value);
+    const selected = options.find(x => x.address === transfer.tokenAddress);
     useEffect(() => {
-        if (selected?.address !== value)
-            onChange(selected?.address);
+        if (selected?.address !== transfer.tokenAddress)
+            transferStore.patch({tokenAddress: selected?.address});
     }, [selected?.address]);
     return <TypedSelect showSearch={tokens.length > 5}
-                        {...selectProps}
                         value={selected}
                         options={options}
                         filterOption={(q, o) => o.name.toLowerCase().includes(q.toLowerCase())}
                         optionFilterProp="children"
-                        onSelect={(_,token) => onChange(token.address)}>
+                        onSelect={(_,token) => transferStore.patch({tokenAddress: token.address})}>
     </TypedSelect>;
 };
