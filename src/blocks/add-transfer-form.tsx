@@ -1,16 +1,19 @@
-import {Button, Flex} from "antd";
+import {Button, Flex, Skeleton} from "antd";
 import {MyAmount} from "../components/my-amount";
 import {TransferContext} from "../contexts/transfer-context";
-import {Transfer} from "../stores/transfers.store";
 import {AccountSelect} from "../components/account-select";
 import {TargetInput} from "../components/target-input";
 import {TokenSelect} from "../components/token-select";
-import {useCallback, useContext} from "react";
+import { useContext} from "react";
+import {useCell} from "../helpers/use-cell";
 import {AmountInput} from "../components/amount-input";
 import styles from "./add-transfer-form.module.less";
 
 export const AddTransferForm = () => {
     const transferStore = useContext(TransferContext);
+    const transfer = useCell(() => transferStore.Transfer);
+    if (!transfer) //TODO: add loader
+        return <Skeleton/>;
     return <div className={styles.container}>
         <label>
             <span>Account</span>
