@@ -1,9 +1,9 @@
-import {AsyncCell, bind, Cell, cell, compare, Fn} from "@cmmn/cell/lib";
+import {AsyncCell, bind, cell, compare} from "@cmmn/cell/lib";
 import {Timer} from "../helpers/timer";
 import {getTokenByAddress} from "../services/token.info";
 import {TransferApi} from "../services/transfer.api";
 import {TransfersStore} from "./transfers.store";
-import {formatEther} from "ethers";
+import {formatUnits, parseUnits} from "ethers";
 
 export class TransferStore {
     constructor(private transfers: TransfersStore,
@@ -39,12 +39,19 @@ export class TransferStore {
         if (!this.Transfer.tokenAddress || !this.Transfer.from)
             return null;
         const balance = await this.api.getBalance(this.Transfer.tokenAddress, this.Transfer.from);
-        return formatEther(balance);
+        return formatUnits(balance, this.TokenInfo.decimals);
     });
 
     @cell({compare})
     public get TokenInfo(){
         return getTokenByAddress(this.Transfer.tokenAddress);
+    }
+
+    public get Amount(){
+        return formatUnits(this.Transfer.amount, this.TokenInfo.decimals);
+    }
+    public set Amount(amount: string){
+        this.patch({amount: parseUnits(amount, this.TokenInfo.decimals )});
     }
 }
 
