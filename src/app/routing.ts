@@ -18,17 +18,18 @@ const queryCell = new Cell<Record<string, string>>(
   Object.fromEntries(new URL(location.href).searchParams.entries())
 );
 
+const back = history.back.bind(history);
 export const routerCell = new Cell(() => {
   const route = routeCell.get();
   const query = queryCell.get()
   return {
-    back: history.back.bind(history),
+    back,
     route,
     query,
     active: routes[route[0]] ?? routes.main,
     goTo,
   }
-})
+}, {compare})
 
 function onRoutingChange(e: {oldValue: RoutePath, value: RoutePath} ){
   document.title = ["Token Transfer", routes[e.value[0]]?.title].filter(x => x).join(': ');

@@ -1,5 +1,5 @@
 import {Button, Flex, Skeleton} from "antd";
-import {MyAmount} from "../components/my-amount";
+import {MyBalance} from "../components/my-balance";
 import {TransferContext} from "../contexts/transfer-context";
 import {AccountSelect} from "../components/account-select";
 import {TargetInput} from "../components/target-input";
@@ -28,7 +28,7 @@ export const AddTransferForm = () => {
             <span>Amount</span>
             <Flex gap="2em">
                 <AmountInput />
-                <MyAmount />
+                <MyBalance />
             </Flex>
         </label>
         <label>

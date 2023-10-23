@@ -3,13 +3,11 @@ import {FC, useContext, useMemo} from "react";
 import {TransferContext} from "../contexts/transfer-context";
 import {useCell} from "../helpers/use-cell";
 
-export const MyAmount: FC = () => {
+export const MyBalance: FC = () => {
     const transferStore = useContext(TransferContext);
     const balance = useCell(transferStore.MyBalance);
     const symbol = useCell(() => transferStore.TokenInfo?.symbol);
-    return <Flex>
-        <span>My amount</span>
-        {balance !== null ? balance.toString(10): <Skeleton.Input active/>}
-        {symbol}
+    return <Flex align="center">
+        <span>My amount: {balance !== null ? balance: <Skeleton.Input active/>} {symbol}</span>
     </Flex>
 }

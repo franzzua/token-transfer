@@ -15,7 +15,7 @@ export class AccountStore {
         provider.addListener('accountsChanged', (accounts: string[]) => {
             this.accounts = accounts;
         });
-        provider.addListener('networkChanged', (accounts: string[]) => {
+        provider.addListener('chainChanged', (accounts: string[]) => {
             this.chainId = Number.parseInt(provider.chainId, 16);
         });
     }

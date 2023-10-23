@@ -1,5 +1,5 @@
 import { BaseCell, Cell, compare } from "@cmmn/cell/lib";
-import {useMemo, useSyncExternalStore, useCallback} from "react";
+import {useMemo, useReducer, useEffect} from "react";
 
 export function useCell<T>(
     getter: (() => T) | BaseCell<T> | undefined,
@@ -11,9 +11,10 @@ export function useCell<T>(
         () => getter instanceof BaseCell ? getter : new Cell(getter, {compare}),
         deps
     );
-    const getSnapshot = useCallback(() => cell.get(), [cell]);
-    const subscribe = useCallback<Subscribe>(onChange => cell.on('change', onChange), [cell]);
-    return useSyncExternalStore(subscribe, getSnapshot);
+    const [, dispatch] = useReducer(x => ({}), {});
+    useEffect(() => {
+        dispatch();
+        return cell.on('change', dispatch);
+    }, [cell])
+    return cell.get();
 }
-
-type Subscribe = (onStoreChange: () => void) => () => void;

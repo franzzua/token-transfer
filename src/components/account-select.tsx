@@ -15,7 +15,7 @@ export const AccountSelect: FunctionComponent = () => {
         if (!transfer.from && accounts.length == 1){
             transferStore.patch({from: accounts[0]});
         }
-    }, [accounts.length, transfer.from]);
+    }, [accounts.length == 1, !!transfer.from]);
     return <Select<string> onChange={e => transferStore.patch({from: e})}
                            value={transfer.from}>
         {accounts.map(x => <Select.Option key={x} value={x}>{x}</Select.Option>)}

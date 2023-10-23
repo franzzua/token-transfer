@@ -60,7 +60,7 @@ export class TransfersStore {
             amount: BigInt(Math.round(Math.random()*(10**8))),
             tokenAddress: 'ETH',
             from: null,
-            to: 'dad',
+            to: null,
             state: 'initial'
         } as Transfer;
         await this.storage.addOrUpdate(transfer)
