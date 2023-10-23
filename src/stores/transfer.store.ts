@@ -19,7 +19,7 @@ export class TransferStore {
 
     public async patch(diff: Partial<Transfer>){
         await this.transfers.patchTransfer({
-           _id: this.id, ...diff
+           ...this.Transfer, ...diff
         });
     }
 

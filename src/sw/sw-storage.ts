@@ -145,10 +145,13 @@ export class SwStorage {
   }
 
   async getResponse(request: Request) {
-    if (new URL(request.url).pathname.match(/^\/(esbuild|api|db|webapi|kibana|grafana)/))
+    if (new URL(request.url).pathname.match(/^\/(esbuild|api|db|webapi|kibana|grafana)/) ||
+      new URL(request.url).origin !== location.origin)
       return fetch(request);
+
     // routes with extensions: .js, .css, .json...
-    if (request.url.match(/\.\w+$/)) return this.getFromCacheOrFetch(request).catch(console.warn);
+    if (request.url.match(/\.\w+$/))
+      return this.getFromCacheOrFetch(request).catch(console.warn);
     // routes without extension: /, /map, /info, ...
     return this.getFromCacheOrFetch(new Request("/"));
   }

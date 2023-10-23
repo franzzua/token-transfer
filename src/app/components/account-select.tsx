@@ -4,7 +4,7 @@ import {useContext, JSX} from "react";
 import {useEffect} from "react";
 import {AppContext} from "../contexts/app-context";
 import {TransferContext} from "../contexts/transfer-context";
-import {useCell} from "../helpers/use-cell";
+import {useCell} from "../../helpers/use-cell";
 
 export const AccountSelect: FunctionComponent = () => {
     const {accountStore} = useContext(AppContext);

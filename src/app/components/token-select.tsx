@@ -4,8 +4,8 @@ import {FC, useContext, useEffect} from "react";
 import {useMemo} from "react";
 import {AppContext} from "../contexts/app-context";
 import {TransferContext} from "../contexts/transfer-context";
-import {useCell} from "../helpers/use-cell";
-import {getTokensByChainId, TokenInfo} from "../services/token.info";
+import {useCell} from "../../helpers/use-cell";
+import {getTokensByChainId, TokenInfo} from "../../services/token.info";
 
 const TypedSelect = Select<TokenInfo, TokenInfo & BaseOptionType>;
 

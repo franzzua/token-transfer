@@ -1,7 +1,7 @@
 import {Input} from "antd";
 import {useContext} from "react";
 import {TransferContext} from "../contexts/transfer-context";
-import {useCell} from "../helpers/use-cell";
+import {useCell} from "../../helpers/use-cell";
 
 export const TargetInput = () => {
     const transferStore = useContext(TransferContext);

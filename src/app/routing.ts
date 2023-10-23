@@ -1,7 +1,8 @@
-import {Cell, compare} from "@cmmn/cell/lib";
+import {Cell} from "@cmmn/cell/lib";
+import {compare} from "@cmmn/cell/lib";
 import {useEffect} from "react";
 import {useCell} from "../helpers/use-cell";
-import {routes} from "./pages";
+import {routes} from "./pages/routes";
 
 export type RoutePath =
   | [keyof typeof routes, ...Array<string | number>]
@@ -18,7 +19,7 @@ const queryCell = new Cell<Record<string, string>>(
   Object.fromEntries(new URL(location.href).searchParams.entries())
 );
 
-const back = history.back.bind(history);
+export const back = history.back.bind(history);
 export const routerCell = new Cell(() => {
   const route = routeCell.get();
   const query = queryCell.get()

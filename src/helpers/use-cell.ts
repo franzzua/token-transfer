@@ -1,4 +1,5 @@
-import { BaseCell, Cell, compare } from "@cmmn/cell/lib";
+import {compare }from "@cmmn/cell/lib";
+import { BaseCell, Cell } from "@cmmn/cell/lib";
 import {useMemo, useReducer, useEffect} from "react";
 
 export function useCell<T>(

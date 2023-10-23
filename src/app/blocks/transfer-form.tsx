@@ -5,11 +5,12 @@ import {AccountSelect} from "../components/account-select";
 import {TargetInput} from "../components/target-input";
 import {TokenSelect} from "../components/token-select";
 import { useContext} from "react";
-import {useCell} from "../helpers/use-cell";
+import {useCell} from "../../helpers/use-cell";
 import {AmountInput} from "../components/amount-input";
-import styles from "./add-transfer-form.module.less";
+import {back, goTo} from "../routing";
+import styles from "./transfer-form.module.less";
 
-export const AddTransferForm = () => {
+export const TransferForm = () => {
     const transferStore = useContext(TransferContext);
     const transfer = useCell(() => transferStore.Transfer);
     if (!transfer) //TODO: add loader
@@ -35,6 +36,9 @@ export const AddTransferForm = () => {
             <span>To</span>
             <TargetInput />
         </label>
-        <Button type="primary" onClick={() => transferStore.send()}>Send</Button>
+        <Button.Group>
+            <Button onClick={() => goTo("/main")}>Cancel</Button>
+            <Button type="primary" onClick={() => transferStore.send()}>Send</Button>
+        </Button.Group>
     </div>;
 }
