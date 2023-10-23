@@ -1,12 +1,12 @@
-import {SyncStore} from "@cmmn/sync";
+import {cell} from "@cmmn/cell/lib";
+import {ObservableDB} from "../helpers/observableDB";
 import {Transfer} from "../stores/transfer.store";
 
-export class Storage extends SyncStore {
-    constructor() {
-        super("app");
+export class Storage  {
 
-    }
+    @cell
+    public transfers = new ObservableDB<Transfer>("transfers");
 
-    public transfers = this.getArray<Transfer>("transfers");
-    public tokens = this.getArray<Transfer>("tokens");
+    @cell
+    public tokens = new ObservableDB<Transfer>("tokens");
 }

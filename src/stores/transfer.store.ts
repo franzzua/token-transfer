@@ -1,5 +1,5 @@
-import {bind,compare, Container, Fn} from "@cmmn/core";
-import {AsyncCell, Cell, cell} from "@cmmn/cell";
+import {bind,compare, Container, Fn} from "@cmmn/cell/lib";
+import {AsyncCell, Cell, cell} from "@cmmn/cell/lib";
 import {Timer} from "../helpers/timer";
 import {getTokenByAddress} from "../services/token.info";
 import {TransferApi} from "../services/transfer.api";

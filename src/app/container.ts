@@ -1,4 +1,4 @@
-import {Container, InjectionToken} from "@cmmn/core";
+import {Container, InjectionToken} from "@cmmn/cell/lib";
 import {BrowserProvider} from "ethers";
 import {TransferApi} from "../services/transfer.api";
 import {Storage} from "../services/storage";

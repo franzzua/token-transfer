@@ -1,4 +1,4 @@
-import {Cell} from "@cmmn/cell";
+import {Cell} from "@cmmn/cell/lib";
 
 export class Timer extends Cell<Date>{
     constructor(private interval: number) {

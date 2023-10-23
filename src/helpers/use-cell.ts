@@ -1,5 +1,5 @@
-import {compare }from "@cmmn/core";
-import { BaseCell, Cell } from "@cmmn/cell";
+import {compare }from "@cmmn/cell/lib";
+import { BaseCell, Cell } from "@cmmn/cell/lib";
 import {useMemo, useReducer, useEffect} from "react";
 
 export function useCell<T>(

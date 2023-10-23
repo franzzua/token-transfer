@@ -1,4 +1,4 @@
-import {cell} from "@cmmn/cell";
+import {cell} from "@cmmn/cell/lib";
 
 const provider = window.ethereum;
 export class AccountStore {

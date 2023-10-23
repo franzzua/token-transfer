@@ -1,5 +1,5 @@
-import {bind,compare, Container, Fn} from "@cmmn/core";
-import {cell} from "@cmmn/cell";
+import {bind,compare, Container, Fn} from "@cmmn/cell/lib";
+import {cell} from "@cmmn/cell/lib";
 import {TransferApi} from "../services/transfer.api";
 import {Storage} from "../services/storage";
 import {TransferStore} from "./transfer.store";
@@ -23,7 +23,7 @@ export class TransfersStore {
     }
 
     public async patchTransfer(transfer: Transfer){
-        this.storage.transfers.set(this.storage.transfers.indexOf(transfer), transfer);
+        await this.storage.transfers.addOrUpdate(transfer);
     }
 
     get(id: string) {
@@ -38,13 +38,13 @@ export class TransfersStore {
         const transfer = {
             _id: Fn.ulid(),
             id: null,
-            amount: BigInt(Math.round(Math.random()*(10**8))),
-            tokenAddress: 'ETH',
+            amount: 0n,
+            tokenAddress: '',
             from: null,
             to: null,
             state: 'initial'
         } as Transfer;
-        this.storage.transfers.push(transfer);
+        await this.storage.transfers.addOrUpdate(transfer);
         return transfer._id;
     }
 }

@@ -1,4 +1,4 @@
-import {EventEmitter, Fn} from "@cmmn/core";
+import {EventEmitter, Fn} from "@cmmn/cell/lib";
 import { IndexedDatabase } from "./indexedDatabase";
 
 export class ObservableDB<T extends { _id: string }> extends EventEmitter<{

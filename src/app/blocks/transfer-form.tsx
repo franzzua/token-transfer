@@ -7,6 +7,7 @@ import {TokenSelect} from "../components/token-select";
 import { useContext} from "react";
 import {useCell} from "../../helpers/use-cell";
 import {AmountInput} from "../components/amount-input";
+import {back, goTo} from "../routing";
 import styles from "./transfer-form.module.less";
 
 export const TransferForm = () => {
@@ -35,6 +36,9 @@ export const TransferForm = () => {
             <span>To</span>
             <TargetInput />
         </label>
-        <Button type="primary" onClick={() => transferStore.send()}>Send</Button>
+        <Button.Group>
+            <Button onClick={() => goTo("/main")}>Cancel</Button>
+            <Button type="primary" onClick={() => transferStore.send()}>Send</Button>
+        </Button.Group>
     </div>;
 }
