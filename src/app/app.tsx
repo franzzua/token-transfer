@@ -1,15 +1,18 @@
-import {Layout} from "../components/layout";
-import {Main} from "../pages/main";
+import {Layout} from "./layout";
 import {container} from "./container";
-import {DiContainer, DiContext} from "./di-context";
+import {DiContainer, AppContext} from "../contexts/app-context";
+import {useRouter} from "./routing";
 
 export const App = () => {
     const diContainer = container.get<DiContainer>(DiContainer);
+    const route = useRouter();
+    const Page = route.active.page;
+    console.log(route);
     return (
-        <DiContext.Provider value={diContainer}>
+        <AppContext.Provider value={diContainer}>
             <Layout>
-                <Main/>
+                <Page/>
             </Layout>
-        </DiContext.Provider>
+        </AppContext.Provider>
     );
 }

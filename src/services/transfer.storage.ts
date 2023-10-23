@@ -1,5 +1,5 @@
 import {ObservableDB} from "../helpers/observableDB";
-import {Transfer} from "../stores/transfer.store";
+import {Transfer} from "../stores/transfers.store";
 
 export class TransferStorage extends ObservableDB<Transfer> {
     private channel = new BroadcastChannel(this.name);

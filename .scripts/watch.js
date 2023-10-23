@@ -22,7 +22,7 @@ let { host, port } = await context.serve({
     servedir: 'dist',
     port: +(process.env.PORT || 3208),
     host: '0.0.0.0',
-    fallback: 'index.html',
+    fallback: './dist/index.html',
     onRequest(arg){
        // console.log(`[${arg.method}] ${arg.path}: ${arg.timeInMS}`);
     }

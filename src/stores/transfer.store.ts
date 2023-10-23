@@ -1,54 +1,47 @@
-import {bind, Cell, cell, compare, Fn} from "@cmmn/cell/lib";
+import {AsyncCell, bind, Cell, cell, compare, Fn} from "@cmmn/cell/lib";
+import {Timer} from "../helpers/timer";
+import {getTokenByAddress} from "../services/token.info";
 import {TransferApi} from "../services/transfer.api";
 import {TransferStorage} from "../services/transfer.storage";
+import {TransfersStore} from "./transfers.store";
 
 export class TransferStore {
-
-    constructor(storage: TransferStorage,
-                private api: TransferApi) {
-        this.storage = storage;
-        this.init();
+    constructor(private transfers: TransfersStore,
+                private api: TransferApi,
+                private id: string) {
     }
 
-    async init(){
-        await this.storage.init();
-        if (!this.currentTransfer){
-            const transfer = {
-                _id: Fn.ulid(),
-                id: null,
-                amount: BigInt(Math.round(Math.random()*(10**8))),
-                tokenAddress: 'ETH',
-                from: 'me',
-                to: 'dad',
-                state: 'initial'
-            } as Transfer;
-            await this.storage.addOrUpdate(transfer)
-        }
-    }
-
-    @cell
-    private storage: TransferStorage;
 
     @cell({compare})
-    public get Transfers(){
-        return this.storage.toArray();
+    public get Transfer(){
+        return this.transfers.get(this.id)
     }
 
-    @cell
-    public get currentTransfer(){
-        return this.Transfers.find(x => x.state == 'initial');
-    }
-
-    public async patchTransfer(diff: Pick<Transfer, "_id"> & Partial<Transfer>){
-        const transfer = this.storage.get(diff._id);
-        await this.storage.addOrUpdate({
-            ...transfer,
-            ...diff
+    public async patch(diff: Partial<Transfer>){
+        await this.transfers.patchTransfer({
+           _id: this.id, ...diff
         });
     }
 
     @bind
-    async add() {
+    async send() {
+        await this.patch({
+            state: 'pending'
+        });
+        for await (let t of this.api.run(this.Transfer)){
+
+        }
+    }
+
+    private timer = new Timer(5000);
+    public MyBalance = new AsyncCell(() => {
+        this.timer.get();
+        return this.api.getBalance(this.Transfer.tokenAddress, this.Transfer.from);
+    });
+
+    @cell({compare})
+    public get TokenInfo(){
+        return getTokenByAddress(this.Transfer.tokenAddress);
     }
 }
 

@@ -1,9 +1,5 @@
-import type {SDKProvider} from "@metamask/sdk";
-
-declare module "*.css" {
-    const style: Record<string, string>;
-    export default style;
-}
+declare module "*.module.css";
+declare module "*.module.less";
 declare interface Window {
-    ethereum: SDKProvider;
+    ethereum: import('@metamask/sdk').SDKProvider;
 }

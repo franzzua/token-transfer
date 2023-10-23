@@ -1,5 +1,6 @@
 import "./polyfills";
-import {render} from "preact";
+import {createRoot} from "react-dom/client";
+
 import {App} from "./app/app";
 
 const start = document.getElementById("start");
@@ -14,7 +15,7 @@ window.addEventListener('accountsChanged', async (e: CustomEvent<string[]>) => {
   }
 });
 function show(){
-  render(<App/>, root);
+  createRoot(root).render(<App/>);
   start.remove();
   root.style.display = 'initial';
 }

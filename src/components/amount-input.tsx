@@ -1,21 +1,20 @@
-import {FunctionalComponent} from "preact";
-import {useMemo} from "preact/hooks";
-import {getTokenByAddress} from "../services/token.info";
+import {Flex, Input} from "antd";
+import {FC} from "react";
 
 export type AmountInputProps = {
     symbol: string;
     amount: bigint;
-    onAmountChange(amount: bigint);
+    onChange(amount: bigint): void;
 }
-export const AmountInput: FunctionalComponent<AmountInputProps> = props => {
-    return <div>
-        <input value={props.amount.toString()} onChange={e => {
+export const AmountInput: FC<AmountInputProps> = props => {
+    return <Flex gap="2em">
+        <Input value={props.amount.toString()} onChange={e => {
             const value = e.currentTarget.value;
             try {
                 const bigint = BigInt(value);
-                props.onAmountChange(bigint);
+                props.onChange(bigint);
             } catch (e) {
             }
         }}/>
-    </div>
+    </Flex>
 }

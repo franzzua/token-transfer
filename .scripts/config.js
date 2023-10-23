@@ -1,10 +1,11 @@
 import { htmlPlugin } from '@craftamap/esbuild-plugin-html';
 import {readFileSync, writeFileSync} from "node:fs";
+import { lessLoader } from 'esbuild-plugin-less';
 import * as path from "node:path";
 export const getConfig = ({prod, watch}) => ({
     entryPoints: [
         { out: 'main', in: 'src/index.tsx'},
-        { out: 'global', in: 'src/global.css'},
+        { out: 'global', in: 'src/global.less'},
         { out: 'loader', in: 'src/sw/loader.ts'},
         { out: 'sw', in: 'src/sw/index.ts'},
         { out: 'connect', in: 'src/connect.ts'},
@@ -20,6 +21,7 @@ export const getConfig = ({prod, watch}) => ({
     tsconfig: 'tsconfig.json',
     jsx: 'automatic',
     plugins: [
+        lessLoader(),
         htmlPlugin({
             files: [{
                 entryPoints: ['src/connect.ts'],

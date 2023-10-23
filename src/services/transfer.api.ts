@@ -1,5 +1,5 @@
 import {Contract, ethers, JsonRpcApiProvider} from "ethers";
-import {Transfer} from "../stores/transfer.store";
+import {Transfer} from "../stores/transfers.store";
 import {abi, ERC20} from "erc20-compiled";
 export class TransferApi {
 
@@ -20,7 +20,7 @@ export class TransferApi {
     }
 
     async cancel(transaction: Transfer): Promise<void> {
-
+        const erc20 = await this.getContract(transaction.tokenAddress);
     }
     async getBalance(tokenAddress: string, from: string) {
         const erc20 = await this.getContract(tokenAddress);
