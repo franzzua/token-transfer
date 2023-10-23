@@ -2,7 +2,7 @@ import {test, beforeAll} from "@jest/globals";
 import {ContractFactory, JsonRpcProvider, parseEther, Provider, Wallet, parseUnits} from "ethers";
 import {ProviderInjectionToken, TransferApi} from "../src/lib";
 import {etherium, testContainer} from "./test.container";
-import {abi, bytecode, TestToken, TestTokenFactory} from "erc20-compiled";
+import {abi, bytecode} from "erc20-compiled";
 
 
 const api = testContainer.get<TransferApi>(TransferApi);

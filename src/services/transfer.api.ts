@@ -1,15 +1,15 @@
 import {Contract, ethers, JsonRpcApiProvider} from "ethers";
-import {Transfer} from "../stores/transaction.store";
-import {abi, TestToken, TestTokenFactory} from "erc20-compiled";
+import {Transfer} from "../stores/transfer.store";
+import {abi, ERC20} from "erc20-compiled";
 export class TransferApi {
 
     // private provider = new ethers.BrowserProvider(window.ethereum);
     constructor(private provider: JsonRpcApiProvider) {
     }
 
-    private async getContract(tokenAddress: string): Promise<TestToken>{
+    private async getContract(tokenAddress: string): Promise<ERC20>{
         const signer = await this.provider.getSigner();
-        return new Contract(tokenAddress, abi, signer) as Contract&TestToken;
+        return new Contract(tokenAddress, abi, signer) as Contract&ERC20;
 
     }
 

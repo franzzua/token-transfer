@@ -1,10 +1,10 @@
 import {ObservableDB} from "../helpers/observableDB";
-import {Transfer} from "../stores/transaction.store";
+import {Transfer} from "../stores/transfer.store";
 
 export class TransferStorage extends ObservableDB<Transfer> {
     private channel = new BroadcastChannel(this.name);
     constructor() {
-        super("transactions");
+        super("transfers");
 
         this.channel.addEventListener('message', async e => {
             if (e.data?.key != 'change') return;
