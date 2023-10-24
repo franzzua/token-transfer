@@ -23,6 +23,5 @@ export const AccountSelect: FunctionComponent = () => {
                            value={transfer.from}>
             {accounts.map(x => <Select.Option key={x} value={x}>{x}</Select.Option>)}
         </Select>
-        {error && <Typography>{error}</Typography>}
     </Label>
 }
