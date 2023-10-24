@@ -53,6 +53,12 @@ export class TransfersStore {
         this.timer.get();
         return this.api.getFeeData();
     });
+
+    async create(transfer: Transfer) {
+        transfer._id = Fn.ulid();
+        await this.storage.transfers.addOrUpdate(transfer);
+        return transfer._id;
+    }
 }
 
 export type Transfer = {

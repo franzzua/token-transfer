@@ -1,6 +1,6 @@
 import {Dashboard} from "../blocks/dashboard";
 
 
-export function Main(){
+export function MainPage(){
     return <Dashboard/>;
 }

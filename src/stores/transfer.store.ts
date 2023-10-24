@@ -5,8 +5,9 @@ import {TransferApi} from "../services/transfer.api";
 import {Transfer, TransfersStore} from "./transfers.store";
 import {formatEther, formatUnits, parseUnits, isAddress, FeeData} from "ethers";
 import {Storage} from "../services/storage";
+import {BaseTransferStore} from "./base.transfer.store";
 
-export class TransferStore {
+export class TransferStore implements BaseTransferStore {
     constructor(private store: TransfersStore,
                 private storage: Storage,
                 private api: TransferApi,
@@ -43,7 +44,7 @@ export class TransferStore {
     });
 
     public get myBalanceFormatted(){
-        if (!this.TokenInfo)
+        if (!this.TokenInfo || !this.myBalance.get())
             return null;
         return formatUnits(this.myBalance.get(), this.TokenInfo.decimals);
     }

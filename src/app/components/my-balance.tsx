@@ -2,9 +2,10 @@ import {Flex, Skeleton} from "antd";
 import {FC, useContext, useMemo} from "react";
 import {TransferContext} from "../contexts/transfer-context";
 import {useCell} from "../../helpers/use-cell";
+import {TransferStore} from "../../stores/transfer.store";
 
 export const MyBalance: FC = () => {
-    const transferStore = useContext(TransferContext);
+    const transferStore = useContext(TransferContext) as TransferStore;
     const balance = useCell(() => transferStore.myBalanceFormatted);
     const symbol = useCell(() => transferStore.TokenInfo?.symbol);
     return <Flex align="center">

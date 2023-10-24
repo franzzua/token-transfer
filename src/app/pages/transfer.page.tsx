@@ -5,7 +5,7 @@ import {TransferContext} from "../contexts/transfer-context";
 import {useRouter} from "../routing";
 
 
-export function Transfer(){
+export function TransferPage(){
     const {transfersStore} = useContext(AppContext);
     const {query: {id}} = useRouter();
     const transferStore = useMemo(() => transfersStore.getTransferStore(id), [id]);

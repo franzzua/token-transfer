@@ -5,7 +5,7 @@ import {useCell} from "../../helpers/use-cell";
 import {Label} from "../elements/label";
 import {MyBalance} from "./my-balance";
 
-export const AmountInput: FC = () => {
+export const AmountInput: FC<{noMyAmount?: boolean}> = ({noMyAmount}) => {
     const transferStore = useContext(TransferContext);
     const amount = useCell(() => transferStore.Amount);
     const [localAmount, setLocalAmount] = useState(amount);
@@ -18,7 +18,7 @@ export const AmountInput: FC = () => {
                 if (Number.isFinite(+value))
                     transferStore.Amount = value;
             }}/>
-            <MyBalance/>
+            {!noMyAmount && <MyBalance/>}
         </Flex>
     </Label>
 }
