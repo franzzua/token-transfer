@@ -43,7 +43,7 @@ export const TransferForm = () => {
         <Button.Group>
             <Button onClick={() => goTo("/main")}>Cancel</Button>
             <Button type="primary" onClick={async () => {
-                await transferStore.send();
+                transferStore.send();
                 goTo("/main")
             }}>Send</Button>
         </Button.Group>

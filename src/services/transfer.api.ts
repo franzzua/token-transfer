@@ -15,6 +15,7 @@ export class TransferApi {
     }
 
     async *run(transfer: Transfer): AsyncGenerator<Transfer> {
+        yield { ...transfer, state: 'pending' };
         try {
             const erc20 = await this.getContract(transfer.tokenAddress, transfer.from);
             const transaction = await erc20.transfer(transfer.to, transfer.amount);

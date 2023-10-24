@@ -20,6 +20,7 @@ export const getConfig = ({prod, watch}) => ({
     treeShaking: prod,
     tsconfig: 'tsconfig.json',
     jsx: 'automatic',
+    define: { DEBUG: (!prod).toString() },
     plugins: [
         lessLoader(),
         htmlPlugin({

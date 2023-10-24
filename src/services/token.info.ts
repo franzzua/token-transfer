@@ -1,6 +1,6 @@
-import {tokens} from "@uniswap/default-token-list";
+import uniswapTokenList from "@uniswap/default-token-list";
 
-const allTokens = tokens as Array<TokenInfo>
+const allTokens = uniswapTokenList.tokens as Array<TokenInfo>
 export function getTokensByChainId(chainId: number){
     return allTokens.filter(x =>
         x.chainId == chainId ||

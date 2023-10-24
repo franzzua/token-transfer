@@ -1,6 +1,6 @@
 import {ConfigProvider} from "antd";
 import {Layout} from "./layout";
-import {container} from "./container";
+import {container} from "../container";
 import {DiContainer, AppContext} from "./contexts/app-context";
 import {useRouter} from "./routing";
 import {theme} from "./theme";

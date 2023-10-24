@@ -2,7 +2,7 @@ import {AsyncCell, bind, Cell, cell, compare} from "@cmmn/cell/lib";
 import {Timer} from "../helpers/timer";
 import {getTokenByAddress} from "../services/token.info";
 import {TransferApi} from "../services/transfer.api";
-import {TransfersStore} from "./transfers.store";
+import {Transfer, TransfersStore} from "./transfers.store";
 import {formatEther, formatUnits, parseUnits} from "ethers";
 import {Storage} from "../services/storage";
 
@@ -27,9 +27,6 @@ export class TransferStore {
 
     @bind
     async send() {
-        await this.patch({
-            state: 'pending'
-        });
         for await (let t of this.api.run(this.Transfer)){
             await this.patch({
                 state: t.state
@@ -68,14 +65,4 @@ export class TransferStore {
         if (!feeData || !gas) return null;
         return `${formatEther(feeData.gasPrice * gas)}, ${feeData.maxFeePerGas}, ${feeData.maxPriorityFeePerGas}, ${feeData.gasPrice}`;
     })
-}
-
-export type Transfer = {
-    _id: string;
-    id: string | null;
-    amount: bigint;
-    tokenAddress: string;
-    from: string;
-    to: string;
-    state: string;
 }

@@ -17,13 +17,16 @@ beforeAll(async () => {
     tokenAddress = await deploy.getAddress();
 })
 test(`run transaction`,async () => {
-    const balanceF = await api.getBalance(tokenAddress, from);
-    const balanceT = await api.getBalance(tokenAddress, to);
     const res = api.run({
         from, to, _id: '1',
         id: null,
         amount: 1n*(10n**6n),
         tokenAddress,
-        state: 'pending'
+        state: 'initial'
     });
+    const states = ['pending', 'signed', 'mined'];
+    for await (let {state} of res){
+        expect(state).toEqual(states.shift());
+    }
+    expect(states).toHaveLength(0);
 });

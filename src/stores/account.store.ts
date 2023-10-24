@@ -1,22 +1,22 @@
 import {cell} from "@cmmn/cell/lib";
 
-const provider = window.ethereum;
 export class AccountStore {
+    private provider = globalThis.ethereum;
     @cell
     public accounts: string[] = [];
 
     @cell
-    public chainId: number = Number.parseInt(provider.chainId, 16);
+    public chainId: number = Number.parseInt(this.provider.chainId, 16);
 
     constructor() {
-        provider.request({method: "eth_accounts"})
+        this.provider.request({method: "eth_accounts"})
             .then(x => this.accounts = x as string[])
             .catch(console.error);
-        provider.addListener('accountsChanged', (accounts: string[]) => {
+        this.provider.addListener('accountsChanged', (accounts: string[]) => {
             this.accounts = accounts;
         });
-        provider.addListener('chainChanged', (accounts: string[]) => {
-            this.chainId = Number.parseInt(provider.chainId, 16);
+        this.provider.addListener('chainChanged', (accounts: string[]) => {
+            this.chainId = Number.parseInt(this.provider.chainId, 16);
         });
     }
 

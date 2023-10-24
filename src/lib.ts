@@ -1,2 +1,2 @@
 export { TransferApi } from "./services/transfer.api"
-export {container, ProviderInjectionToken} from "./app/container";
+export {container, ProviderInjectionToken} from "./container";
