@@ -1,4 +1,4 @@
-import {Button, Flex, Skeleton} from "antd";
+import {Button, Card, Flex, Skeleton} from "antd";
 import {MyBalance} from "../components/my-balance";
 import {TransferContext} from "../contexts/transfer-context";
 import {AccountSelect} from "../components/account-select";
@@ -13,9 +13,10 @@ import styles from "./transfer-form.module.less";
 export const TransferForm = () => {
     const transferStore = useContext(TransferContext);
     const transfer = useCell(() => transferStore.Transfer);
+    const fee = useCell(transferStore.Fee);
     if (!transfer) //TODO: add loader
         return <Skeleton/>;
-    return <div className={styles.container}>
+    return <Card>
         <label>
             <span>Account</span>
             <AccountSelect />
@@ -36,9 +37,15 @@ export const TransferForm = () => {
             <span>To</span>
             <TargetInput />
         </label>
+        <label>
+            <span>Fee: {fee}</span>
+        </label>
         <Button.Group>
             <Button onClick={() => goTo("/main")}>Cancel</Button>
-            <Button type="primary" onClick={() => transferStore.send()}>Send</Button>
+            <Button type="primary" onClick={async () => {
+                await transferStore.send();
+                goTo("/main")
+            }}>Send</Button>
         </Button.Group>
-    </div>;
+    </Card>;
 }

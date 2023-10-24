@@ -43,7 +43,7 @@ onRoutingChange({
 });
 export const goTo = (
   path: RoutePath | RoutePathString,
-  query: Record<string, string> | undefined = queryCell.get(),
+  query: Record<string, string> | undefined = undefined,
   replace: boolean = false
 ) => {
   console.log(path, query)
@@ -56,7 +56,7 @@ export const goTo = (
     query = path.pop() as Record<string, string>;
   }
   routeCell.set(path.filter((x) => x !== null) as RoutePath);
-  query && queryCell.set(query);
+  queryCell.set(query ?? {});
   let url = "/" + path.filter((x) => x !== null).join("/");
   const search = new URLSearchParams(query ?? queryCell.get()).toString();
   if (search) url += "?" + search;

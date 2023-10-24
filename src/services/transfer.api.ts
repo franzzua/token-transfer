@@ -1,29 +1,46 @@
 import {Contract, ethers, JsonRpcApiProvider} from "ethers";
 import {Transfer} from "../stores/transfers.store";
 import {abi, ERC20} from "erc20-compiled";
+import {etherium} from "../../test/test.container";
 export class TransferApi {
 
     // private provider = new ethers.BrowserProvider(window.ethereum);
     constructor(private provider: JsonRpcApiProvider) {
     }
 
-    private async getContract(tokenAddress: string): Promise<ERC20>{
-        const signer = await this.provider.getSigner();
+    private async getContract(tokenAddress: string, account: string): Promise<ERC20>{
+        const signer = await this.provider.getSigner(account);
         return new Contract(tokenAddress, abi, signer) as Contract&ERC20;
 
     }
 
     async *run(transfer: Transfer): AsyncGenerator<Transfer> {
-        const erc20 = await this.getContract(transfer.tokenAddress);
-        // const gas = await erc20.transfer.estimateGas(transfer.to, transfer.amount);
-        await erc20.transfer(transfer.to, transfer.amount);
+        try {
+            const erc20 = await this.getContract(transfer.tokenAddress, transfer.from);
+            const transaction = await erc20.transfer(transfer.to, transfer.amount);
+            if (transaction.isMined()) {
+                yield { ...transfer, state: 'mined' };
+            } else {
+                yield { ...transfer, state: 'signed' };
+                await transaction.wait();
+                yield { ...transfer, state: 'mined' };
+            }
+        }catch (e){
+            yield {...transfer, state: 'rejected'};
+        }
     }
 
-    async cancel(transaction: Transfer): Promise<void> {
-        const erc20 = await this.getContract(transaction.tokenAddress);
+    async estimateGas(transfer: Transfer): Promise<bigint> {
+        const erc20 = await this.getContract(transfer.tokenAddress);
+        return await erc20.transfer.estimateGas(transfer.to, transfer.amount);
     }
+
     async getBalance(tokenAddress: string, from: string) {
         const erc20 = await this.getContract(tokenAddress);
         return erc20.balanceOf(from);
+    }
+
+    getFeeData(){
+        return this.provider.getFeeData();
     }
 }

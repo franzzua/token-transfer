@@ -1,12 +1,14 @@
-import {AsyncCell, bind, cell, compare} from "@cmmn/cell/lib";
+import {AsyncCell, bind, Cell, cell, compare} from "@cmmn/cell/lib";
 import {Timer} from "../helpers/timer";
 import {getTokenByAddress} from "../services/token.info";
 import {TransferApi} from "../services/transfer.api";
 import {TransfersStore} from "./transfers.store";
-import {formatUnits, parseUnits} from "ethers";
+import {formatEther, formatUnits, parseUnits} from "ethers";
+import {Storage} from "../services/storage";
 
 export class TransferStore {
     constructor(private transfers: TransfersStore,
+                private storage: Storage,
                 private api: TransferApi,
                 private id: string) {
     }
@@ -18,7 +20,7 @@ export class TransferStore {
     }
 
     public async patch(diff: Partial<Transfer>){
-        await this.transfers.patchTransfer({
+        await this.storage.transfers.addOrUpdate({
            ...this.Transfer, ...diff
         });
     }
@@ -29,7 +31,9 @@ export class TransferStore {
             state: 'pending'
         });
         for await (let t of this.api.run(this.Transfer)){
-
+            await this.patch({
+                state: t.state
+            });
         }
     }
 
@@ -48,11 +52,22 @@ export class TransferStore {
     }
 
     public get Amount(){
+        if (!this.TokenInfo) return '';
         return formatUnits(this.Transfer.amount, this.TokenInfo.decimals);
     }
     public set Amount(amount: string){
         this.patch({amount: parseUnits(amount, this.TokenInfo.decimals )});
     }
+
+
+    public Gas = new AsyncCell(() => this.api.estimateGas(this.Transfer));
+
+    public Fee = new Cell(() => {
+        const gas = this.Gas.get();
+        const feeData = this.transfers.FeeData.get();
+        if (!feeData || !gas) return null;
+        return `${formatEther(feeData.gasPrice * gas)}, ${feeData.maxFeePerGas}, ${feeData.maxPriorityFeePerGas}, ${feeData.gasPrice}`;
+    })
 }
 
 export type Transfer = {
