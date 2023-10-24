@@ -26,7 +26,7 @@ export class TransferApi {
                 await transaction.wait();
                 yield { ...transfer, state: 'mined' };
             }
-        }catch (e){
+        } catch (e) {
             yield {...transfer, state: 'rejected'};
         }
     }
@@ -45,6 +45,7 @@ export class TransferApi {
         const feeData = await this.provider.getFeeData();
         const currentBlock = await this.provider.getBlock('pending');
         const transaction = await currentBlock.getTransaction(0);
+
         const baseFeePerGas = currentBlock.baseFeePerGas;
         return {
             baseFeePerGas,

@@ -41,6 +41,7 @@ export class TransfersStore {
             tokenAddress: '',
             from: null,
             to: null,
+            fee: 0n,
             state: 'initial'
         } as Transfer;
         await this.storage.transfers.addOrUpdate(transfer);

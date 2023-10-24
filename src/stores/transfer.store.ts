@@ -35,13 +35,18 @@ export class TransferStore {
     }
 
     private timer = new Timer(5000);
-    public MyBalance = new AsyncCell(async () => {
+    public myBalance = new AsyncCell(async () => {
         this.timer.get();
         if (!this.Transfer.tokenAddress || !this.Transfer.from)
             return null;
-        const balance = await this.api.getBalance(this.Transfer.tokenAddress, this.Transfer.from);
-        return formatUnits(balance, this.TokenInfo.decimals);
+        return await this.api.getBalance(this.Transfer.tokenAddress, this.Transfer.from);
     });
+
+    public get myBalanceFormatted(){
+        if (!this.TokenInfo)
+            return null;
+        return formatUnits(this.myBalance.get(), this.TokenInfo.decimals);
+    }
 
     @cell({compare})
     public get TokenInfo(){
@@ -63,7 +68,7 @@ export class TransferStore {
         const gas = this.Gas.get();
         const feeData = this.store.FeeData.get();
         if (!feeData || !gas) return null;
-        return {...feeData, gas};
+        return {...feeData, gas} as any;
     });
 
     public get errors(): Record<keyof Transfer, string | undefined>{
@@ -73,6 +78,12 @@ export class TransferStore {
         }
         if (!isAddress(this.Transfer.to)){
             errors.to = `Invalid address`;
+        }
+        if (!isAddress(this.Transfer.tokenAddress)){
+            errors.tokenAddress = `Invalid address`;
+        }
+        if (this.myBalance.get() && (this.Transfer.amount + this.Transfer.fee > this.myBalance.get())){
+            errors.amount = `Not enough balance`;
         }
         return errors;
     }
