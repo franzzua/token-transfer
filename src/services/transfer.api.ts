@@ -8,7 +8,7 @@ export class TransferApi {
     constructor(private provider: JsonRpcApiProvider) {
     }
 
-    private async getContract(tokenAddress: string, account: string): Promise<ERC20>{
+    private async getContract(tokenAddress: string, account: string = undefined): Promise<ERC20>{
         const signer = await this.provider.getSigner(account);
         return new Contract(tokenAddress, abi, signer) as Contract&ERC20;
 
@@ -41,7 +41,14 @@ export class TransferApi {
         return erc20.balanceOf(from);
     }
 
-    getFeeData(){
-        return this.provider.getFeeData();
+    async getFeeData(){
+        const feeData = await this.provider.getFeeData();
+        const currentBlock = await this.provider.getBlock('pending');
+        const transaction = await currentBlock.getTransaction(0);
+        const baseFeePerGas = currentBlock.baseFeePerGas;
+        return {
+            baseFeePerGas,
+            ...feeData,
+        }
     }
 }

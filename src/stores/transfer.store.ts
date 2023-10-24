@@ -3,11 +3,11 @@ import {Timer} from "../helpers/timer";
 import {getTokenByAddress} from "../services/token.info";
 import {TransferApi} from "../services/transfer.api";
 import {Transfer, TransfersStore} from "./transfers.store";
-import {formatEther, formatUnits, parseUnits} from "ethers";
+import {formatEther, formatUnits, parseUnits, isAddress, FeeData} from "ethers";
 import {Storage} from "../services/storage";
 
 export class TransferStore {
-    constructor(private transfers: TransfersStore,
+    constructor(private store: TransfersStore,
                 private storage: Storage,
                 private api: TransferApi,
                 private id: string) {
@@ -15,8 +15,8 @@ export class TransferStore {
 
 
     @cell({compare})
-    public get Transfer(){
-        return this.transfers.get(this.id)
+    public get Transfer(): Transfer{
+        return this.storage.transfers.get(this.id);
     }
 
     public async patch(diff: Partial<Transfer>){
@@ -59,10 +59,21 @@ export class TransferStore {
 
     public Gas = new AsyncCell(() => this.api.estimateGas(this.Transfer));
 
-    public Fee = new Cell(() => {
+    public Fee = new Cell<FeeData&{gas: bigint; baseFeePerGas: bigint;} | null>(() => {
         const gas = this.Gas.get();
-        const feeData = this.transfers.FeeData.get();
+        const feeData = this.store.FeeData.get();
         if (!feeData || !gas) return null;
-        return `${formatEther(feeData.gasPrice * gas)}, ${feeData.maxFeePerGas}, ${feeData.maxPriorityFeePerGas}, ${feeData.gasPrice}`;
-    })
+        return {...feeData, gas};
+    });
+
+    public get errors(): Record<keyof Transfer, string | undefined>{
+        const errors = {} as Record<keyof Transfer, string | undefined>;
+        if (!isAddress(this.Transfer.from)){
+            errors.from = `Invalid address`;
+        }
+        if (!isAddress(this.Transfer.to)){
+            errors.to = `Invalid address`;
+        }
+        return errors;
+    }
 }

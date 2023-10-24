@@ -5,12 +5,13 @@ import {Storage} from "../services/storage";
 import {TransferStore} from "./transfer.store";
 import {Timer} from "../helpers/timer";
 import {formatUnits} from "ethers";
+import {AccountStore} from "./account.store";
 
 export class TransfersStore {
 
     constructor(private storage: Storage,
                 private api: TransferApi,
-                private container: Container) {
+                private account: AccountStore) {
     }
 
 
@@ -61,4 +62,5 @@ export type Transfer = {
     from: string;
     to: string;
     state: string;
+    fee: bigint;
 }

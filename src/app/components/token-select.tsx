@@ -6,6 +6,7 @@ import {AppContext} from "../contexts/app-context";
 import {TransferContext} from "../contexts/transfer-context";
 import {useCell} from "../../helpers/use-cell";
 import {getTokensByChainId, TokenInfo} from "../../services/token.info";
+import {Label} from "../elements/label";
 
 const TypedSelect = Select<TokenInfo, TokenInfo & BaseOptionType>;
 
@@ -29,11 +30,13 @@ export const TokenSelect: FC = () => {
         if (selected?.address !== transfer.tokenAddress)
             transferStore.patch({tokenAddress: selected?.address});
     }, [selected?.address]);
-    return <TypedSelect showSearch={tokens.length > 5}
-                        value={selected}
-                        options={options}
-                        filterOption={(q, o) => o.name.toLowerCase().includes(q.toLowerCase())}
-                        optionFilterProp="children"
-                        onSelect={(_,token) => transferStore.patch({tokenAddress: token.address})}>
-    </TypedSelect>;
+    return <Label title="Token">
+        <TypedSelect showSearch={tokens.length > 5}
+                       value={selected}
+                       options={options}
+                       filterOption={(q, o) => o.name.toLowerCase().includes(q.toLowerCase())}
+                       optionFilterProp="children"
+                       onSelect={(_, token) => transferStore.patch({ tokenAddress: token.address })}>
+        </TypedSelect>
+    </Label>;
 };
