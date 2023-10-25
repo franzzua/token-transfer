@@ -7,8 +7,10 @@ import {TransferStore} from "../../stores/transfer.store";
 export const MyBalance: FC = () => {
     const transferStore = useContext(TransferContext) as TransferStore;
     const balance = useCell(() => transferStore.myBalanceFormatted);
-    const symbol = useCell(() => transferStore.TokenInfo?.symbol);
+    const tokenInfo = useCell(transferStore.TokenInfo);
+    if (balance == null)
+        return <></>
     return <Flex align="center">
-        <span>My amount: {balance !== null ? balance: <Skeleton.Input active/>} {symbol}</span>
+        <span>My amount: {balance} {tokenInfo?.symbol}</span>
     </Flex>
 }

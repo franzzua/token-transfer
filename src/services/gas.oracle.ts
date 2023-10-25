@@ -56,8 +56,12 @@ export class GasOracle<
         this.size = values.length;
     }
 
-    public removeAll(filter: (t: TValue) => boolean){
+    public removeAll(filter?: (t: TValue) => boolean){
         if (!this.linkedList.min) return;
+        if (!filter){
+            this.linkedList.min = null;
+            this.percPositions = [];
+        }
         for (let node = this.linkedList.min; node != null; node = node.next){
             if (!filter(node.data)) continue;
             const value = node.data[this.key];

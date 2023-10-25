@@ -58,4 +58,14 @@ export class TransferApi {
             ...feeData,
         }
     }
+
+    async getTokenInfo(tokenAddress: string) {
+        const contract = await this.getContract(tokenAddress);
+        const decimals = await contract.decimals();
+        const name = await contract.name();
+        const symbol = await contract.symbol();
+        return {
+            decimals, name, symbol
+        }
+    }
 }

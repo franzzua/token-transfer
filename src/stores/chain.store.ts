@@ -1,4 +1,4 @@
-import {AsyncCell, Fn} from "@cmmn/cell/lib";
+import {AsyncCell, Fn, Cell} from "@cmmn/cell/lib";
 import {EtherscanApi} from "../services/etherscanApi";
 import {Timer} from "../helpers/timer";
 import {AccountStore} from "./account.store";
@@ -12,10 +12,14 @@ export class ChainStore{
                 private accountStore: AccountStore,
                 private providerFactory: (chainId: number) => JsonRpcApiProvider) {
 
-        this.storage.init().then(async () => {
-            await this.clean();
-            this.estimator.add(...this.storage.toArray().filter(x => x.type == 2));
-        });
+        Cell.OnChange(() => this.accountStore.chainId, this.init);
+        this.init();
+    }
+
+    private init = async () => {
+        await this.storage.init();
+        this.estimator.removeAll();
+        this.estimator.add(...this.storage.toArray().filter(this.transactionFilter));
         this.readTransactions().catch(console.error);
     }
 
@@ -24,6 +28,9 @@ export class ChainStore{
     }
 
     private transactionFilter = (t: TransactionInfo) => t.timestamp < +new Date()/1000 - 60
+        && t.chainId == this.accountStore.chainId
+        && t.type == 2;
+
     private async clean(){
         this.estimator.removeAll(this.transactionFilter);
         for (let item of this.storage.toArray()) {
@@ -69,17 +76,21 @@ export class ChainStore{
     }>("transactions");
 
     private async readTransactions(){
+        const startChainId = this.accountStore.chainId;
         const blockNumber = await this.provider.getBlockNumber();
+        if (this.accountStore.chainId !== startChainId) return;
         for (let i = 0; i < 6; i++) {
             const block = await this.provider.getBlock(blockNumber - i);
+            if (this.accountStore.chainId !== startChainId) return;
             if (!block) continue;
-            console.log('transactions in block', block.transactions.length)
             for (let hash of block.transactions) {
                 if (this.storage.get(hash)) continue;
                 const transaction = await block.getTransaction(hash);
+                if (this.accountStore.chainId !== startChainId) return;
                 const data = {
                     _id: hash,
                     type: transaction.type,
+                    chainId: this.accountStore.chainId,
                     maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
                     timestamp: block.timestamp
                 };
@@ -96,6 +107,7 @@ export class ChainStore{
 
 type TransactionInfo = Pick<TransactionResponse, "maxPriorityFeePerGas"|"type"> & {
     timestamp: number;
+    chainId: number;
 };
 export type GasInfo = null | {
     slow: bigint;

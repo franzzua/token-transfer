@@ -1,6 +1,4 @@
-import {cell, AsyncCell} from "@cmmn/cell/lib";
-import {Timer} from "../helpers/timer";
-import {TransferApi} from "../services/transfer.api";
+import {cell} from "@cmmn/cell/lib";
 
 export class AccountStore {
     private provider = globalThis.ethereum;

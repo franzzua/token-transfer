@@ -45,35 +45,35 @@ export class TransferStore implements BaseTransferStore {
         this.timer.get();
         if (!this.Transfer.tokenAddress || !this.Transfer.from)
             return null;
-        return await this.api.getBalance(this.Transfer.tokenAddress, this.Transfer.from);
+        return await this.api.getBalance(this.Transfer.tokenAddress, this.Transfer.from)
+            .catch(console.error);
     });
 
     public get myBalanceFormatted(){
-        if (!this.TokenInfo || this.myBalance.get() == null)
+        if (!this.TokenInfo.get() || this.myBalance.get() == null)
             return null;
-        return formatUnits(this.myBalance.get(), this.TokenInfo.decimals);
+        return formatUnits(this.myBalance.get(), this.TokenInfo.get().decimals);
     }
 
-    @cell({compare})
-    public get TokenInfo(){
-        return getTokenByAddress(this.Transfer.tokenAddress);
-    }
+    public TokenInfo = new AsyncCell(() => {
+        return getTokenByAddress(this.Transfer.tokenAddress) ??
+            this.api.getTokenInfo(this.Transfer.tokenAddress);
+    })
 
     public get Amount(){
-        if (!this.TokenInfo) return '';
-        return formatUnits(this.Transfer.amount, this.TokenInfo.decimals);
+        if (!this.TokenInfo.get()) return '';
+        return formatUnits(this.Transfer.amount, this.TokenInfo.get().decimals);
     }
     public set Amount(amount: string){
-        this.patch({amount: parseUnits(amount, this.TokenInfo.decimals )});
+        if (!this.TokenInfo.get()) return;
+        this.patch({amount: parseUnits(amount, this.TokenInfo.get().decimals )});
     }
-
-
     public Gas = new AsyncCell(() => this.api.estimateGas(
         this.Transfer.tokenAddress,
         this.Transfer.to,
         this.Transfer.amount,
         this.Transfer.from
-    ));
+    ).catch(console.error));
 
     public Fee = new Cell(() => {
         if (this.errors.tokenAddress) return null;

@@ -1,14 +1,13 @@
-import {Image, Select, Flex} from "antd";
+import {Image, Flex, AutoComplete, Typography} from "antd";
 import {BaseOptionType} from "antd/es/select";
-import {FC, useContext, useEffect} from "react";
+import {FC, useContext, useEffect, useState} from "react";
 import {useMemo} from "react";
 import {AppContext} from "../contexts/app-context";
 import {TransferContext} from "../contexts/transfer-context";
 import {useCell} from "../../helpers/use-cell";
 import {getTokensByChainId, TokenInfo} from "../../services/token.info";
 import {Label} from "../elements/label";
-
-const TypedSelect = Select<TokenInfo, TokenInfo & BaseOptionType>;
+import {isAddress} from "ethers";
 
 export const TokenSelect: FC = () => {
     const {accountStore} = useContext(AppContext);
@@ -20,23 +19,49 @@ export const TokenSelect: FC = () => {
         ...t,
         value: t.address,
         key: t.address,
-        label: <Flex gap="1em" >
+        label: <Flex gap="1em" justify="space-between" >
             <Image width="2em" height="2em" src={t.logoURI}/>
-            {t.name}
+            <Typography.Text>{t.name}</Typography.Text>
+            <Typography.Text className="text-xs" type="secondary" copyable>{t.address}</Typography.Text>
+            <Typography.Text strong>{t.symbol}</Typography.Text>
         </Flex>
-    } as TokenInfo & BaseOptionType))
-    const selected = options.find(x => x.address === transfer.tokenAddress);
+    } as BaseOptionType));
+    const tokenInfo = useCell(transferStore.TokenInfo);
+    const selected = options.find(x => x.value === transfer.tokenAddress) ?? {
+        ...tokenInfo,
+        value: transfer.tokenAddress,
+        key: transfer.tokenAddress,
+        label: transfer.tokenAddress,
+    };
+    const [localValue, setLocalValue] = useState(selected);
     useEffect(() => {
-        if (selected?.address !== transfer.tokenAddress)
-            transferStore.patch({tokenAddress: selected?.address});
-    }, [selected?.address]);
+        if (selected?.value !== transfer.tokenAddress)
+            transferStore.patch({tokenAddress: selected?.value});
+    }, [selected?.value]);
+    console.log(localValue, selected);
     return <Label title="Token">
-        <TypedSelect showSearch={tokens.length > 5}
-                       value={selected}
-                       options={options}
-                       filterOption={(q, o) => o.name.toLowerCase().includes(q.toLowerCase())}
-                       optionFilterProp="children"
-                       onSelect={(_, token) => transferStore.patch({ tokenAddress: token.address })}>
-        </TypedSelect>
+        <AutoComplete showSearch={tokens.length > 5}
+                      value={localValue}
+                      allowClear
+                      onClear={() => transferStore.patch({tokenAddress: null})}
+                      options={options}
+                      filterOption={filter}
+                      onChange={(value,option) => {
+                          console.log(value, option);
+                          setLocalValue(value);
+                          if (isAddress(value)) {
+                              transferStore.patch({ tokenAddress: value })
+                          }
+                      }}>
+        </AutoComplete>
     </Label>;
 };
+
+function filter(query: string, token: TokenInfo & BaseOptionType){
+    return [
+        token.name?.toLowerCase(),
+        token.address?.toLowerCase(),
+        token.symbol?.toLowerCase(),
+        token.value?.toLowerCase(),
+    ].some(x => x?.includes(query.toLowerCase()));
+}
