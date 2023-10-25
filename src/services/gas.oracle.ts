@@ -6,17 +6,15 @@ export class GasOracle<
     TNames extends Record<TPerc, string>,
     TPerc extends Exclude<number,0|1>,
 > {
-    constructor(private percentiles: TPerc[],
+    constructor(private names: TNames,
                 private key: TKey,
-                values: Array<TValue> = [],
-                private names: TNames = Object.fromEntries(percentiles.map(x => [x,x])) as any) {
-        this.percentiles.sort();
+                values: Array<TValue> = []) {
         this.add(...values);
     }
-
+    private percentiles: TPerc[] = Object.keys(this.names).map(x => +x as TPerc).sort();
     private linkedList: {
-        min: LinkedListNode<TValue>;
-    }
+        min: LinkedListNode<TValue> | undefined;
+    } = { min : undefined };
 
     private size: number = 0;
     private percPositions: Array<{perc: TPerc, node: LinkedListNode<TValue>, index: number}> = [];
@@ -25,13 +23,11 @@ export class GasOracle<
     public add<TValue2 extends TValue>(...values: Array<TValue2>){
         if (values.length == 0)
             return;
-        if (!this.linkedList) {
+        if (!this.linkedList.min) {
             values.sort((a,b) => a[this.key] > b[this.key] ? 1 :
                 a[this.key] == b[this.key] ? 0 : -1);
 
-            this.linkedList = {
-                min: {data: values[0], next: undefined, prev: undefined},
-            };
+            this.linkedList.min = {data: values[0], next: undefined, prev: undefined};
             this.percPositions = this.percentiles.map(perc => ({
                 perc,
                 node: this.linkedList.min,
@@ -57,6 +53,7 @@ export class GasOracle<
     }
 
     public removeAll(filter: (t: TValue) => boolean){
+        if (!this.linkedList.min) return;
         for (let node = this.linkedList.min; node != null; node = node.next){
             if (!filter(node.data)) continue;
             const value = node.data[this.key];
@@ -128,7 +125,7 @@ export class GasOracle<
         }
     }
     public get Percentiles(): Record<TNames[keyof TNames], bigint> {
-        if (!this.linkedList)
+        if (!this.linkedList.min)
             return null;
         return Object.fromEntries(
             this.percPositions.map(x =>

@@ -47,10 +47,8 @@ export class ObservableDB<T extends { _id: string }> extends EventEmitter<{
   async remove(key: string) {
     const existed = this.get(key);
     if (!existed) return;
-    return this.addOrUpdate({
-      ...existed,
-      deleted: true
-    })
+    this.db.remove(key);
+    this.items.delete(key);
   }
 
   async clear() {
