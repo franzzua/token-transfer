@@ -17,7 +17,7 @@ export const container = Container.withProviders(
     {provide: TransfersStore, deps: [Storage, TransferApi, AccountStore]},
     {provide: TransferApi, deps: [ProviderInjectionToken]},
     {provide: ProviderInjectionToken, useFactory: () => new BrowserProvider(window.ethereum)},
-    {provide: ChainStore, deps: [EtherscanApi]}
+    {provide: ChainStore, deps: [EtherscanApi, AccountStore, ProviderInjectionToken]}
 );
 
 // @ts-ignore
@@ -30,7 +30,7 @@ if (DEBUG){
                 toBeHex(toBigInt(randomBytes(20))),
                 toBeHex(toBigInt(randomBytes(20))),
             ],
-            chainId: 1
+            chainId: 137
         }
     }, {
         provide: TransferApi, useClass: TransferApiMock, deps: [ProviderInjectionToken]
