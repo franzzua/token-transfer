@@ -57,7 +57,7 @@ export class TransferStore implements BaseTransferStore {
 
     public TokenInfo = new AsyncCell(() => {
         return getTokenByAddress(this.Transfer.tokenAddress) ??
-            this.api.getTokenInfo(this.Transfer.tokenAddress);
+            this.api.getTokenInfo(this.Transfer.tokenAddress).catch(console.error);
     })
 
     public get Amount(){

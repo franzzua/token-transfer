@@ -31,7 +31,12 @@ export const TokenSelect: FC = () => {
         ...tokenInfo,
         value: transfer.tokenAddress,
         key: transfer.tokenAddress,
-        label: transfer.tokenAddress,
+        label: <Flex gap="1em" justify="space-between" >
+            <Image width="2em" height="2em" src={tokenInfo?.logoURI}/>
+            <Typography.Text>{tokenInfo?.name}</Typography.Text>
+            <Typography.Text className="text-xs" type="secondary" copyable>{tokenInfo?.address ?? transfer.tokenAddress}</Typography.Text>
+            <Typography.Text strong>{tokenInfo?.symbol}</Typography.Text>
+        </Flex>
     };
     const [localValue, setLocalValue] = useState(selected);
     useEffect(() => {
@@ -54,6 +59,7 @@ export const TokenSelect: FC = () => {
                           }
                       }}>
         </AutoComplete>
+        {selected?.label}
     </Label>;
 };
 
