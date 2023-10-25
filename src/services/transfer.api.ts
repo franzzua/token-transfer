@@ -1,11 +1,17 @@
 import {Contract, ethers, JsonRpcApiProvider} from "ethers";
+import {AccountStore} from "../stores/account.store";
 import {Transfer} from "../stores/transfers.store";
 import {abi, ERC20} from "erc20-compiled";
 import {etherium} from "../../test/test.container";
 export class TransferApi {
 
     // private provider = new ethers.BrowserProvider(window.ethereum);
-    constructor(private provider: JsonRpcApiProvider) {
+    constructor(private providerFactory: (chainId: number) => JsonRpcApiProvider,
+                private accountStore: AccountStore) {
+    }
+
+    private get provider(){
+        return this.providerFactory(this.accountStore.chainId)
     }
 
     private async getContract(tokenAddress: string, account: string = undefined): Promise<ERC20>{
@@ -31,9 +37,9 @@ export class TransferApi {
         }
     }
 
-    async estimateGas(transfer: Transfer): Promise<bigint> {
-        const erc20 = await this.getContract(transfer.tokenAddress);
-        return await erc20.transfer.estimateGas(transfer.to, transfer.amount);
+    async estimateGas(tokenAddress: string, to: string, amount: bigint, from: string): Promise<bigint> {
+        const erc20 = await this.getContract(tokenAddress, from);
+        return await erc20.transfer.estimateGas(to, amount);
     }
 
     async getBalance(tokenAddress: string, from: string) {

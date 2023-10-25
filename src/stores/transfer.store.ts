@@ -1,17 +1,22 @@
-import {AsyncCell, bind, Cell, cell, compare} from "@cmmn/cell/lib";
+import {AsyncCell, bind, Cell, cell, compare, Fn} from "@cmmn/cell/lib";
+import {Chain} from "eth-chains";
 import {Timer} from "../helpers/timer";
 import {getTokenByAddress} from "../services/token.info";
 import {TransferApi} from "../services/transfer.api";
+import {ChainStore} from "./chain.store";
 import {Transfer, TransfersStore} from "./transfers.store";
 import {formatEther, formatUnits, parseUnits, isAddress, FeeData} from "ethers";
 import {Storage} from "../services/storage";
 import {BaseTransferStore} from "./base.transfer.store";
 
 export class TransferStore implements BaseTransferStore {
-    constructor(private store: TransfersStore,
-                private storage: Storage,
-                private api: TransferApi,
-                private id: string) {
+    constructor(
+        private id: string,
+        private store: TransfersStore,
+        private storage: Storage,
+        private api: TransferApi,
+        private chainStore: ChainStore
+    ) {
     }
 
 
@@ -44,7 +49,7 @@ export class TransferStore implements BaseTransferStore {
     });
 
     public get myBalanceFormatted(){
-        if (!this.TokenInfo || !this.myBalance.get())
+        if (!this.TokenInfo || this.myBalance.get() == null)
             return null;
         return formatUnits(this.myBalance.get(), this.TokenInfo.decimals);
     }
@@ -63,28 +68,54 @@ export class TransferStore implements BaseTransferStore {
     }
 
 
-    public Gas = new AsyncCell(() => this.api.estimateGas(this.Transfer));
+    public Gas = new AsyncCell(() => this.api.estimateGas(
+        this.Transfer.tokenAddress,
+        this.Transfer.to,
+        this.Transfer.amount,
+        this.Transfer.from
+    ));
 
-    public Fee = new Cell<FeeData&{gas: bigint; baseFeePerGas: bigint;} | null>(() => {
+    public Fee = new Cell(() => {
+        if (this.errors.tokenAddress) return null;
+        if (this.errors.to) return null;
         const gas = this.Gas.get();
-        const feeData = this.store.FeeData.get();
-        if (!feeData || !gas) return null;
-        return {...feeData, gas} as any;
+        const gasData = this.chainStore.gasPrices;
+        if (!gasData || !gas) return null;
+        const fees = {
+            slow: gasData.slow * gas,
+            average: gasData.average * gas,
+            fast: gasData.fast * gas,
+        }
+        return fees;
     });
 
+
+    private validators: Partial<Record<keyof Transfer, (value, transfer: Transfer) => boolean>> = {
+        from: isAddress,
+        to: isAddress,
+        tokenAddress: isAddress,
+        amount: (amount, transfer) => {
+            const balance = this.myBalance.get();
+            if (!balance) return true;
+            // if (!transfer.fee) return true;
+            return transfer.amount < balance;
+        }
+    }
+
+    public get isValid(){
+        for (let key in this.validators) {
+            if (!this.validators[key](this.Transfer[key], this.Transfer)){
+                return false;
+            }
+        }
+        return true;
+    }
     public get errors(): Record<keyof Transfer, string | undefined>{
         const errors = {} as Record<keyof Transfer, string | undefined>;
-        if (!isAddress(this.Transfer.from)){
-            errors.from = `Invalid address`;
-        }
-        if (!isAddress(this.Transfer.to)){
-            errors.to = `Invalid address`;
-        }
-        if (!isAddress(this.Transfer.tokenAddress)){
-            errors.tokenAddress = `Invalid address`;
-        }
-        if (this.myBalance.get() && (this.Transfer.amount + this.Transfer.fee > this.myBalance.get())){
-            errors.amount = `Not enough balance`;
+        for (let key in this.validators) {
+            if (!this.validators[key](this.Transfer[key], this.Transfer)){
+                errors[key] = "error";
+            }
         }
         return errors;
     }

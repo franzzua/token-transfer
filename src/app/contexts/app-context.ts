@@ -1,3 +1,4 @@
+import {Container} from "@cmmn/cell/lib";
 import {createContext} from "react";
 import {TransferApi} from "../../services/transfer.api";
 import {Storage} from "../../services/storage";
@@ -12,6 +13,7 @@ export class DiContainer {
                 public transferStorage: Storage,
                 public transferApi: TransferApi,
                 public accountStore: AccountStore,
-                public chainStore: ChainStore) {
+                public chainStore: ChainStore,
+                public container: Container) {
     }
 }

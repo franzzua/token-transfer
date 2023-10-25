@@ -15,7 +15,6 @@
     "@cmmn/cell": "1.8.4",
     "@cmmn/tools": "^1.8.1",
     "@metamask/sdk": "0.10.0",
-    "@mycrypto/gas-estimation": "^1.1.1",
     "@uniswap/default-token-list": "^11.9.0",
     "@urlpack/base62": "^1.1.0",
     "antd": "^5.10.2",
@@ -23,7 +22,6 @@
     "eth-chains": "^2.0.0",
     "ethers": "6.8.0",
     "events": "^3.3.0",
-    "gas-price-oracle": "^0.5.2",
     "qrcode": "^1.5.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

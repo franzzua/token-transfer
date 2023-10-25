@@ -24,32 +24,36 @@ export class GasOracle<
         if (values.length == 0)
             return;
         if (!this.linkedList.min) {
-            values.sort((a,b) => a[this.key] > b[this.key] ? 1 :
-                a[this.key] == b[this.key] ? 0 : -1);
-
-            this.linkedList.min = {data: values[0], next: undefined, prev: undefined};
-            this.percPositions = this.percentiles.map(perc => ({
-                perc,
-                node: this.linkedList.min,
-                index: Math.floor(perc*values.length),
-            }));
-            let lastNode = this.linkedList.min;
-            let percIndex = 0;
-            for (let i = 1; i < values.length; i++) {
-                lastNode.next = {
-                    data: values[i], next: undefined, prev: lastNode
-                };
-                lastNode = lastNode.next;
-                if (this.percPositions[percIndex]?.index === i){
-                    this.percPositions[percIndex].node = lastNode;
-                    percIndex++;
-                }
-            }
-            this.size = values.length;
+            this.init(values);
             return;
         }
         values.forEach(x => this.insert(x));
         this.movePercentiles();
+    }
+
+    private init(values: Array<TValue>){
+        values.sort((a,b) => a[this.key] > b[this.key] ? 1 :
+            a[this.key] == b[this.key] ? 0 : -1);
+
+        this.linkedList.min = {data: values[0], next: undefined, prev: undefined};
+        this.percPositions = this.percentiles.map(perc => ({
+            perc,
+            node: this.linkedList.min,
+            index: Math.floor(perc*values.length),
+        }));
+        let lastNode = this.linkedList.min;
+        let percIndex = 0;
+        for (let i = 1; i < values.length; i++) {
+            lastNode.next = {
+                data: values[i], next: undefined, prev: lastNode
+            };
+            lastNode = lastNode.next;
+            if (this.percPositions[percIndex]?.index === i){
+                this.percPositions[percIndex].node = lastNode;
+                percIndex++;
+            }
+        }
+        this.size = values.length;
     }
 
     public removeAll(filter: (t: TValue) => boolean){
@@ -78,11 +82,11 @@ export class GasOracle<
             const newIndex = Math.floor(item.perc * this.size);
             if (newIndex == item.index)
                 continue;
-            while (newIndex < item.index){
+            while (newIndex < item.index && item.node.prev){
                 item.node = item.node.prev;
                 item.index--;
             }
-            while (newIndex > item.index){
+            while (newIndex > item.index && item.node.next){
                 item.node = item.node.next;
                 item.index++;
             }
@@ -102,7 +106,7 @@ export class GasOracle<
             start = percPosition.node;
         }
 
-        for (let node = start; node !== undefined; node = node.next){
+        for (let node = start; ; node = node.next){
             if (transaction[this.key] < node.data[this.key]) {
                 node.prev = {
                     data: transaction, next: node, prev: node.prev
@@ -125,7 +129,7 @@ export class GasOracle<
         }
     }
     public get Percentiles(): Record<TNames[keyof TNames], bigint> {
-        if (!this.linkedList.min)
+        if (this.size < 100)
             return null;
         return Object.fromEntries(
             this.percPositions.map(x =>

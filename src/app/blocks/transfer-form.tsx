@@ -1,4 +1,5 @@
 import {Button, Card, Flex, Skeleton} from "antd";
+import {TransferStore} from "../../stores/transfer.store";
 import {TransferContext} from "../contexts/transfer-context";
 import {AccountSelect} from "../components/account-select";
 import {TargetInput} from "../components/target-input";
@@ -10,7 +11,7 @@ import {goTo} from "../routing";
 import {FeeSelect} from "../components/fee-select";
 
 export const TransferForm = () => {
-    const transferStore = useContext(TransferContext);
+    const transferStore = useContext(TransferContext) as TransferStore;
     const transfer = useCell(() => transferStore.Transfer);
     if (!transfer) //TODO: add loader
         return <Skeleton/>;
