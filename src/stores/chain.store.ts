@@ -18,8 +18,8 @@ export class ChainStore{
 
     private init = async () => {
         await this.storage.init();
-        this.estimator.removeAll();
-        this.estimator.add(...this.storage.toArray().filter(this.transactionFilter));
+        this.oracle.removeAll();
+        this.oracle.add(...this.storage.toArray().filter(this.transactionFilter));
         this.readTransactions().catch(console.error);
     }
 
@@ -27,24 +27,24 @@ export class ChainStore{
         return this.providerFactory(this.accountStore.chainId);
     }
 
-    private transactionFilter = (t: TransactionInfo) => t.timestamp < +new Date()/1000 - 60
+    private transactionFilter = (t: TransactionInfo) => t.timestamp > +new Date()/1000 - 300
         && t.chainId == this.accountStore.chainId
         && t.type == 2;
 
     private async clean(){
-        this.estimator.removeAll(this.transactionFilter);
+        this.oracle.removeAll(t => !this.transactionFilter(t));
         for (let item of this.storage.toArray()) {
-            if (!item.timestamp || this.transactionFilter(item)){
+            if (!item.timestamp || !this.transactionFilter(item)){
                 await this.storage.remove(item._id);
             }
         }
     }
 
-    private estimator = new GasOracle(
+    private oracle = new GasOracle(
         {
             [0.2]: "slow",
             [0.5]: "average",
-            [0.95]: "fast"
+            [0.90]: "fast"
         } as const,
         "maxPriorityFeePerGas",
         [] as Array<TransactionInfo> );
@@ -52,7 +52,7 @@ export class ChainStore{
     private timer = new Timer(3000);
 
     public get gasPrices(): GasInfo {
-        return this.timer.get() && this.estimator.Percentiles as GasInfo;
+        return this.timer.get() && this.oracle.Percentiles as GasInfo;
     }
     //
     public gasTimes = new AsyncCell(async () => {
@@ -79,7 +79,7 @@ export class ChainStore{
         const startChainId = this.accountStore.chainId;
         const blockNumber = await this.provider.getBlockNumber();
         if (this.accountStore.chainId !== startChainId) return;
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < 100; i++) {
             const block = await this.provider.getBlock(blockNumber - i);
             if (this.accountStore.chainId !== startChainId) return;
             if (!block) continue;
@@ -96,8 +96,12 @@ export class ChainStore{
                 };
                 await this.storage.addOrUpdate(data);
                 if (data.type == 2)
-                    this.estimator.add(data);
+                    this.oracle.add(data);
+                if (this.oracle.Size > 1000)
+                    break;
             }
+            if (this.oracle.Size > 1000)
+                break;
         }
         await Fn.asyncDelay(5000);
         await this.clean();

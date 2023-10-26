@@ -5,7 +5,7 @@ import {randomBytes, toBigInt} from "ethers";
 const percentileNames = {
     [0.2]: "slow",
     [0.5]: "average",
-    [0.99]: "fast"
+    [0.6]: "fast"
 } as const;
 test(`increase`,async () => {
     const gasOracle = new GasOracle(percentileNames, "maxPriorityFeePerGas");
@@ -14,12 +14,12 @@ test(`increase`,async () => {
             hash: '',
             maxPriorityFeePerGas: i,
             type: 2
-        })
+        });
     }
     const percentiles = gasOracle.Percentiles;
     expect(Math.abs(Number(percentiles.slow - 20000n))).toBeLessThan(3);
     expect(Math.abs(Number(percentiles.average - 50000n))).toBeLessThan(3);
-    expect(Math.abs(Number(percentiles.fast - 99000n))).toBeLessThan(3);
+    expect(Math.abs(Number(percentiles.fast - 60000n))).toBeLessThan(3);
 });
 
 test(`decrease`,async () => {
@@ -35,7 +35,7 @@ test(`decrease`,async () => {
     const percentiles = gasOracle.Percentiles;
     expect(Math.abs(Number(percentiles.slow - 20000n))).toBeLessThan(3);
     expect(Math.abs(Number(percentiles.average - 50000n))).toBeLessThan(3);
-    expect(Math.abs(Number(percentiles.fast - 99000n))).toBeLessThan(3);
+    expect(Math.abs(Number(percentiles.fast - 60000n))).toBeLessThan(3);
 });
 test(`increaseModule`,async () => {
     const gasOracle = new GasOracle(percentileNames, "value");
@@ -44,19 +44,12 @@ test(`increaseModule`,async () => {
             value: i % 100n
         })
     }
-    const time = performance.now();
-    for (let i = 1n; i <= 100n; i++) {
-        gasOracle.add({
-            value: i
-        })
-    }
-    const time2 = performance.now();
-    console.log(time2 - time);
+    // gasOracle.removeAll(x => (x.value % 2n) == 0n);
     gasOracle.removeAll(x => (x.value % 2n) == 0n);
     const percentiles = gasOracle.Percentiles;
     expect(Math.abs(Number(percentiles.slow - 20n))).toBeLessThan(3);
     expect(Math.abs(Number(percentiles.average - 50n))).toBeLessThan(3);
-    expect(Math.abs(Number(percentiles.fast - 99n))).toBeLessThan(3);
+    expect(Math.abs(Number(percentiles.fast - 60n))).toBeLessThan(3);
 });
 test(`equal`,async () => {
     const gasOracle = new GasOracle(percentileNames, "value");
@@ -77,5 +70,6 @@ test(`random`,async () => {
             value: toBigInt(randomBytes(6)),
         })
     }
+    gasOracle.removeAll(x => (x.value % 2n) == 0n);
     console.log(gasOracle.Percentiles);
 });
