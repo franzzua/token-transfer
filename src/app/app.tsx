@@ -9,7 +9,12 @@ export const App = () => {
     const diContainer = container.get<DiContainer>(DiContainer);
     const route = useRouter();
     return (
-        <ConfigProvider theme={theme}>
+        <ConfigProvider theme={theme} card={{
+            style: {
+                background: '#FFF6',
+                backdropFilter: 'blur(3px)'
+            }
+        }}>
             <AppContext.Provider value={diContainer}>
                 <Layout>
                     <route.active.page />

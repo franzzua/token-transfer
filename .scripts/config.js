@@ -25,7 +25,7 @@ export const getConfig = ({prod, watch}) => ({
         lessLoader(),
         htmlPlugin({
             files: [{
-                entryPoints: ['src/connect.ts'],
+                entryPoints: ['src/connect.ts', 'src/global.less'],
                 inline: true,
                 filename: 'index.html',
                 htmlTemplate: readFileSync('./src/index.html'),

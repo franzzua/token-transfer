@@ -1,10 +1,27 @@
-label{
-  display: flex;
-  flex-direction: column;
-  > span{
-    opacity: .6;
-    font-size: .8em;
-  }
+body {
+  --blue: #4f6691;
+  --light-blue: #95b8d1;
+  --green: #b8e0d2;
+  --light-green: #d6eadf;
+  --dark: #084624;
+  --red: #eac4d5;
+  background: var(--blue);
+  color: var(--light-green);
+  font-family: Courier, sans-serif;
+  margin: 0;
+  overflow: hidden;
+}
+button{
+  font-family: inherit;
+  color: inherit;
+  background: none;
+  border: solid .1px;
+  border-radius: 100%;
+  padding: 1em .5em;
+}
+
+.text-lg{
+  font-size: 2rem;
 }
 
 .text-sm{

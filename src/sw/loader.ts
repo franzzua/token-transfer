@@ -35,23 +35,23 @@ if (navigator.serviceWorker && !location.href.match("(localhost)")) {
   //   navigator.serviceWorker.controller instanceof ServiceWorker
   // ); // при первой установке на клиенте еще нет sw
 
-  if (location.pathname.match(/\.reload/)) {
-    localStorage.clear();
-    document.cookie = "";
-    navigator.serviceWorker
-      .getRegistration()
-      .then((x) => x?.unregister())
-      .catch()
-      .then(() => indexedDB.databases())
-      .then((x) => {
-        for (let db of x) {
-          indexedDB.deleteDatabase(db.name);
-        }
-        indexedDB.deleteDatabase('versions');
-      })
-      .catch()
-      .then(() => location.pathname = '/');
-  }
+  // if (location.pathname.match(/\.reload/)) {
+  //   localStorage.clear();
+  //   document.cookie = "";
+  //   navigator.serviceWorker
+  //     .getRegistration()
+  //     .then((x) => x?.unregister())
+  //     .catch()
+  //     .then(() => indexedDB.databases())
+  //     .then((x) => {
+  //       for (let db of x) {
+  //         indexedDB.deleteDatabase(db.name);
+  //       }
+  //       indexedDB.deleteDatabase('versions');
+  //     })
+  //     .catch()
+  //     .then(() => location.pathname = '/');
+  // }
   if (navigator.serviceWorker.controller) {
     const isIOS = CSS.supports("-webkit-touch-callout", "none");
     navigator.serviceWorker.controller.postMessage({
@@ -84,12 +84,12 @@ if (navigator.serviceWorker && !location.href.match("(localhost)")) {
     });
   }
 
-  navigator.serviceWorker.addEventListener("controllerchange", () => {
-    console.log(navigator.serviceWorker.controller);
-    // This fires when the service worker controlling this page
-    // changes, eg a new worker has skipped waiting and become
-    // the new active worker.
-  });
+  // navigator.serviceWorker.addEventListener("controllerchange", () => {
+  //   console.log(navigator.serviceWorker.controller);
+  //   // This fires when the service worker controlling this page
+  //   // changes, eg a new worker has skipped waiting and become
+  //   // the new active worker.
+  // });
 
   navigator.serviceWorker.addEventListener("message", ({ data }) => {
     switch (data.action) {
@@ -125,7 +125,7 @@ async function init() {
   const assets = await fetch("/assets.json").then(x => x.json()) as string[];
   const elements = [] as Array<HTMLScriptElement | HTMLLinkElement>;
   for (let asset of assets) {
-    if (['/loader.js', '/sw.js'].includes(asset))
+    if (['/loader.js', '/sw.js', '/global.less'].includes(asset))
       continue;
     if (asset.endsWith("css")) {
       const link = document.createElement("link");
@@ -175,3 +175,20 @@ type BeforeInstallPromptEvent = Event & {
    */
   prompt(): Promise<void>;
 };
+
+function preloader(){
+  const svg = document.getElementById('bg');
+  function addStar(){
+    const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+    use.setAttribute("href","#star");
+    use.setAttribute("transform", `translate(${Math.random()*100}, ${Math.random()*100}) scale(${Math.random()*0.3})`);
+    svg.appendChild(use);
+    if (Math.random() > 1 - svg.childElementCount/50){
+      svg.querySelector('use').remove();
+    }
+    setTimeout(addStar, Math.random()*1000);
+  }
+  addStar();
+}
+
+preloader();

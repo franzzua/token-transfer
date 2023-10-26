@@ -15,7 +15,7 @@ export const TransferForm = () => {
     const transfer = useCell(() => transferStore.Transfer);
     if (!transfer) //TODO: add loader
         return <Skeleton/>;
-    return <Card>
+    return <Card style={{maxWidth: 600, margin: 'auto'}}>
         <Flex vertical gap="1em">
             <AccountSelect />
             <TokenSelect />
