@@ -1,7 +1,7 @@
 import {AsyncCell, bind, Cell, cell, compare, Fn} from "@cmmn/cell/lib";
 import {Chain} from "eth-chains";
 import {Timer} from "../helpers/timer";
-import {getTokenByAddress} from "../services/token.info";
+import {getTokenByAddress, TokenInfo} from "../services/token.info";
 import {TransferApi} from "../services/transfer.api";
 import {ChainStore} from "./chain.store";
 import {Transfer, TransfersStore} from "./transfers.store";
@@ -55,9 +55,9 @@ export class TransferStore implements BaseTransferStore {
         return formatUnits(this.myBalance.get(), this.TokenInfo.get().decimals);
     }
 
-    public TokenInfo = new AsyncCell(() => {
+    public TokenInfo = new AsyncCell<TokenInfo | undefined>(async () => {
         return getTokenByAddress(this.Transfer.tokenAddress) ??
-            this.api.getTokenInfo(this.Transfer.tokenAddress).catch(console.error);
+            await this.api.getTokenInfo(this.Transfer.tokenAddress).catch(() => undefined);
     })
 
     public get Amount(){
@@ -68,19 +68,23 @@ export class TransferStore implements BaseTransferStore {
         if (!this.TokenInfo.get()) return;
         this.patch({amount: parseUnits(amount, this.TokenInfo.get().decimals )});
     }
-    public Gas = new AsyncCell(() => this.api.estimateGas(
-        this.Transfer.tokenAddress,
-        this.Transfer.to,
-        this.Transfer.amount,
-        this.Transfer.from
-    ).catch(console.error));
+    public Gas = new AsyncCell(() => {
+        if (!this.isValid) return null;
+        return this.api.estimateGas(
+            this.Transfer.tokenAddress,
+            this.Transfer.to,
+            this.Transfer.amount,
+            this.Transfer.from
+        ).catch(console.error);
+    });
 
     public Fee = new Cell(() => {
         if (this.errors.tokenAddress) return null;
         if (this.errors.to) return null;
         const gas = this.Gas.get();
+        if (!gas) return null;
         const gasData = this.chainStore.gasPrices;
-        if (!gasData || !gas) return null;
+        if (!gasData) return null;
         const fees = {
             slow: gasData.slow * gas,
             average: gasData.average * gas,

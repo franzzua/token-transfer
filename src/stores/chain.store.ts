@@ -13,18 +13,27 @@ export class ChainStore{
                 private providerFactory: (chainId: number) => JsonRpcApiProvider) {
 
         Cell.OnChange(() => this.accountStore.chainId, this.init);
+        this.storage.on('change', e => {
+            switch (e?.type){
+                case "addOrUpdate":
+                    const newTransaction = e.value;
+                    if (this.transactionFilter(newTransaction))
+                        this.oracle.add(newTransaction);
+                    break;
+                case "delete":
+                    this.oracle.removeAll(x => x._id == e.key);
+                    break;
+            }
+        })
         this.init();
     }
+
+    private storage = new ObservableDB<TransactionInfo>("transactions");
 
     private init = async () => {
         await this.storage.init();
         this.oracle.removeAll();
         this.oracle.add(...this.storage.toArray().filter(this.transactionFilter));
-        this.readTransactions().catch(console.error);
-    }
-
-    private get provider(){
-        return this.providerFactory(this.accountStore.chainId);
     }
 
     private transactionFilter = (t: TransactionInfo) => t.timestamp > +new Date()/1000 - 300
@@ -71,45 +80,10 @@ export class ChainStore{
         }
     });
 
-    private storage = new ObservableDB<TransactionInfo & {
-        _id: string;
-    }>("transactions");
-
-    private async readTransactions(){
-        const startChainId = this.accountStore.chainId;
-        const blockNumber = await this.provider.getBlockNumber();
-        if (this.accountStore.chainId !== startChainId) return;
-        for (let i = 0; i < 100; i++) {
-            const block = await this.provider.getBlock(blockNumber - i);
-            if (this.accountStore.chainId !== startChainId) return;
-            if (!block) continue;
-            for (let hash of block.transactions) {
-                if (this.storage.get(hash)) continue;
-                const transaction = await block.getTransaction(hash);
-                if (this.accountStore.chainId !== startChainId) return;
-                const data = {
-                    _id: hash,
-                    type: transaction.type,
-                    chainId: this.accountStore.chainId,
-                    maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
-                    timestamp: block.timestamp
-                };
-                await this.storage.addOrUpdate(data);
-                if (data.type == 2)
-                    this.oracle.add(data);
-                if (this.oracle.Size > 1000)
-                    break;
-            }
-            if (this.oracle.Size > 1000)
-                break;
-        }
-        await Fn.asyncDelay(5000);
-        await this.clean();
-        this.readTransactions().catch(console.error);
-    }
 }
 
 type TransactionInfo = Pick<TransactionResponse, "maxPriorityFeePerGas"|"type"> & {
+    _id: string;
     timestamp: number;
     chainId: number;
 };

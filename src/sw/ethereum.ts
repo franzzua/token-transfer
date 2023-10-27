@@ -2,7 +2,10 @@ declare var self: ServiceWorkerGlobalScope;
 import {EventEmitter} from "@cmmn/cell/lib";
 import type {BaseProvider} from '@metamask/providers';
 
-class Connector extends EventEmitter<Record<string, any>>{
+class Connector extends EventEmitter<Record<string, any> & {
+    connected: void;
+    disconnected: void;
+}>{
 
     public port: MessagePort | null = null;
     constructor(private namespace: string) {
@@ -30,10 +33,12 @@ class Connector extends EventEmitter<Record<string, any>>{
     }
     public disconnect(){
         this.port = null;
+        this.emit('disconnected');
     }
 
     public connect(port: MessagePort){
         this.port = port;
+        this.emit('connected');
     }
 
     public postMessage(data: any){
@@ -46,7 +51,7 @@ class Connector extends EventEmitter<Record<string, any>>{
 
 }
 class Ethereum implements Pick<BaseProvider, "request">{
-    private connector = new Connector("ethereum");
+    public connector = new Connector("ethereum");
     private async requestBase<TResult>(action: string, data?: any): Promise<TResult> {
         if (globalThis.ethereum) {
             return (typeof globalThis.ethereum[action] === "function")

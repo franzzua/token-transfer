@@ -25,7 +25,11 @@ export class ObservableDB<T extends { _id: string }> extends EventEmitter<{
       switch (e.data.event?.type){
         case "addOrUpdate":
           await this.addOrUpdate(e.data.event.value, true);
-          super.emit("change", e.data.event.value);
+          super.emit("change", e.data.event);
+          break;
+        case "delete":
+          await this.remove(e.data.event.key, true);
+          super.emit("change", e.data.event);
           break;
       }
     })
@@ -44,11 +48,17 @@ export class ObservableDB<T extends { _id: string }> extends EventEmitter<{
     });
   }
 
-  async remove(key: string) {
+  async remove(key: string, skipChange = false) {
     const existed = this.get(key);
     if (!existed) return;
     this.db.remove(key);
     this.items.delete(key);
+    if (!skipChange) {
+      this.emit("change", {
+        type: "delete",
+        key: key,
+      });
+    }
   }
 
   async clear() {

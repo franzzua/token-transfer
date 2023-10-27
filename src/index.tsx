@@ -1,26 +1,23 @@
 import "./polyfills";
-import {createRoot} from "react-dom/client";
+import {createRoot, Root} from "react-dom/client";
 
 import {App} from "./app/app";
 
 const start = document.getElementById("start");
 const root = document.getElementById('root');
+let reactRoot: Root;
 
-window.addEventListener('accountsChanged', async (e: CustomEvent<string[]>) => {
-  if (e.detail.length > 0 && root.style.display == 'none') {
-    show();
-  }
-  if (e.detail.length == 0 && root.style.display == 'initial') {
-    hide();
-  }
-});
+window.addEventListener('ethereum_connected', show);
+window.addEventListener('ethereum_disconnected', hide);
 function show(){
-  createRoot(root).render(<App/>);
+  reactRoot = createRoot(root);
+  reactRoot.render(<App/>);
   start.remove();
   root.style.display = 'initial';
 }
 
  function hide(){
+   reactRoot.unmount();
    document.body.appendChild(start);
    root.style.display = 'none';
  }
