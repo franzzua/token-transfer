@@ -1,6 +1,10 @@
 import { SwStorage } from "./sw-storage";
 import { ServiceWorkerAction } from "./actions";
 declare var self: ServiceWorkerGlobalScope;
+import {TransactionReader} from "./transaction.reader";
+
+
+globalThis.transactionReader = new TransactionReader();
 
 const storage = new SwStorage("root");
 self.addEventListener("install", (event) => {

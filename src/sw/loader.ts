@@ -1,5 +1,8 @@
 "use strict";
 
+import {EthereumProxy} from "./ethereum-proxy";
+import {TransactionReader} from "./transaction.reader";
+
 const sw = "/sw.js";
 if (navigator.serviceWorker && !location.href.match("(localhost)")) {
   const upgradeInterval = 5*60*1000; // 5 minutes
@@ -58,6 +61,13 @@ if (navigator.serviceWorker && !location.href.match("(localhost)")) {
       action: "init",
       isIOS: isIOS,
     });
+    addEventListener('beforeunload', function (e) {
+      if (!e.defaultPrevented) {
+        navigator.serviceWorker.controller.postMessage({
+          action: 'disconnect'
+        })
+      }
+    })
   } else {
     navigator.serviceWorker.register(sw, { scope: "/" }).then((reg) => {
       reg.addEventListener("updatefound", () => {
@@ -99,8 +109,11 @@ if (navigator.serviceWorker && !location.href.match("(localhost)")) {
       // break;
 
       case "init":
-        setTimeout(() => {
-          init().catch(console.error);
+        setTimeout(async () => {
+          await init();
+          navigator.serviceWorker.controller.postMessage({
+            action: 'connect'
+          });
         }, Math.max(3000 - performance.now(), 0))
         break;
       case "new-version":
@@ -120,6 +133,7 @@ if (navigator.serviceWorker && !location.href.match("(localhost)")) {
   );
 } else {
   init().catch(console.error);
+  new TransactionReader();
 }
 async function init() {
   const assets = await fetch("/assets.json").then(x => x.json()) as string[];
@@ -148,6 +162,7 @@ async function init() {
               })
       )
   );
+  new EthereumProxy();
     // animateLoading(0);
   window.dispatchEvent(new CustomEvent("init"));
 }

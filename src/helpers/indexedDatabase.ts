@@ -1,6 +1,6 @@
 export class IndexedDatabase<T> {
   private db = new Promise<IDBDatabase>((resolve, reject) => {
-    const request = window.indexedDB.open(this.name, 1);
+    const request = globalThis.indexedDB.open(this.name, 1);
     request.addEventListener("success", (e: any) => resolve(e.target.result), {
       once: true,
     });
