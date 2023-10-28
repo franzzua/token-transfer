@@ -11,6 +11,7 @@ export class TransactionReader {
 
     private storage = new ObservableDB<TransactionInfo>("transactions");
     private isConnected = false;
+
     public async start(){
         if (this.isConnected) {
             console.log('transactions are reading already');
@@ -48,7 +49,7 @@ export class TransactionReader {
 
     private async removeOld(){
         for (let transaction of this.storage.toArray()) {
-            if (transaction.timestamp > +new Date()/1000 - 300) continue;
+            if (transaction.timestamp > +new Date()/1000 - globalThis.TRANSACTION_WINDOW) continue;
             await this.storage.remove(transaction._id);
         }
     }
@@ -72,7 +73,7 @@ export class TransactionReader {
             method: 'eth_getBlockByNumber',
             params: ['0x'+number.toString(16), withTransactions],
         });
-        console.log(`There are ${block.transactions.length} transactions in block ${number}`);
+        // console.log(`There are ${block.transactions.length} transactions in block ${number}`);
         if (!block) return;
         for (let transactionOrHash of block.transactions) {
             if (!this.isConnected) return;

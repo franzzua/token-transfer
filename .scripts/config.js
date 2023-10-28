@@ -20,7 +20,10 @@ export const getConfig = ({prod, watch, sourceMaps}) => ({
     treeShaking: prod,
     tsconfig: 'tsconfig.json',
     jsx: 'automatic',
-    define: { 'globalThis.DEBUG': (!prod).toString() },
+    define: {
+        'globalThis.DEBUG': (!prod).toString(),
+        'globalThis.TRANSACTION_WINDOW': 300
+    },
     plugins: [
         lessLoader(),
         htmlPlugin({

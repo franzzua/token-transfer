@@ -3,7 +3,7 @@ import {Timer} from "../helpers/timer";
 import {TransferApi} from "../services/transfer.api";
 import {AccountStore} from "./account.store";
 import {ChainStore} from "./chain.store";
-import {formatUnits, parseUnits, isAddress, FeeData} from "ethers";
+import {formatUnits, parseUnits, isAddress, FeeData, formatEther} from "ethers";
 import {UserStorage} from "../services/userStorage";
 import {BaseTransferStore} from "./base.transfer.store";
 
@@ -32,10 +32,10 @@ export class TransferStore extends BaseTransferStore {
 
     @bind
     async send() {
-        for await (let t of this.api.run(this.Transfer)){
-            await this.patch({
-                state: t.state
-            });
+        console.log(formatEther(this.Fee.get()?.[this.Transfer.fee]), 'ETH');
+        const fee = this.chainStore.gasPrices[this.Transfer.fee];
+        for await (let state of this.api.run(this.Transfer, fee)){
+            await this.patch({ state });
         }
     }
 

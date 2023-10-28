@@ -19,20 +19,23 @@ export class TransferApi {
 
     }
 
-    async *run(transfer: Transfer): AsyncGenerator<Transfer> {
-        yield { ...transfer, state: 'pending' };
+    async *run(transfer: Transfer, maxPriorityFeePerGas: bigint): AsyncGenerator<Transfer['state']> {
+        const currentBlock = await this.provider.getBlock('pending');
+        yield 'pending';
         try {
             const erc20 = await this.getContract(transfer.tokenAddress, this.accountStore.me);
-            const transaction = await erc20.transfer(transfer.to, transfer.amount);
+            const transaction = await erc20.transfer(transfer.to, transfer.amount, {
+                maxFeePerGas: maxPriorityFeePerGas + currentBlock.baseFeePerGas
+            });
             if (transaction.isMined()) {
-                yield { ...transfer, state: 'mined' };
+                yield 'mined';
             } else {
-                yield { ...transfer, state: 'signed' };
+                yield 'signed';
                 await transaction.wait();
-                yield { ...transfer, state: 'mined' };
+                yield 'mined';
             }
         } catch (e) {
-            yield {...transfer, state: 'rejected'};
+            yield 'rejected';
         }
     }
 
@@ -49,7 +52,6 @@ export class TransferApi {
     async getFeeData(){
         const feeData = await this.provider.getFeeData();
         const currentBlock = await this.provider.getBlock('pending');
-        const transaction = await currentBlock.getTransaction(0);
 
         const baseFeePerGas = currentBlock.baseFeePerGas;
         return {

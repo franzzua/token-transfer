@@ -13,8 +13,8 @@ export const FeeSelect = () => {
     return <Flex>
         <Radio.Group value={fee} onChange={e => transferStore.patch({fee: e.target.value})}>
             <Radio.Button value='slow'>Slow {formatEther(info.slow)} ETH</Radio.Button>
-            <Radio.Button value='average'>Average {formatEther(info.average)}</Radio.Button>
-            <Radio.Button value='fast'>Fast {formatEther(info.fast)}</Radio.Button>
+            <Radio.Button value='average'>Average {formatEther(info.average)} ETH</Radio.Button>
+            <Radio.Button value='fast'>Fast {formatEther(info.fast)} ETH</Radio.Button>
         </Radio.Group>
     </Flex>
 }

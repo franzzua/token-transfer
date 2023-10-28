@@ -1,5 +1,5 @@
 import {test, beforeAll} from "@jest/globals";
-import {GasOracle} from "../src/services/gas.oracle";
+import {GasEstimator} from "../src/services/gas.oracle";
 import {randomBytes, toBigInt} from "ethers";
 
 const percentileNames = {
@@ -7,8 +7,28 @@ const percentileNames = {
     [0.5]: "average",
     [0.6]: "fast"
 } as const;
+test(`init`,async () => {
+    const gasOracle = new GasEstimator(percentileNames, "value");
+    const buffer = []
+    for (let i = 1n; i <= 100_000n; i++) {
+        buffer.push({
+            value: i,
+        });
+    }
+    gasOracle.add(...buffer);
+    const values = gasOracle.Values;
+    expect(values).toHaveLength(100_000);
+    for (let i = 0; i < values.length; i++) {
+        expect(Number(values[i])).toEqual((i + 1));
+    }
+    const percentiles = gasOracle.Percentiles;
+    expect(Math.abs(Number(percentiles.slow - 20000n))).toBeLessThan(3);
+    expect(Math.abs(Number(percentiles.average - 50000n))).toBeLessThan(3);
+    expect(Math.abs(Number(percentiles.fast - 60000n))).toBeLessThan(3);
+});
+
 test(`increase`,async () => {
-    const gasOracle = new GasOracle(percentileNames, "maxPriorityFeePerGas");
+    const gasOracle = new GasEstimator(percentileNames, "maxPriorityFeePerGas");
     for (let i = 1n; i <= 100_000n; i++) {
         gasOracle.add({
             hash: '',
@@ -23,7 +43,7 @@ test(`increase`,async () => {
 });
 
 test(`decrease`,async () => {
-    const gasOracle = new GasOracle(percentileNames, "maxPriorityFeePerGas");
+    const gasOracle = new GasEstimator(percentileNames, "maxPriorityFeePerGas");
     for (let i = 1n; i <= 100_000n; i++) {
         gasOracle.add({
             hash: '',
@@ -38,7 +58,7 @@ test(`decrease`,async () => {
     expect(Math.abs(Number(percentiles.fast - 60000n))).toBeLessThan(3);
 });
 test(`increaseModule`,async () => {
-    const gasOracle = new GasOracle(percentileNames, "value");
+    const gasOracle = new GasEstimator(percentileNames, "value");
     for (let i = 1n; i <= 100_000n; i++) {
         gasOracle.add({
             value: i % 100n
@@ -52,7 +72,7 @@ test(`increaseModule`,async () => {
     expect(Math.abs(Number(percentiles.fast - 60n))).toBeLessThan(3);
 });
 test(`equal`,async () => {
-    const gasOracle = new GasOracle(percentileNames, "value");
+    const gasOracle = new GasEstimator(percentileNames, "value");
     for (let i = 1n; i <= 100_000n; i++) {
         gasOracle.add({
             value: 100n
@@ -64,7 +84,7 @@ test(`equal`,async () => {
     expect(Math.abs(Number(percentiles.fast - 100n))).toBeLessThan(3);
 });
 test(`random`,async () => {
-    const gasOracle = new GasOracle(percentileNames, "value");
+    const gasOracle = new GasEstimator(percentileNames, "value");
     for (let i = 1n; i <= 100_000n; i++) {
         gasOracle.add({
             value: toBigInt(randomBytes(6)),
