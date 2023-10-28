@@ -4,4 +4,4 @@ import {TransactionReaderWrapper} from "./transaction.reader.wrapper";
 export const transactionReader:{
     start(): void;
     stop(): void;
-} = globalThis.DEBUG ? new TransactionReader() : new TransactionReaderWrapper();
+} = DEBUG ? new TransactionReader() : new TransactionReaderWrapper();

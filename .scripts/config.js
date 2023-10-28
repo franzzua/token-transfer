@@ -21,8 +21,8 @@ export const getConfig = ({prod, watch, sourceMaps}) => ({
     tsconfig: 'tsconfig.json',
     jsx: 'automatic',
     define: {
-        'globalThis.DEBUG': (!prod).toString(),
-        'globalThis.TRANSACTION_WINDOW': 300
+        DEBUG: (!prod).toString(),
+        TRANSACTION_WINDOW: '300'
     },
     plugins: [
         lessLoader(),

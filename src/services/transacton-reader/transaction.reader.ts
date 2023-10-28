@@ -49,7 +49,7 @@ export class TransactionReader {
 
     private async removeOld(){
         for (let transaction of this.storage.toArray()) {
-            if (transaction.timestamp > +new Date()/1000 - globalThis.TRANSACTION_WINDOW) continue;
+            if (transaction.timestamp > +new Date()/1000 - TRANSACTION_WINDOW) continue;
             await this.storage.remove(transaction._id);
         }
     }

@@ -1,7 +1,7 @@
 "use strict";
 
 const sw = "/sw.js";
-if (!globalThis.DEBUG) {
+if (!DEBUG) {
   const upgradeInterval = 5*60*1000; // 5 minutes
 
   const handle = (globalThis.ServiceWorkerHandle = {
