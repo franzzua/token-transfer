@@ -5,8 +5,14 @@ import {AccountStore} from "./account.store";
 import {JsonRpcApiProvider, TransactionResponse} from "ethers";
 import {ObservableDB} from "../helpers/observableDB";
 import {GasEstimator} from "../services/gas.oracle";
-
+import {chains} from "eth-chains";
 export class ChainStore{
+
+    get chain(){
+        return chains.get(this.accountStore.chainId);
+    }
+
+    public defaultToken = new Cell(() => this.chain.nativeCurrency.name);
 
     constructor(private api: EtherscanApi,
                 private accountStore: AccountStore,

@@ -1,4 +1,4 @@
-import {Image, Flex, AutoComplete, Typography} from "antd";
+import {Image, Flex, AutoComplete, Typography, Dropdown, Select} from "antd";
 import {BaseOptionType} from "antd/es/select";
 import {FC, useContext, useEffect, useState} from "react";
 import {useMemo} from "react";
@@ -10,7 +10,11 @@ import {isAddress} from "ethers";
 import {useTransferStore} from "../contexts/useTransferStore";
 
 export const TokenSelect: FC = () => {
-    const {accountStore} = useContext(AppContext);
+    const {accountStore, chainStore} = useContext(AppContext);
+    const defaultToken = useCell(chainStore.defaultToken);
+    return <>
+        <Select value={defaultToken}/>
+    </>
     const transferStore = useTransferStore();
     const chainId = useCell(() => accountStore.chainId);
     const transfer = useCell(() => transferStore.Transfer);
