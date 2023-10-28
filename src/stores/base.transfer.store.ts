@@ -1,11 +1,12 @@
 import {AsyncCell} from "@cmmn/cell/lib";
-import {TokenInfo, getTokenByAddress} from "../services/token.info";
 import {TransferApi} from "../services/transfer.api";
+import {TokensStore} from "./tokens.store";
 
 export abstract class BaseTransferStore{
 
     protected constructor(
         protected api: TransferApi,
+        protected tokensStore: TokensStore,
     ) {
     }
 
@@ -16,7 +17,6 @@ export abstract class BaseTransferStore{
     public abstract patch(diff: Partial<Transfer>): Promise<void>;
 
     public TokenInfo = new AsyncCell<TokenInfo | undefined>(async () => {
-        return getTokenByAddress(this.Transfer.tokenAddress) ??
-            await this.api.getTokenInfo(this.Transfer.tokenAddress).catch(() => undefined);
+        return this.tokensStore.getTokenInfo(this.Transfer.tokenAddress)
     })
 }

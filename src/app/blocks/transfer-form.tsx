@@ -16,7 +16,6 @@ export const TransferForm = () => {
         return <Skeleton/>;
     return <Card style={{maxWidth: 600, margin: 'auto'}} title={"Send tokens"}>
         <Flex vertical gap="1em">
-            <TokenSelect />
             <AmountInput />
             <TargetInput />
             <FeeSelect />

@@ -5,18 +5,20 @@ import {TransferApi} from "../services/transfer.api";
 import {AccountStore} from "./account.store";
 import {ChainStore} from "./chain.store";
 import {TransferToMeStore} from "./transfer-to-me.store";
+import {TokensStore} from "./tokens.store";
 
 export class AppStore {
     constructor(public storage: UserStorage,
                 public api: TransferApi,
                 public accountStore: AccountStore,
                 public chainStore: ChainStore,
+                public tokensStore: TokensStore,
                 public container: Container) {
     }
 
     @bind
     public getTransferToMeStore(){
-        return new TransferToMeStore(this.api, this.accountStore);
+        return new TransferToMeStore(this.api, this.accountStore, this.tokensStore);
     }
 
     @cell({compare})

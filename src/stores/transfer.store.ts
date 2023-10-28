@@ -6,16 +6,18 @@ import {ChainStore} from "./chain.store";
 import {formatUnits, parseUnits, isAddress, FeeData, formatEther} from "ethers";
 import {UserStorage} from "../services/userStorage";
 import {BaseTransferStore} from "./base.transfer.store";
+import {TokensStore} from "./tokens.store";
 
 export class TransferStore extends BaseTransferStore {
     constructor(
         private id: string,
         private storage: UserStorage,
         private accountStore: AccountStore,
+        tokensStore: TokensStore,
         api: TransferApi,
         private chainStore: ChainStore
     ) {
-        super(api)
+        super(api, tokensStore)
     }
 
 

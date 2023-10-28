@@ -6,8 +6,7 @@ import {TtmLink} from "../components/ttm-link";
 export const TransferToMe = () => {
     return <Card>
         <Flex vertical>
-            <TokenSelect/>
-            <AmountInput noMyAmount/>
+            <AmountInput hideMyAmount/>
             <TtmLink/>
         </Flex>
     </Card>

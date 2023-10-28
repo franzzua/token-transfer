@@ -8,19 +8,18 @@ import {TransferStore} from "./stores/transfer.store";
 import {AccountStore} from "./stores/account.store";
 import {TransferApiMock} from "./transferApiMock";
 import {ChainStore} from "./stores/chain.store";
-import {EtherscanApi} from "./services/etherscanApi";
 
 
 export const ProviderInjectionToken = new InjectionToken("provider");
 export const IdInjectionToken = new InjectionToken("id");
 export const container = Container.withProviders(
-    {provide: AppStore, deps: [UserStorage, TransferApi, AccountStore, ChainStore, Container]},
+    {provide: AppStore, deps: [UserStorage, TransferApi, AccountStore, ChainStore, TokensStore, Container]},
     {provide: AccountStore, deps: []},
-    {provide: TransferStore, deps: [IdInjectionToken, UserStorage, AccountStore, TransferApi, ChainStore]},
+    {provide: TransferStore, deps: [IdInjectionToken, UserStorage, AccountStore, TokensStore, TransferApi, ChainStore]},
     {provide: TokensStore, deps: [UserStorage, AccountStore, TransferApi]},
     {provide: TransferApi, deps: [ProviderInjectionToken, AccountStore]},
     {provide: ProviderInjectionToken, useValue: (chainId: number) => new BrowserProvider(window.ethereum, chainId)},
-    {provide: ChainStore, deps: [EtherscanApi, AccountStore, ProviderInjectionToken]}
+    {provide: ChainStore, deps: [AccountStore, ProviderInjectionToken]}
 );
 
 // @ts-ignore

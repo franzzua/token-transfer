@@ -17,3 +17,17 @@ type Transfer = {
     state: string;
     fee: 'slow'|'fast'|'average';
 }
+
+type TokenInfo = {
+    chainId: number;
+    address: string;
+    symbol: string;
+    name: string;
+    logoURI: string;
+    decimals: number;
+    // extensions?: {
+    //     bridgeInfo: Record<string, {
+    //         tokenAddress: string;
+    //     }>
+    // }
+}

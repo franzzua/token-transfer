@@ -8,12 +8,24 @@ export const theme: ConfigProviderProps = {
         components: {
             Card: {},
             Button:{
-                colorPrimaryBg: '#354667',
-                colorBgBase: 'var(--dark-blue)',
+                colorBgContainer: 'var(--light-blue)',
+                // colorPrimaryBg: 'var(--dark-blue)',
+                // colorBgBase: 'var(--dark-blue)',
+                colorErrorBg: 'var(--red)',
+                colorBorder: 'transparent'
+            },
+            Input: {
+                addonBg: 'var(--light-blue)',
+                colorBgContainer: 'var(--light-green)',
+                colorBorder: 'transparent'
             }
         }
     },
     button: {
+        style: {
+        }
+    },
+    input: {
         style: {
         }
     },

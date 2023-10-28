@@ -7,8 +7,8 @@ import {useCell} from "../../helpers/use-cell";
 import {TransferStore} from "../../stores/transfer.store";
 
 export const FeeSelect = () => {
-    const {chainStore} = useContext(AppContext);
-    const defaultToken = useCell(chainStore.defaultToken);
+    const {tokensStore} = useContext(AppContext);
+    const defaultToken = useCell(tokensStore.defaultToken).symbol;
     const transferStore = useContext(TransferContext) as TransferStore;
     const fee = useCell(() => transferStore.Transfer.fee);
     const info = useCell(transferStore.Fee);

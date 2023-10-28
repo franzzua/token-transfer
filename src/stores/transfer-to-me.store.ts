@@ -5,11 +5,14 @@ import {formatUnits, parseUnits, isAddress, FeeData} from "ethers";
 import {decode, encode} from "@urlpack/base62";
 import {AccountStore} from "./account.store";
 import {BaseTransferStore} from "./base.transfer.store";
+import {ChainStore} from "./chain.store";
+import {TokensStore} from "./tokens.store";
 
 export class TransferToMeStore extends BaseTransferStore {
     constructor(api: TransferApi,
-                private accountStore: AccountStore) {
-        super(api);
+                private accountStore: AccountStore,
+                tokensStore: TokensStore) {
+        super(api, tokensStore);
     }
 
     @cell

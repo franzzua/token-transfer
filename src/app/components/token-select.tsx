@@ -1,71 +1,41 @@
-import {Image, Flex, AutoComplete, Typography, Dropdown, Select} from "antd";
+import {Image, Flex, Input} from "antd";
 import {BaseOptionType} from "antd/es/select";
-import {FC, useContext, useEffect, useState} from "react";
-import {useMemo} from "react";
-import {AppContext} from "../contexts/app-context";
+import {FC, useMemo, useState} from "react";
 import {useCell} from "../../helpers/use-cell";
-import {getTokensByChainId, TokenInfo} from "../../services/token.info";
-import {Label} from "../elements/label";
-import {isAddress} from "ethers";
-import {useTransferStore} from "../contexts/useTransferStore";
+import {useAppContext} from "../contexts";
 
-export const TokenSelect: FC = () => {
-    const {accountStore, chainStore} = useContext(AppContext);
-    const defaultToken = useCell(chainStore.defaultToken);
-    return <>
-        <Select value={defaultToken}/>
-    </>
-    const transferStore = useTransferStore();
-    const chainId = useCell(() => accountStore.chainId);
-    const transfer = useCell(() => transferStore.Transfer);
-    const tokens = useMemo(() => getTokensByChainId(chainId), [chainId]);
-    const options = tokens.map(t => ({
-        ...t,
-        value: t.address,
-        key: t.address,
-        label: <Flex gap="1em" justify="space-between" >
-            <Image width="2em" height="2em" src={t.logoURI}/>
-            <Typography.Text>{t.name}</Typography.Text>
-            <Typography.Text className="text-xs" type="secondary" copyable>{t.address}</Typography.Text>
-            <Typography.Text strong>{t.symbol}</Typography.Text>
-        </Flex>
-    } as BaseOptionType));
-    const tokenInfo = useCell(transferStore.TokenInfo);
-    const selected = options.find(x => x.value === transfer.tokenAddress) ?? {
-        ...tokenInfo,
-        value: transfer.tokenAddress,
-        key: transfer.tokenAddress,
-        label: <Flex gap="1em" justify="space-between" >
-            <Image width="2em" height="2em" src={tokenInfo?.logoURI}/>
-            <Typography.Text>{tokenInfo?.name}</Typography.Text>
-            <Typography.Text className="text-xs" type="secondary" copyable>{tokenInfo?.address ?? transfer.tokenAddress}</Typography.Text>
-            <Typography.Text strong>{tokenInfo?.symbol}</Typography.Text>
-        </Flex>
-    };
-    const [localValue, setLocalValue] = useState(selected);
-    useEffect(() => {
-        if (selected?.value !== transfer.tokenAddress)
-            transferStore.patch({tokenAddress: selected?.value});
-    }, [selected?.value]);
-    console.log(localValue, selected);
-    return <Label title="Token">
-        <AutoComplete showSearch={tokens.length > 5}
-                      value={localValue}
-                      allowClear
-                      onClear={() => transferStore.patch({tokenAddress: null})}
-                      options={options}
-                      filterOption={filter}
-                      onChange={(value,option) => {
-                          console.log(value, option);
-                          setLocalValue(value);
-                          if (isAddress(value)) {
-                              transferStore.patch({ tokenAddress: value })
-                          }
-                      }}>
-        </AutoComplete>
-        {selected?.label}
-    </Label>;
+export type TokenSelectProps = {
+    value: TokenInfo;
+    onChange(value?: TokenInfo): void;
+}
+export const TokenSelect: FC<TokenSelectProps> = (props) => {
+    const {tokensStore} = useAppContext();
+    const tokens = useCell(() => tokensStore.tokens);
+    const [query, setQuery] = useState('');
+    const filteredTokens = useMemo(() => tokens.filter(t => filter(query, t)), [query, tokens]);
+    return <Flex style={{maxHeight: '30vh', overflow: 'auto'}} justify="space-around" wrap="wrap" gap="1em">
+        <Input.Search value={query}
+                      onChange={e => setQuery(e.currentTarget.value)}
+                      style={{width: '100%'}}/>
+        {filteredTokens.map(t => <TokenPreview onChange={props.onChange}
+                                               isSelected={props.value.address == t.address}
+                                               token={t}
+                                               key={t.address ?? t.symbol}/>)}
+        {filteredTokens.length == 0 && `Unknown token, do you want to add it?`}
+    </Flex>;
 };
+
+const TokenPreview: FC<{
+    token: TokenInfo;
+    isSelected: boolean;
+    onChange(token: TokenInfo): void;
+}> = ({token, onChange, isSelected}) => <Flex vertical align="center" style={{
+    cursor: 'pointer',
+    background: isSelected ? 'var(--light-blue)' : 'transparent'
+}} onClick={() => onChange(token)}>
+    <Image preview={false} width="4em" height="4em" src={token.logoURI}/>
+    <span>{token.symbol}</span>
+</Flex>;
 
 function filter(query: string, token: TokenInfo & BaseOptionType){
     return [

@@ -1,21 +1,14 @@
 import {AsyncCell, Fn, Cell, cell} from "@cmmn/cell/lib";
-import {EtherscanApi} from "../services/etherscanApi";
-import {Timer} from "../helpers/timer";
 import {AccountStore} from "./account.store";
 import {JsonRpcApiProvider, TransactionResponse} from "ethers";
 import {ObservableDB} from "../helpers/observableDB";
 import {GasEstimator} from "../services/gas.oracle";
 import {chains} from "eth-chains";
+
 export class ChainStore{
 
-    get chain(){
-        return chains.get(this.accountStore.chainId);
-    }
 
-    public defaultToken = new Cell(() => this.chain.nativeCurrency.name);
-
-    constructor(private api: EtherscanApi,
-                private accountStore: AccountStore,
+    constructor(private accountStore: AccountStore,
                 private providerFactory: (chainId: number) => JsonRpcApiProvider) {
 
         Cell.OnChange(() => this.accountStore.chainId, this.init);
@@ -58,27 +51,9 @@ export class ChainStore{
         && t.chainId == this.accountStore.chainId
         && t.type == 2;
 
-    private timer = new Timer(3000);
-
     public get gasPrices(): GasInfo {
         return this.estimator.Percentiles as GasInfo;
     }
-    //
-    public gasTimes = new AsyncCell(async () => {
-        if (this.accountStore.chainId !== 1)
-            return {
-                slow: 120,
-                average: 45,
-                fast: 30
-            }
-        const prices = this.gasPrices;
-        if (!prices) return null;
-        return {
-            slow: await this.api.getEstimationTime(prices.slow),
-            average: await this.api.getEstimationTime(prices.average),
-            fast: await this.api.getEstimationTime(prices.fast),
-        }
-    });
 
 }
 
