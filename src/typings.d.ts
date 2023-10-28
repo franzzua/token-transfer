@@ -3,9 +3,7 @@ declare module "*.module.less";
 declare interface Window {
     ethereum: import('@metamask/sdk').SDKProvider;
     TokenTransferApp: {start();stop();}
-    TRANSACTION_WINDOW: string;
 }
-
 
 declare const TRANSACTION_WINDOW: number;
 declare const DEBUG: boolean;
