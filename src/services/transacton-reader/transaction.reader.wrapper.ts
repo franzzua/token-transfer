@@ -1,9 +1,10 @@
-export class EthereumProxy{
+import {ServiceWorkerAction} from "../../sw/actions";
+export class TransactionReaderWrapper {
     private ethereum = window.ethereum;
     private channel = navigator.serviceWorker;
     // only one tab should be connected
-    private isConnected = false;
     private namespace = "ethereum";
+
     constructor() {
         this.channel.addEventListener('message', async e => {
             if (e.data.namespace !== this.namespace) return;
@@ -24,6 +25,21 @@ export class EthereumProxy{
                     data: [id, undefined, e.message]
                 });
             }
+        });
+        window.addEventListener('beforeunload', () => {
+            this.stop();
         })
+    }
+
+    public start(){
+        navigator.serviceWorker.controller.postMessage({
+            action: 'ethereum_connect' as ServiceWorkerAction
+        });
+    }
+
+    public stop(){
+        navigator.serviceWorker.controller.postMessage({
+            action: 'ethereum_disconnect' as ServiceWorkerAction
+        });
     }
 }

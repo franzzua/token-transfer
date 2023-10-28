@@ -15,10 +15,15 @@ body {
 button{
   font-family: inherit;
   color: inherit;
-  background: none;
+  background: transparent;
   border: solid .1px;
   border-radius: 100%;
   padding: 1em .5em;
+  cursor: pointer;
+  &[disabled]{
+    color: var(--dark-blue);
+  }
+
 }
 
 .text-lg{

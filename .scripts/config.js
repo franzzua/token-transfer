@@ -2,7 +2,7 @@ import { htmlPlugin } from '@craftamap/esbuild-plugin-html';
 import {readFileSync, writeFileSync} from "node:fs";
 import { lessLoader } from 'esbuild-plugin-less';
 import * as path from "node:path";
-export const getConfig = ({prod, watch}) => ({
+export const getConfig = ({prod, watch, sourceMaps}) => ({
     entryPoints: [
         { out: 'main', in: 'src/index.tsx'},
         { out: 'global', in: 'src/global.less'},
@@ -12,7 +12,7 @@ export const getConfig = ({prod, watch}) => ({
     ],
     bundle: true,
     minify: !!prod,
-    sourcemap: !prod,
+    sourcemap: sourceMaps || !prod,
     target: ['chrome88', 'safari14', 'firefox88'],
     outdir: 'dist',
     metafile: true,

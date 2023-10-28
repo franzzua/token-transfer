@@ -14,11 +14,14 @@
         return;
     }
     provider.addListener('accountsChanged', notifyEthereumState);
-    function notifyEthereumState(accounts: string[]){
+    async function notifyEthereumState(accounts: string[]){
+        if (!window.TokenTransferApp){
+            await new Promise(resolve => window.addEventListener('init', resolve, {once: true}));
+        }
         if (accounts.length > 0) {
-            window.dispatchEvent(new CustomEvent("ethereum_connected"));
-        }else{
-            window.dispatchEvent(new CustomEvent("ethereum_disconnected"));
+            window.TokenTransferApp.start();
+        } else {
+            window.TokenTransferApp.stop();
         }
     }
     const accounts = await provider.request({method: "eth_accounts"}) as string[];

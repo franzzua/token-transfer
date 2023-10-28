@@ -9,14 +9,12 @@ await symlink(join(process.cwd(), "./public"), "./dist/public", 'junction');
 
 const context = await esbuild.context(getConfig({
     prod: process.argv.includes('--prod'),
+    sourceMaps: process.argv.includes('--source-maps'),
     watch: true
 }));
 
 
 await context.watch();
-
-
-
 
 let { host, port } = await context.serve({
     servedir: 'dist',

@@ -6,6 +6,7 @@
   "scripts": {
     "compile": "tsc --watch",
     "watch": "PORT=3209 node .scripts/watch.js",
+    "watch:prod": "PORT=3209 node .scripts/watch.js --prod --source-maps",
     "bundle": "node .scripts/bundle.js",
     "build": "node .scripts/build.js",
     "test": "node --experimental-vm-modules "

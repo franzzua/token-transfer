@@ -1,8 +1,5 @@
 "use strict";
 
-import {EthereumProxy} from "./ethereum-proxy";
-import {transactionReader} from "./transaction.reader";
-
 const sw = "/sw.js";
 if (!globalThis.DEBUG) {
   const upgradeInterval = 5*60*1000; // 5 minutes
@@ -57,17 +54,6 @@ if (!globalThis.DEBUG) {
       case "init":
         setTimeout(async () => {
           await init();
-
-          window.addEventListener('ethereum_connected', () => {
-            navigator.serviceWorker.controller.postMessage({
-              action: 'connect'
-            });
-          });
-          window.addEventListener('ethereum_disconnected', () => {
-            navigator.serviceWorker.controller.postMessage({
-              action: 'disconnect'
-            });
-          });
         }, Math.max(3000 - performance.now(), 0))
         break;
       case "new-version":
@@ -88,12 +74,6 @@ if (!globalThis.DEBUG) {
   );
 } else {
   init().catch(console.error);
-  window.addEventListener('ethereum_connected', () => {
-    transactionReader.start();
-  });
-  window.addEventListener('ethereum_disconnected', () => {
-    transactionReader.stop();
-  });
 }
 async function init() {
   const assets = await fetch("/assets.json").then(x => x.json()) as string[];
@@ -123,7 +103,6 @@ async function init() {
               })
       )
   );
-  new EthereumProxy();
     // animateLoading(0);
   window.dispatchEvent(new CustomEvent("init"));
 }

@@ -1,9 +1,12 @@
+import {ethereumSw} from "../services/transacton-reader/ethereum-sw";
+import {TransactionReader} from "../services/transacton-reader/transaction.reader";
 import { SwStorage } from "./sw-storage";
 import { ServiceWorkerAction } from "./actions";
+
 declare var self: ServiceWorkerGlobalScope;
-import "./transaction.reader";
 
 const storage = new SwStorage("root");
+const transactionReader = new TransactionReader();
 self.addEventListener("install", (event) => {
   // event.waitUntil(caches.delete('root').catch())
 });
@@ -41,6 +44,12 @@ self.addEventListener("message", (event) => {
               action: "init" as ServiceWorkerAction,
             });
           });
+        break;
+      case "ethereum_connect":
+        ethereumSw.connector.connect(event.source as MessagePort);
+        break;
+      case "ethereum_disconnect":
+        ethereumSw.connector.disconnect(event.source as MessagePort);
         break;
     }
   } catch (e) {
