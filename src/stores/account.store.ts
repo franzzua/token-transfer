@@ -1,9 +1,12 @@
-import {cell} from "@cmmn/cell/lib";
+import {Cell, cell} from "@cmmn/cell/lib";
 
 export class AccountStore {
     private provider = globalThis.ethereum;
     @cell
     public accounts: string[] = [];
+
+    @cell
+    public me: string;
 
     @cell
     public chainId: number = Number.parseInt(this.provider.chainId, 16);
@@ -18,6 +21,10 @@ export class AccountStore {
         this.provider.addListener('chainChanged', (accounts: string[]) => {
             this.chainId = Number.parseInt(this.provider.chainId, 16);
         });
+        Cell.OnChange(() => this.accounts, x => {
+            if (this.me) return;
+            this.me = this.accounts[0];
+        })
     }
 
 }

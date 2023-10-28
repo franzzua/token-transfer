@@ -3,15 +3,15 @@ import {BaseOptionType} from "antd/es/select";
 import {FC, useContext, useEffect, useState} from "react";
 import {useMemo} from "react";
 import {AppContext} from "../contexts/app-context";
-import {TransferContext} from "../contexts/transfer-context";
 import {useCell} from "../../helpers/use-cell";
 import {getTokensByChainId, TokenInfo} from "../../services/token.info";
 import {Label} from "../elements/label";
 import {isAddress} from "ethers";
+import {useTransferStore} from "../contexts/useTransferStore";
 
 export const TokenSelect: FC = () => {
     const {accountStore} = useContext(AppContext);
-    const transferStore = useContext(TransferContext);
+    const transferStore = useTransferStore();
     const chainId = useCell(() => accountStore.chainId);
     const transfer = useCell(() => transferStore.Transfer);
     const tokens = useMemo(() => getTokensByChainId(chainId), [chainId]);

@@ -3,20 +3,22 @@ import {Chain} from "eth-chains";
 import {Timer} from "../helpers/timer";
 import {getTokenByAddress, TokenInfo} from "../services/token.info";
 import {TransferApi} from "../services/transfer.api";
+import {AccountStore} from "./account.store";
 import {ChainStore} from "./chain.store";
 import {Transfer, TransfersStore} from "./transfers.store";
 import {formatEther, formatUnits, parseUnits, isAddress, FeeData} from "ethers";
-import {Storage} from "../services/storage";
+import {UserStorage} from "../services/userStorage";
 import {BaseTransferStore} from "./base.transfer.store";
 
-export class TransferStore implements BaseTransferStore {
+export class TransferStore extends BaseTransferStore {
     constructor(
         private id: string,
-        private store: TransfersStore,
-        private storage: Storage,
-        private api: TransferApi,
+        private storage: UserStorage,
+        private accountStore: AccountStore,
+        api: TransferApi,
         private chainStore: ChainStore
     ) {
+        super(api)
     }
 
 
@@ -43,10 +45,10 @@ export class TransferStore implements BaseTransferStore {
     private timer = new Timer(5000);
     public myBalance = new AsyncCell(async () => {
         this.timer.get();
-        if (!this.Transfer.tokenAddress || !this.Transfer.from)
+        if (!this.Transfer.tokenAddress)
             return null;
-        return await this.api.getBalance(this.Transfer.tokenAddress, this.Transfer.from)
-            .catch(console.error);
+        return await this.api.getBalance(this.Transfer.tokenAddress, this.accountStore.me)
+            .catch(() => null);
     });
 
     public get myBalanceFormatted(){
@@ -55,10 +57,6 @@ export class TransferStore implements BaseTransferStore {
         return formatUnits(this.myBalance.get(), this.TokenInfo.get().decimals);
     }
 
-    public TokenInfo = new AsyncCell<TokenInfo | undefined>(async () => {
-        return getTokenByAddress(this.Transfer.tokenAddress) ??
-            await this.api.getTokenInfo(this.Transfer.tokenAddress).catch(() => undefined);
-    })
 
     public get Amount(){
         if (!this.TokenInfo.get()) return '';
@@ -74,7 +72,7 @@ export class TransferStore implements BaseTransferStore {
             this.Transfer.tokenAddress,
             this.Transfer.to,
             this.Transfer.amount,
-            this.Transfer.from
+            this.accountStore.me
         ).catch(console.error);
     });
 
@@ -95,7 +93,6 @@ export class TransferStore implements BaseTransferStore {
 
 
     private validators: Partial<Record<keyof Transfer, (value, transfer: Transfer) => boolean>> = {
-        from: isAddress,
         to: isAddress,
         tokenAddress: isAddress,
         amount: (amount, transfer) => {

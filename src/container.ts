@@ -1,10 +1,11 @@
 import {Container, InjectionToken} from "@cmmn/cell/lib";
 import {BrowserProvider, randomBytes, toBeHex, toBigInt} from "ethers";
+import {AppStore} from "./stores/app-store";
 import {TransferApi} from "./services/transfer.api";
-import {Storage} from "./services/storage";
+import {UserStorage} from "./services/userStorage";
+import {TokensStore} from "./stores/tokens.store";
 import {TransferStore} from "./stores/transfer.store";
 import {TransfersStore} from "./stores/transfers.store";
-import {DiContainer} from "./app/contexts/app-context";
 import {AccountStore} from "./stores/account.store";
 import {TransferApiMock} from "./transferApiMock";
 import {ChainStore} from "./stores/chain.store";
@@ -14,10 +15,11 @@ import {EtherscanApi} from "./services/etherscanApi";
 export const ProviderInjectionToken = new InjectionToken("provider");
 export const IdInjectionToken = new InjectionToken("id");
 export const container = Container.withProviders(
-    {provide: DiContainer, deps: [TransfersStore, Storage, TransferApi, AccountStore, ChainStore, Container]},
+    {provide: AppStore, deps: [TransfersStore, UserStorage, TransferApi, AccountStore, ChainStore, Container]},
     {provide: AccountStore, deps: []},
-    {provide: TransfersStore, deps: [Storage, TransferApi, AccountStore]},
-    {provide: TransferStore, deps: [IdInjectionToken, TransfersStore, Storage, TransferApi, ChainStore]},
+    {provide: TransfersStore, deps: [UserStorage, TransferApi, AccountStore]},
+    {provide: TransferStore, deps: [IdInjectionToken, UserStorage, AccountStore, TransferApi, ChainStore]},
+    {provide: TokensStore, deps: [UserStorage, AccountStore, TransferApi]},
     {provide: TransferApi, deps: [ProviderInjectionToken, AccountStore]},
     {provide: ProviderInjectionToken, useValue: (chainId: number) => new BrowserProvider(window.ethereum, chainId)},
     {provide: ChainStore, deps: [EtherscanApi, AccountStore, ProviderInjectionToken]}

@@ -1,13 +1,14 @@
 import {pack, unpack} from "msgpackr";
 import {bind, cell, compare, Fn} from "@cmmn/cell/lib";
-import {getTokenByAddress} from "../services/token.info";
+import {TransferApi} from "../services/transfer.api";
 import {Transfer} from "./transfers.store";
 import {formatUnits, parseUnits, isAddress, FeeData} from "ethers";
 import {decode, encode} from "@urlpack/base62";
 import {BaseTransferStore} from "./base.transfer.store";
 
-export class TransferToMeStore implements BaseTransferStore {
-    constructor() {
+export class TransferToMeStore extends BaseTransferStore {
+    constructor(api: TransferApi) {
+        super(api);
     }
 
     @cell
@@ -36,17 +37,13 @@ export class TransferToMeStore implements BaseTransferStore {
     @bind
     async send() {
     }
-    @cell({compare})
-    public get TokenInfo(){
-        return getTokenByAddress(this.Transfer.tokenAddress);
-    }
 
     public get Amount(){
         if (!this.TokenInfo) return '';
-        return formatUnits(this.Transfer.amount, this.TokenInfo.decimals);
+        return formatUnits(this.Transfer.amount, this.TokenInfo.get()?.decimals);
     }
     public set Amount(amount: string){
-        this.patch({amount: parseUnits(amount, this.TokenInfo.decimals )});
+        this.patch({amount: parseUnits(amount, this.TokenInfo.get()?.decimals )});
     }
 
     public get errors(): Record<keyof Transfer, string | undefined>{

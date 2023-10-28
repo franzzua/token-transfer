@@ -1,12 +1,12 @@
 import {Flex, Input} from "antd";
-import {FC, useContext, useState} from "react";
-import {TransferContext} from "../contexts/transfer-context";
+import {FC, useState} from "react";
 import {useCell} from "../../helpers/use-cell";
 import {Label} from "../elements/label";
+import {useTransferStore} from "../contexts/useTransferStore";
 import {MyBalance} from "./my-balance";
 
 export const AmountInput: FC<{noMyAmount?: boolean}> = ({noMyAmount}) => {
-    const transferStore = useContext(TransferContext);
+    const transferStore = useTransferStore();
     const amount = useCell(() => transferStore.Amount);
     const [localAmount, setLocalAmount] = useState(amount);
     const error = useCell(() => transferStore.errors.amount);

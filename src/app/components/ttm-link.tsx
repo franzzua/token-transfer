@@ -1,12 +1,12 @@
 import {QRCode} from "antd";
-import {useContext, useEffect, useRef} from "react";
-import {TransferContext} from "../contexts/transfer-context";
+import {useEffect, useRef} from "react";
 import {useCell} from "../../helpers/use-cell";
 import {TransferToMeStore} from "../../stores/transfer-to-me.store";
 import {toCanvas} from 'qrcode/lib/index.js'
+import {useTransferStore} from "../contexts/useTransferStore";
 
 export const TtmLink = () => {
-    const transferStore = useContext(TransferContext) as TransferToMeStore;
+    const transferStore = useTransferStore<TransferToMeStore>();
     const url = useCell(() => transferStore.URL);
     const info = useCell(() => transferStore.TokenInfo);
     const ref = useRef<HTMLCanvasElement>();

@@ -1,11 +1,11 @@
-import {Flex, Skeleton} from "antd";
-import {FC, useContext, useMemo} from "react";
-import {TransferContext} from "../contexts/transfer-context";
+import {Flex} from "antd";
+import {FC} from "react";
 import {useCell} from "../../helpers/use-cell";
 import {TransferStore} from "../../stores/transfer.store";
+import {useTransferStore} from "../contexts/useTransferStore";
 
 export const MyBalance: FC = () => {
-    const transferStore = useContext(TransferContext) as TransferStore;
+    const transferStore = useTransferStore<TransferStore>();
     const balance = useCell(() => transferStore.myBalanceFormatted);
     const tokenInfo = useCell(transferStore.TokenInfo);
     if (balance == null)

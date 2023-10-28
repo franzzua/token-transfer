@@ -6,9 +6,9 @@ import {goTo, useRouter} from "../routing";
 import {AppContext} from "../contexts/app-context";
 
 export function TransferToMePage(){
-    const {transfersStore} = useContext(AppContext);
+    const {transfersStore, container, transferApi} = useContext(AppContext);
     const {route: [base, encoded]} = useRouter();
-    const transferStore = useMemo(() => new TransferToMeStore(), []);
+    const transferStore = useMemo(() => new TransferToMeStore(transferApi), []);
     useEffect(() => {
         if (base !== 'ttm') return;
         const transfer = transferStore.parse(encoded as string);

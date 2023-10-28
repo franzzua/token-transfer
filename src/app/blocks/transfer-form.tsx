@@ -1,7 +1,6 @@
 import {Button, Card, Flex, Skeleton} from "antd";
 import {TransferStore} from "../../stores/transfer.store";
 import {TransferContext} from "../contexts/transfer-context";
-import {AccountSelect} from "../components/account-select";
 import {TargetInput} from "../components/target-input";
 import {TokenSelect} from "../components/token-select";
 import { useContext} from "react";
@@ -15,9 +14,8 @@ export const TransferForm = () => {
     const transfer = useCell(() => transferStore.Transfer);
     if (!transfer) //TODO: add loader
         return <Skeleton/>;
-    return <Card style={{maxWidth: 600, margin: 'auto'}}>
+    return <Card style={{maxWidth: 600, margin: 'auto'}} title={"Send tokens"}>
         <Flex vertical gap="1em">
-            <AccountSelect />
             <TokenSelect />
             <AmountInput />
             <TargetInput />

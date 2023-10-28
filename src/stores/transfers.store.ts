@@ -1,15 +1,12 @@
-import {AsyncCell, bind,compare, Container, Fn} from "@cmmn/cell/lib";
+import {compare, Fn} from "@cmmn/cell/lib";
 import {cell} from "@cmmn/cell/lib";
 import {TransferApi} from "../services/transfer.api";
-import {Storage} from "../services/storage";
-import {TransferStore} from "./transfer.store";
-import {Timer} from "../helpers/timer";
-import {formatUnits} from "ethers";
+import {UserStorage} from "../services/userStorage";
 import {AccountStore} from "./account.store";
 
 export class TransfersStore {
 
-    constructor(private storage: Storage,
+    constructor(private storage: UserStorage,
                 private api: TransferApi,
                 private account: AccountStore) {
     }
@@ -29,10 +26,6 @@ export class TransfersStore {
         return this.Transfers.find(x => x._id == id);
     }
 
-    getTransferStore(id: string){
-        return new TransferStore(this, this.storage, this.api, id);
-    }
-
     async createNew() {
         const transfer = {
             _id: Fn.ulid(),
@@ -48,12 +41,6 @@ export class TransfersStore {
         return transfer._id;
     }
 
-    private timer = new Timer(5000);
-    public FeeData = new AsyncCell(() => {
-        this.timer.get();
-        return this.api.getFeeData();
-    });
-
     async create(transfer: Transfer) {
         transfer._id = Fn.ulid();
         await this.storage.transfers.addOrUpdate(transfer);
@@ -66,7 +53,6 @@ export type Transfer = {
     id: string | null;
     amount: bigint;
     tokenAddress: string;
-    from: string;
     to: string;
     state: string;
     fee: bigint;

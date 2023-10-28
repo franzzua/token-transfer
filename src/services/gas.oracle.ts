@@ -289,7 +289,7 @@ export class GasOracleTree<
             this.tree = null;
             return;
         }
-        this.tree = this.tree.removeAll(filter);
+        this.tree = this.tree?.removeAll(filter);
     }
 
     protected movePercentiles(){

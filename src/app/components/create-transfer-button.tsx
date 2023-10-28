@@ -9,5 +9,5 @@ export const CreateTransferButton = () => {
         const id = await transfersStore.createNew();
         goTo(['transfer'], {id});
     }, []);
-    return <Button type="primary" onClick={createTransfer}>Create New Transfer</Button>
+    return <Button type="primary" onClick={createTransfer}>Send Tokens</Button>
 }
