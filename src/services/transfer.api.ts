@@ -1,6 +1,5 @@
 import {Contract, ethers, JsonRpcApiProvider} from "ethers";
 import {AccountStore} from "../stores/account.store";
-import {Transfer} from "../stores/transfers.store";
 import {abi, ERC20} from "erc20-compiled";
 import {etherium} from "../../test/test.container";
 export class TransferApi {
@@ -23,7 +22,7 @@ export class TransferApi {
     async *run(transfer: Transfer): AsyncGenerator<Transfer> {
         yield { ...transfer, state: 'pending' };
         try {
-            const erc20 = await this.getContract(transfer.tokenAddress, transfer.from);
+            const erc20 = await this.getContract(transfer.tokenAddress, this.accountStore.me);
             const transaction = await erc20.transfer(transfer.to, transfer.amount);
             if (transaction.isMined()) {
                 yield { ...transfer, state: 'mined' };

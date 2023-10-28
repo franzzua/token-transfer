@@ -8,7 +8,7 @@ import {useTransferStore} from "../contexts/useTransferStore";
 export const TtmLink = () => {
     const transferStore = useTransferStore<TransferToMeStore>();
     const url = useCell(() => transferStore.URL);
-    const info = useCell(() => transferStore.TokenInfo);
+    const info = useCell(transferStore.TokenInfo);
     const ref = useRef<HTMLCanvasElement>();
     useEffect(() => {
         if (!ref.current || !url) return;

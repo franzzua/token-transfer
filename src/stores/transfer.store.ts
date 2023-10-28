@@ -1,12 +1,9 @@
 import {AsyncCell, bind, Cell, cell, compare, Fn} from "@cmmn/cell/lib";
-import {Chain} from "eth-chains";
 import {Timer} from "../helpers/timer";
-import {getTokenByAddress, TokenInfo} from "../services/token.info";
 import {TransferApi} from "../services/transfer.api";
 import {AccountStore} from "./account.store";
 import {ChainStore} from "./chain.store";
-import {Transfer, TransfersStore} from "./transfers.store";
-import {formatEther, formatUnits, parseUnits, isAddress, FeeData} from "ethers";
+import {formatUnits, parseUnits, isAddress, FeeData} from "ethers";
 import {UserStorage} from "../services/userStorage";
 import {BaseTransferStore} from "./base.transfer.store";
 

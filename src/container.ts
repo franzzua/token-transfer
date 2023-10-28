@@ -5,7 +5,6 @@ import {TransferApi} from "./services/transfer.api";
 import {UserStorage} from "./services/userStorage";
 import {TokensStore} from "./stores/tokens.store";
 import {TransferStore} from "./stores/transfer.store";
-import {TransfersStore} from "./stores/transfers.store";
 import {AccountStore} from "./stores/account.store";
 import {TransferApiMock} from "./transferApiMock";
 import {ChainStore} from "./stores/chain.store";
@@ -15,9 +14,8 @@ import {EtherscanApi} from "./services/etherscanApi";
 export const ProviderInjectionToken = new InjectionToken("provider");
 export const IdInjectionToken = new InjectionToken("id");
 export const container = Container.withProviders(
-    {provide: AppStore, deps: [TransfersStore, UserStorage, TransferApi, AccountStore, ChainStore, Container]},
+    {provide: AppStore, deps: [UserStorage, TransferApi, AccountStore, ChainStore, Container]},
     {provide: AccountStore, deps: []},
-    {provide: TransfersStore, deps: [UserStorage, TransferApi, AccountStore]},
     {provide: TransferStore, deps: [IdInjectionToken, UserStorage, AccountStore, TransferApi, ChainStore]},
     {provide: TokensStore, deps: [UserStorage, AccountStore, TransferApi]},
     {provide: TransferApi, deps: [ProviderInjectionToken, AccountStore]},

@@ -5,8 +5,8 @@ import {AppContext} from "../contexts/app-context";
 import {TransferListItem} from "./transfer-list-item";
 
 export const TransferList = () => {
-    const {transfersStore} = useContext(AppContext);
-    const transfers = useCell(() => transfersStore.Transfers);
+    const appStore = useContext(AppContext);
+    const transfers = useCell(() => appStore.Transfers);
 
     return <List>
         {transfers.map(x => <TransferListItem key={x._id} id={x._id}/>)}

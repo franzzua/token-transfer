@@ -46,10 +46,10 @@ self.addEventListener("message", (event) => {
           });
         break;
       case "ethereum_connect":
-        ethereumSw.connector.connect(event.source as MessagePort);
+        ethereumSw.connector.connect(event.source as Client);
         break;
       case "ethereum_disconnect":
-        ethereumSw.connector.disconnect(event.source as MessagePort);
+        ethereumSw.connector.disconnect(event.source as Client);
         break;
     }
   } catch (e) {

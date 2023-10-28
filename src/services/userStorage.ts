@@ -1,6 +1,5 @@
 import {cell} from "@cmmn/cell/lib";
 import {ObservableDB} from "../helpers/observableDB";
-import {Transfer} from "../stores/transfer.store";
 
 export class UserStorage {
 

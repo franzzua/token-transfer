@@ -1,7 +1,6 @@
 import {AsyncCell} from "@cmmn/cell/lib";
 import {TokenInfo, getTokenByAddress} from "../services/token.info";
 import {TransferApi} from "../services/transfer.api";
-import {Transfer} from "./transfers.store";
 
 export abstract class BaseTransferStore{
 

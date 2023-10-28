@@ -13,10 +13,9 @@ export const TransferListItem: FC<{id: string}> = ({id}) => {
     }]), [id]);
     const transfer = useCell(() => store.Transfer);
     const amount = useCell(() => store.Amount);
-    const tokenInfo = useCell(() => store.TokenInfo);
+    const tokenInfo = useCell(store.TokenInfo);
     return <List.Item onClick={() => goTo(['transfer'], {id})}>
         <Flex vertical>
-            <div>From {transfer.from}</div>
             <div>To {transfer.to}</div>
             <div>Amount {amount} {tokenInfo?.symbol}</div>
             <div>State {transfer.state}</div>

@@ -1,23 +1,23 @@
 import {pack, unpack} from "msgpackr";
 import {bind, cell, compare, Fn} from "@cmmn/cell/lib";
 import {TransferApi} from "../services/transfer.api";
-import {Transfer} from "./transfers.store";
 import {formatUnits, parseUnits, isAddress, FeeData} from "ethers";
 import {decode, encode} from "@urlpack/base62";
+import {AccountStore} from "./account.store";
 import {BaseTransferStore} from "./base.transfer.store";
 
 export class TransferToMeStore extends BaseTransferStore {
-    constructor(api: TransferApi) {
+    constructor(api: TransferApi,
+                private accountStore: AccountStore) {
         super(api);
     }
 
     @cell
     private transfer: Transfer = {
         _id: Fn.ulid(),
-        fee: 0n,
+        fee: 'average',
         amount: 0n,
         tokenAddress: null,
-        from: null,
         state: 'initial',
         to: null,
         id: null
@@ -59,7 +59,7 @@ export class TransferToMeStore extends BaseTransferStore {
 
     public get URL(){
         const encoded = pack([
-            this.transfer.from,
+            this.accountStore,
             this.transfer.tokenAddress,
             this.Amount
         ]);

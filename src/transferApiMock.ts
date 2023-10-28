@@ -1,5 +1,4 @@
 import {TransferApi} from "./services/transfer.api";
-import {Transfer} from "./stores/transfers.store";
 
 export class TransferApiMock extends TransferApi {
     async* run(transfer: Transfer): AsyncGenerator<Transfer> {
@@ -14,7 +13,7 @@ export class TransferApiMock extends TransferApi {
         return 100500n * (10n ** 18n);
     }
 
-    async estimateGas(transfer: Transfer): Promise<bigint> {
+    async estimateGas(tokenAddress: string, to: string, amount: bigint, from: string): Promise<bigint> {
         return 12345n;
     }
 
