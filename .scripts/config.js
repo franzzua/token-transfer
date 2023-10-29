@@ -3,6 +3,7 @@ import {readFileSync, writeFileSync} from "node:fs";
 import { lessLoader } from 'esbuild-plugin-less';
 import * as path from "node:path";
 import {chains} from "eth-chains/dist/src/chains.js";
+import {mkdir} from "node:fs/promises";
 
 export const getConfig = ({prod, watch, sourceMaps}) => ({
     entryPoints: [
@@ -62,6 +63,7 @@ function chainListPlugin(){
             build.initialOptions.alias ??= {};
             const jsonPath = path.join(build.initialOptions.outdir, 'chains.js');
             build.initialOptions.alias["eth-chains/dist/src/chains.js"] = jsonPath;
+            mkdir('dist',{recursive: true});
             writeFileSync(
                 jsonPath,
                 `export const chains = ${JSON.stringify(data)};`
