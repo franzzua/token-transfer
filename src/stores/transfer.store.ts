@@ -44,7 +44,7 @@ export class TransferStore extends BaseTransferStore {
     private timer = new Timer(5000);
     public myBalance = new AsyncCell(async () => {
         this.timer.get();
-        return await this.api.getBalance(this.Transfer.tokenAddress, this.accountStore.me)
+        return await this.api.getBalance(this.Transfer.tokenAddress)
             .catch(() => null);
     });
 

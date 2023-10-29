@@ -1,13 +1,11 @@
-import {Card, Flex} from "antd";
-import {TokenSelect} from "../components/token-select";
 import {AmountInput} from "../components/amount-input";
 import {TtmLink} from "../components/ttm-link";
 
 export const TransferToMe = () => {
-    return <Card>
-        <Flex vertical>
+    return <div className="frost-card">
+        <div flex="column">
             <AmountInput hideMyAmount/>
             <TtmLink/>
-        </Flex>
-    </Card>
+        </div>
+    </div>
 }

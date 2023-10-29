@@ -1,4 +1,3 @@
-import {QRCode} from "antd";
 import {useEffect, useRef} from "react";
 import {useCell} from "../../helpers/use-cell";
 import {TransferToMeStore} from "../../stores/transfer-to-me.store";
@@ -12,9 +11,9 @@ export const TtmLink = () => {
     const ref = useRef<HTMLCanvasElement>();
     useEffect(() => {
         if (!ref.current || !url) return;
-        toCanvas(ref.current, url);
+        toCanvas(ref.current, url, );
     }, [ref, url])
     return <div>
-        <QRCode value={url} size={300} color="blue" icon={info?.logoURI}/>
+        <canvas ref={ref}/>
     </div>
 }

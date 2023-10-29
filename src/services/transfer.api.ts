@@ -60,11 +60,11 @@ export class TransferApi {
         return await erc20.transfer.estimateGas(to, amount);
     }
 
-    async getBalance(tokenAddress: string, from: string) {
+    async getBalance(tokenAddress: string) {
         if (!tokenAddress)
-            return this.provider.getBalance(from);
+            return this.provider.getBalance(this.accountStore.me);
         const erc20 = await this.getContract(tokenAddress);
-        return erc20.balanceOf(from);
+        return erc20.balanceOf(this.accountStore.me);
     }
 
     async getFeeData(){
@@ -78,13 +78,17 @@ export class TransferApi {
         }
     }
 
-    async getTokenInfo(tokenAddress: string) {
+    async getTokenInfo(tokenAddress: string): Promise<{
+        decimals: number;
+        name: string;
+        symbol: string;
+    }> {
         const contract = await this.getContract(tokenAddress);
         const decimals = await contract.decimals();
         const name = await contract.name();
         const symbol = await contract.symbol();
         return {
-            decimals, name, symbol
+            decimals: Number(decimals), name, symbol
         }
     }
 }

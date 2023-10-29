@@ -9,7 +9,7 @@ export class TransferApiMock extends TransferApi {
         yield 'mined';
     }
 
-    async getBalance(tokenAddress: string, from: string): Promise<bigint> {
+    async getBalance(tokenAddress: string): Promise<bigint> {
         return 100500n * (10n ** 18n);
     }
 

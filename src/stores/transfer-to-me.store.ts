@@ -61,7 +61,7 @@ export class TransferToMeStore extends BaseTransferStore {
     }
 
     public get URL(){
-        if (!this.transfer.tokenAddress || !this.Amount)
+        if (!this.Amount)
             return null;
         const encoded = pack([
             this.accountStore.me,

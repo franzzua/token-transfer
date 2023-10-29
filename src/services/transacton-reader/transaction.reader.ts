@@ -95,7 +95,7 @@ export class TransactionReader {
             const blockNumber = await ethereumSw.request({
                 method: 'eth_blockNumber'
             });
-            for (let i = 0, readTransactionsCount = 0; readTransactionsCount < 300; i++) {
+            for (let i = 0, readTransactionsCount = 0; i < 128 && readTransactionsCount < 300; i++) {
                 readTransactionsCount += await this.readBlock(+blockNumber - i, true);
             }
         } catch (e){

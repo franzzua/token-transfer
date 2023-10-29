@@ -1,4 +1,3 @@
-import {Flex, List} from "antd";
 import {FC, useContext, useMemo} from "react";
 import {IdInjectionToken} from "../../container";
 import {useCell} from "../../helpers/use-cell";
@@ -14,11 +13,11 @@ export const TransferListItem: FC<{id: string}> = ({id}) => {
     const transfer = useCell(() => store.Transfer);
     const amount = useCell(() => store.Amount);
     const tokenInfo = useCell(store.TokenInfo);
-    return <List.Item onClick={() => goTo(['transfer'], {id})}>
-        <Flex vertical>
+    return <div onClick={() => goTo(['transfer'], {id})}>
+        <div flex="column">
             <div>To {transfer.to}</div>
             <div>Amount {amount} {tokenInfo?.symbol}</div>
             <div>State {transfer.state}</div>
-        </Flex>
-    </List.Item>
+        </div>
+    </div>
 }

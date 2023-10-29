@@ -1,8 +1,6 @@
-import {Button, Card, Flex, Skeleton} from "antd";
 import {TransferStore} from "../../stores/transfer.store";
 import {TransferContext} from "../contexts/transfer-context";
 import {TargetInput} from "../components/target-input";
-import {TokenSelect} from "../components/token-select";
 import { useContext} from "react";
 import {useCell} from "../../helpers/use-cell";
 import {AmountInput} from "../components/amount-input";
@@ -13,10 +11,10 @@ export const TransferForm = () => {
     const transferStore = useContext(TransferContext) as TransferStore;
     const transfer = useCell(() => transferStore.Transfer);
     if (!transfer) //TODO: add loader
-        return <Skeleton/>;
+        return 'Loading...';
     return <div className="frost-card"
                 style={{maxWidth: 600, margin: 'auto'}} title={"Send tokens"}>
-        <Flex vertical gap="1em">
+        <div flex="column" gap="1">
             <AmountInput />
             <TargetInput />
             <FeeSelect />
@@ -28,6 +26,6 @@ export const TransferForm = () => {
                     goTo("/main")
                 }}>Send</button>
             </div>
-        </Flex>
+        </div>
     </div>;
 }

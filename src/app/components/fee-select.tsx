@@ -1,4 +1,3 @@
-import {Flex, Radio, Skeleton} from "antd";
 import {formatEther, formatUnits} from "ethers";
 import {useContext} from "react";
 import {AppContext} from "../contexts/app-context";
@@ -14,7 +13,7 @@ export const FeeSelect = () => {
     const transferStore = useContext(TransferContext) as TransferStore;
     const fee = useCell(() => transferStore.Transfer.fee);
     const info = useCell(transferStore.Fee);
-    if (!info) return <Skeleton.Input active/>;
+    if (!info) return 'Loading...';
     return <Label title="Fee">
         <div className={style.feeSelect} flex="row" justify="between" gap="1">
             {fees.map(f => (

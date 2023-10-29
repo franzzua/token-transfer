@@ -20,7 +20,7 @@ export class TokensStore {
     }
 
     @cell
-    get tokens(): TokenInfo[]{
+    get savedTokens(): TokenInfo[]{
         return [
             this.defaultToken.get(),
             ...this.storage.tokens.toArray().map(x => ({
@@ -28,7 +28,14 @@ export class TokensStore {
                 ...x
             })).filter(x =>
                 x.chainId == this.accountStore.chainId
-            ),
+            )
+        ];
+    }
+
+    @cell
+    get tokens(): TokenInfo[]{
+        return [
+            ...this.savedTokens,
             ...allTokens.filter(x =>
                 x.chainId == this.accountStore.chainId
             )
@@ -44,7 +51,10 @@ export class TokensStore {
     }
 
     public get Balances(){
-        return null;
+        return this.savedTokens.map(x => ({
+            token: x.address,
+            amount: this.api.getBalance(x.address)
+        }))
     }
 
     async getTokenInfo(tokenAddress: string): Promise<TokenInfo> {
@@ -63,7 +73,8 @@ export class TokensStore {
                     this.storage.tokens.addOrUpdate({
                         _id: tokenAddress,
                         chainId: this.accountStore.chainId,
-                        ...info
+                        ...info,
+                        logoURI: '',
                     })
                 }
                 return info;

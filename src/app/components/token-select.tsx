@@ -1,4 +1,3 @@
-import {BaseOptionType} from "antd/es/select";
 import {FC, useMemo, useState} from "react";
 import {useCell} from "../../helpers/use-cell";
 import {useAppContext} from "../contexts";
@@ -59,11 +58,10 @@ const TokenPreview: FC<{
     <span>{token.symbol}</span>
 </div>;
 
-function filter(query: string, token: TokenInfo & BaseOptionType){
+function filter(query: string, token: TokenInfo){
     return [
         token.name?.toLowerCase(),
         token.address?.toLowerCase(),
         token.symbol?.toLowerCase(),
-        token.value?.toLowerCase(),
     ].some(x => x?.includes(query.toLowerCase()));
 }
