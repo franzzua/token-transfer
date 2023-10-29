@@ -81,4 +81,6 @@ export class TransferToMeStore extends BaseTransferStore {
         this.Amount = amount;
         return this.transfer;
     }
+
+
 }

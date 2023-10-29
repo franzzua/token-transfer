@@ -1,22 +1,28 @@
-(async () => {
-    const provider = window.ethereum;
+const provider = window.ethereum;
+const button = document.getElementById('connect') as HTMLButtonElement;
+const loader = document.getElementById('loader');
+
+if (!provider){
+    button.disabled = true;
+
+} else {
+    provider.addListener('accountsChanged', notifyEthereumState);
     async function connect(){
-        button.disabled = true;
-        if (!provider) return;
+        loader.style.display = 'initial';
+        button.style.display = 'none';
         await provider.request<string[]>({ method: 'eth_requestAccounts' }).catch(() => {
             // rejected and ok
         });
-        button.disabled = false;
+        button.style.display = 'initial';
+        loader.style.display = 'none';
     }
-    const button = document.getElementById('connect') as HTMLButtonElement;
-    if (!provider){
-        button.disabled = true;
-        return;
-    }
-    provider.addListener('accountsChanged', notifyEthereumState);
-    async function notifyEthereumState(accounts: string[]){
-        if (!window.TokenTransferApp){
+    async function notifyEthereumState(accounts: string[]) {
+        if (!window.TokenTransferApp) {
+            loader.style.display = 'initial';
+            button.style.display = 'none';
             await new Promise(resolve => window.addEventListener('init', resolve, {once: true}));
+            button.style.display = 'initial';
+            loader.style.display = 'none';
         }
         if (accounts.length > 0) {
             window.TokenTransferApp.start();
@@ -24,7 +30,9 @@
             window.TokenTransferApp.stop();
         }
     }
-    const accounts = await provider.request({method: "eth_accounts"}) as string[];
-    notifyEthereumState(accounts);
+
+    loader.style.display = 'none';
+    provider.request({method: "eth_accounts"}).then(notifyEthereumState);
+    button.style.display = 'initial';
     button.addEventListener('click', connect);
-})();
+}
