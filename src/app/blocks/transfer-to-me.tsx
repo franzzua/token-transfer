@@ -6,7 +6,7 @@ import {goTo} from "../routing";
 
 export const TransferToMe = () => {
     const transferStore = useTransferStore<TransferToMeStore>();
-    return <div className="frost-card">
+    return <div className="frost-card" style={{maxWidth: 600, margin: 'auto'}}>
         <div flex="column" gap="2">
             <AmountInput hideMyAmount/>
             <TtmLink/>
