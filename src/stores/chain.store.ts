@@ -1,15 +1,13 @@
-import {AsyncCell, Fn, Cell, cell} from "@cmmn/cell/lib";
+import {Cell, cell} from "@cmmn/cell/lib";
 import {AccountStore} from "./account.store";
-import {JsonRpcApiProvider, TransactionResponse} from "ethers";
+import {TransactionResponse} from "ethers";
 import {ObservableDB} from "../helpers/observableDB";
 import {GasEstimator} from "../services/gas.oracle";
-import {chains} from "eth-chains";
 
 export class ChainStore{
 
 
-    constructor(private accountStore: AccountStore,
-                private providerFactory: (chainId: number) => JsonRpcApiProvider) {
+    constructor(private accountStore: AccountStore) {
 
         Cell.OnChange(() => this.accountStore.chainId, this.init);
         this.storage.on('change', e => {
@@ -30,9 +28,9 @@ export class ChainStore{
     @cell
     private estimator = new GasEstimator(
         {
-            [0.02]: "slow",
+            [0.2]: "slow",
             [0.5]: "average",
-            [0.99]: "fast"
+            [0.8]: "fast"
         } as const,
         "maxPriorityFeePerGas",
         [] as Array<TransactionInfo> );

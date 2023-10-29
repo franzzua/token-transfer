@@ -1,5 +1,4 @@
-import {FC} from "react";
-import {Flex, Typography} from "antd";
+import {FC, useState} from "react";
 
 export type LabelProps = {
     children: any;
@@ -7,9 +6,12 @@ export type LabelProps = {
     title?: string;
 }
 export const Label: FC<LabelProps> = (props) => {
-    return <Flex vertical gap="4px">
-        <Typography>{props.title}</Typography>
+    const [isVisited, setIsVisited] = useState(false);
+    return <label className={[
+        !!props.error ? 'error' : '',
+        isVisited ? 'visited' : ''
+    ].filter(x => x).join(' ')} onBlur={() => setIsVisited(true)}>
+        <span>{props.title}</span>
         {props.children}
-        {props.error && <Typography>{props.error}</Typography>}
-    </Flex>
+    </label>
 }

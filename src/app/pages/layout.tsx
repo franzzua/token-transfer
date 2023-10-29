@@ -1,14 +1,11 @@
-import {Flex} from "antd";
 import {FC} from "react";
 import {Header} from "../components/header";
 
 export const Layout: FC<{children: any}> = ({children}) => {
-    return <Flex vertical gap="2em" justify="space-around" >
-        <Flex justify="center">
-            <Header/>
-        </Flex>
+    return <div flex="column" gap="2" justify="around" >
+        <Header/>
         <div>
         {children}
         </div>
-    </Flex>
+    </div>
 }

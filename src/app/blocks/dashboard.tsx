@@ -1,12 +1,11 @@
-import {Button, Flex} from "antd";
 import {CreateTransferButton} from "../components/create-transfer-button";
 import {goTo} from "../routing";
 import {TransferList} from "./transfer-list";
 
 export const Dashboard = () => {
-    return <Flex vertical gap="2em">
+    return <div flex="column" gap="2">
         <CreateTransferButton/>
-        <Button type="primary" onClick={() => goTo("/transferToMe")}>Receive Tokens</Button>
+        <button onClick={() => goTo("/transferToMe")}>Receive Tokens</button>
         <TransferList/>
-    </Flex>
+    </div>
 }

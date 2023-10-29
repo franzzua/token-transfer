@@ -1,4 +1,3 @@
-import {Button} from "antd";
 import {useCallback, useContext} from "react";
 import {AppContext} from "../contexts/app-context";
 import {goTo} from "../routing";
@@ -9,5 +8,5 @@ export const CreateTransferButton = () => {
         const id = await appStore.createNew();
         goTo(['transfer'], {id});
     }, []);
-    return <Button type="primary" onClick={createTransfer}>Send Tokens</Button>
+    return <button onClick={createTransfer}>Send Tokens</button>
 }

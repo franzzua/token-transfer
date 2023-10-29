@@ -17,7 +17,10 @@ export const theme: ConfigProviderProps = {
             Input: {
                 addonBg: 'var(--light-blue)',
                 colorBgContainer: 'var(--light-green)',
-                colorBorder: 'transparent'
+                colorErrorBg: 'var(--red)',
+                colorError: 'transparent',
+                colorErrorBorder: 'transparent',
+                colorBorder: 'transparent',
             }
         }
     },

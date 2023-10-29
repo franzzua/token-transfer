@@ -1,0 +1,21 @@
+.amount{
+  flex-wrap: wrap;
+
+  >input {
+  }
+
+  >span{
+    font-size: 0.75rem;
+  }
+
+  .tokenSelect{
+    background: var(--light-blue);
+    align-self: stretch;
+    padding: 0 1em;
+  }
+}
+
+.amountError{
+  composes: amount;
+  background: var(--red);
+}

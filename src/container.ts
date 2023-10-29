@@ -19,7 +19,7 @@ export const container = Container.withProviders(
     {provide: TokensStore, deps: [UserStorage, AccountStore, TransferApi]},
     {provide: TransferApi, deps: [ProviderInjectionToken, AccountStore]},
     {provide: ProviderInjectionToken, useValue: (chainId: number) => new BrowserProvider(window.ethereum, chainId)},
-    {provide: ChainStore, deps: [AccountStore, ProviderInjectionToken]}
+    {provide: ChainStore, deps: [AccountStore]}
 );
 
 // @ts-ignore

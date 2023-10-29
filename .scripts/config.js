@@ -24,6 +24,7 @@ export const getConfig = ({prod, watch, sourceMaps}) => ({
         DEBUG: (!prod).toString(),
         TRANSACTION_WINDOW: '300'
     },
+    external: ["*.woff2"],
     plugins: [
         lessLoader(),
         htmlPlugin({

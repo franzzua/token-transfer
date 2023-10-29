@@ -14,19 +14,20 @@ export const TransferForm = () => {
     const transfer = useCell(() => transferStore.Transfer);
     if (!transfer) //TODO: add loader
         return <Skeleton/>;
-    return <Card style={{maxWidth: 600, margin: 'auto'}} title={"Send tokens"}>
+    return <div className="frost-card"
+                style={{maxWidth: 600, margin: 'auto'}} title={"Send tokens"}>
         <Flex vertical gap="1em">
             <AmountInput />
             <TargetInput />
             <FeeSelect />
-
-            <Button.Group>
-                <Button onClick={() => goTo("/main")}>Cancel</Button>
-                <Button type="primary" onClick={async () => {
+            <div className="divider"/>
+            <div flex="row" align="center" justify="between">
+                <button onClick={() => goTo("/main")}>Cancel</button>
+                <button className="primary" onClick={async () => {
                     transferStore.send();
                     goTo("/main")
-                }}>Send</Button>
-            </Button.Group>
+                }}>Send</button>
+            </div>
         </Flex>
-    </Card>;
+    </div>;
 }

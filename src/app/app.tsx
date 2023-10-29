@@ -5,7 +5,7 @@ import {container} from "../container";
 import {AppContext} from "./contexts/app-context";
 import {useRouter} from "./routing";
 import {theme} from "./theme";
-
+import "./app.less"
 export const App = () => {
     const diContainer = container.get<AppStore>(AppStore);
     const route = useRouter();

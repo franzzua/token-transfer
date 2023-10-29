@@ -10,7 +10,7 @@ export const MyBalance: FC = () => {
     const tokenInfo = useCell(transferStore.TokenInfo);
     if (balance == null)
         return <></>
-    return <Flex align="center">
-        <span>My amount: {balance} {tokenInfo?.symbol}</span>
-    </Flex>
+    return <>
+        <span>Balance: {balance}</span>
+    </>
 }

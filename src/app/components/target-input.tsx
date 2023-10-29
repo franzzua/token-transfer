@@ -1,4 +1,3 @@
-import {Input} from "antd";
 import {useContext} from "react";
 import {TransferContext} from "../contexts/transfer-context";
 import {useCell} from "../../helpers/use-cell";
@@ -9,7 +8,9 @@ export const TargetInput = () => {
     const transfer = useCell(() => transferStore.Transfer);
     const error = useCell(() => transferStore.errors.to);
     return <Label title="To" error={error}>
-        <Input value={transfer.to}
-                  onChange={e => transferStore.patch({to: e.currentTarget.value})}/>
+        <input value={transfer.to ?? ''}
+               placeholder="Receiver address"
+               className={['control', error ? 'error' : ''].filter(x => x).join(' ')}
+               onChange={e => transferStore.patch({to: e.currentTarget.value})}/>
     </Label>;
 }

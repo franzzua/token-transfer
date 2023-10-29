@@ -22,8 +22,12 @@ export class AccountStore {
             this.chainId = Number.parseInt(this.provider.chainId, 16);
         });
         Cell.OnChange(() => this.accounts, x => {
-            if (this.me) return;
-            this.me = this.accounts[0];
+            if (this.me) {
+                if (!x.value.includes(this.me))
+                    this.me = x.value[0];
+            } else {
+                this.me = this.accounts[0];
+            }
         })
     }
 

@@ -21,19 +21,30 @@ export class TokensStore {
 
     @cell
     get tokens(): TokenInfo[]{
-        return allTokens.filter(x =>
-            x.chainId == this.accountStore.chainId
-        );
+        return [
+            this.defaultToken.get(),
+            ...this.storage.tokens.toArray().map(x => ({
+                address: x._id,
+                ...x
+            })).filter(x =>
+                x.chainId == this.accountStore.chainId
+            ),
+            ...allTokens.filter(x =>
+                x.chainId == this.accountStore.chainId
+            )
+        ];
     }
 
-    public defaultToken = new Cell(() => this.chain.nativeCurrency);
+    public defaultToken = new Cell(() => this.chain.nativeCurrency as TokenInfo);
+
+
 
     public get Tokens() {
         return this.storage.tokens;
     }
 
     public get Balances(){
-        return
+        return null;
     }
 
     async getTokenInfo(tokenAddress: string): Promise<TokenInfo> {
@@ -47,6 +58,15 @@ export class TokensStore {
             }
         }
         return getTokenByAddress(tokenAddress) ??
-            await this.api.getTokenInfo(tokenAddress).catch(() => undefined);
+            await this.api.getTokenInfo(tokenAddress).then(info => {
+                if (info) {
+                    this.storage.tokens.addOrUpdate({
+                        _id: tokenAddress,
+                        chainId: this.accountStore.chainId,
+                        ...info
+                    })
+                }
+                return info;
+            }).catch(() => undefined);
     }
 }

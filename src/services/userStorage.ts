@@ -7,5 +7,7 @@ export class UserStorage {
     public transfers = new ObservableDB<Transfer>("transfers");
 
     @cell
-    public tokens = new ObservableDB<Transfer>("tokens");
+    public tokens = new ObservableDB<Omit<TokenInfo, "address"> & {
+        _id: string;
+    }>("tokens");
 }

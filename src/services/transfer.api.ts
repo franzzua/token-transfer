@@ -19,14 +19,24 @@ export class TransferApi {
 
     }
 
-    async *run(transfer: Transfer, maxPriorityFeePerGas: bigint): AsyncGenerator<Transfer['state']> {
+    private async getTransaction(transfer: Transfer, maxPriorityFeePerGas: bigint){
         const currentBlock = await this.provider.getBlock('pending');
-        yield 'pending';
-        try {
-            const erc20 = await this.getContract(transfer.tokenAddress, this.accountStore.me);
-            const transaction = await erc20.transfer(transfer.to, transfer.amount, {
+        if (!transfer.tokenAddress){
+            const signer = await this.provider.getSigner(this.accountStore.me);
+            return await signer.sendTransaction({
+                to: transfer.to, value: transfer.amount,
                 maxFeePerGas: maxPriorityFeePerGas + currentBlock.baseFeePerGas
             });
+        }
+        const erc20 = await this.getContract(transfer.tokenAddress, this.accountStore.me);
+        return  await erc20.transfer(transfer.to, transfer.amount, {
+            maxFeePerGas: maxPriorityFeePerGas + currentBlock.baseFeePerGas
+        });
+    }
+    async *run(transfer: Transfer, maxPriorityFeePerGas: bigint): AsyncGenerator<Transfer['state']> {
+        yield 'pending';
+        try {
+            const transaction = await this.getTransaction(transfer, maxPriorityFeePerGas);
             if (transaction.isMined()) {
                 yield 'mined';
             } else {
@@ -40,11 +50,19 @@ export class TransferApi {
     }
 
     async estimateGas(tokenAddress: string, to: string, amount: bigint, from: string): Promise<bigint> {
+        if (!tokenAddress){
+            const signer = await this.provider.getSigner(from);
+            return await signer.estimateGas({
+                to, value: amount
+            });
+        }
         const erc20 = await this.getContract(tokenAddress, from);
         return await erc20.transfer.estimateGas(to, amount);
     }
 
     async getBalance(tokenAddress: string, from: string) {
+        if (!tokenAddress)
+            return this.provider.getBalance(from);
         const erc20 = await this.getContract(tokenAddress);
         return erc20.balanceOf(from);
     }

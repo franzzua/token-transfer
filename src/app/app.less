@@ -1,0 +1,148 @@
+@supports (-webkit-touch-callout: none) {
+  /* CSS specific to iOS devices */
+  #root {
+    font-family: 'SF Pro', 'ui-sans-serif';
+  }
+
+  @font-face {
+    font-family: 'SF Pro';
+    src: local('SF Pro Text Regular'), local('SFProText-Regular'), local("SF Pro");
+    font-weight: normal;
+    font-style: normal;
+  }
+}
+
+@supports not (-webkit-touch-callout: none) {
+  /* CSS for other than iOS devices */
+  #root, button, input, select {
+    font-family: 'Exo2', 'ui-sans-serif', 'Roboto', 'sans-serif';
+  }
+
+  @font-face {
+    font-family: 'Exo2';
+    src: local('Exo2'), url('/public/fonts/Exo2.woff2') format('woff2');
+    /*font-weight: 400 510 590 860;*/
+  }
+}
+
+.frost-card {
+  background: #FFF6;
+  backdrop-filter: blur(3px);
+  border-width: 0;
+  box-shadow: #465d8f 0 0 6px 6px;
+  padding: 2em;
+  border-radius: 8px;
+
+  &.small{
+    padding: .5em 1em;
+  }
+
+  @media(max-width: 400px){
+    padding: 1em .5em;
+    border-radius: 0;
+  }
+}
+
+
+#root, input, select, button{
+  color: var(--dark);
+}
+
+[flex]{
+  display: flex;
+  &[flex=column]{
+    flex-direction: column;
+  }
+  &[justify=center]{
+    justify-content: center;
+  }
+  &[justify=between]{
+   justify-content: space-between;
+  }
+  &[justify=between]{
+    justify-content: space-between;
+  }
+  &[align=center]{
+    align-items: center;
+  }
+  &[align=start]{
+    align-items: flex-start;
+  }
+  &[align=end]{
+    align-items: flex-end;
+  }
+  &[gap="0.5"]{
+    gap: 0.5em;
+  }
+  &[gap="1"]{
+    gap: 1em;
+  }
+  &[gap="1.5"]{
+    gap: 1.5em;
+  }
+  &[gap="2"]{
+    gap: 2em;
+  }
+  &[gap="3"]{
+    gap: 3em;
+  }
+  &[gap="4"]{
+    gap: 4em;
+  }
+  &[wrap]{
+    flex-wrap: wrap;
+  }
+}
+
+button.primary {
+  background: var(--dark-blue);
+  color: var(--light-green);
+}
+
+.divider{
+  height: .1px;
+  background: var(--dark-blue);
+  margin: .5em -2em;
+  box-sizing: border-box;
+}
+
+input {
+  border: none;
+  padding: 1em;
+  flex: 1;
+  background: none;
+  outline: none;
+  font-size: 1.5rem;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.pre-input{
+  font-size: 1.5rem;
+  width: 1em;
+  height: 1em;
+  padding: 1em;
+  margin-right: -1em;
+}
+
+label{
+  display: flex;
+  flex-direction: column;
+}
+
+
+.control{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background: var(--light-green);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+label.visited.error .control {
+  background: var(--red);
+}
+
+label.error .control:not(:placeholder-shown) {
+  background: var(--red);
+}

@@ -44,8 +44,6 @@ export class TransferStore extends BaseTransferStore {
     private timer = new Timer(5000);
     public myBalance = new AsyncCell(async () => {
         this.timer.get();
-        if (!this.Transfer.tokenAddress)
-            return null;
         return await this.api.getBalance(this.Transfer.tokenAddress, this.accountStore.me)
             .catch(() => null);
     });
@@ -93,7 +91,7 @@ export class TransferStore extends BaseTransferStore {
 
     private validators: Partial<Record<keyof Transfer, (value, transfer: Transfer) => boolean>> = {
         to: isAddress,
-        tokenAddress: isAddress,
+        tokenAddress: x => !x || isAddress(x),
         amount: (amount, transfer) => {
             const balance = this.myBalance.get();
             if (!balance) return true;

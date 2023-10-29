@@ -8,11 +8,9 @@ import {useRouter} from "../routing";
 
 
 export function TransferPage(){
-    const {container} = useContext(AppContext);
+    const appContext = useContext(AppContext);
     const {query: {id}} = useRouter();
-    const transferStore = useMemo(() => container.get<TransferStore>(TransferStore, [{
-        provide: IdInjectionToken, useValue: id
-    }]), [id]);
+    const transferStore = useMemo(() => appContext.getTransferStore(id as string), [id]);
     return <TransferContext.Provider value={transferStore}>
         <TransferForm/>
     </TransferContext.Provider>

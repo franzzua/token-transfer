@@ -6,6 +6,7 @@ import {AccountStore} from "./account.store";
 import {ChainStore} from "./chain.store";
 import {TransferToMeStore} from "./transfer-to-me.store";
 import {TokensStore} from "./tokens.store";
+import {TransferStore} from "./transfer.store";
 
 export class AppStore {
     constructor(public storage: UserStorage,
@@ -20,6 +21,11 @@ export class AppStore {
     public getTransferToMeStore(){
         return new TransferToMeStore(this.api, this.accountStore, this.tokensStore);
     }
+    @bind
+    public getTransferStore(id: string){
+        return new TransferStore(id, this.storage, this.accountStore, this.tokensStore, this.api, this.chainStore);
+    }
+
 
     @cell({compare})
     public get Transfers(){
