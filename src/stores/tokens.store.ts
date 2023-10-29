@@ -1,12 +1,14 @@
 import {TransferApi} from "../services/transfer.api";
 import {UserStorage} from "../services/userStorage";
 import {AccountStore} from "./account.store";
-import {chains} from "eth-chains";
 import {cell, Cell} from "@cmmn/cell/lib";
 import uniswapTokenList from "@uniswap/default-token-list";
 import {getTokenByAddress} from "../services/token.info";
+import {chains} from "eth-chains/dist/src/chains.js";
 
-const allTokens = uniswapTokenList.tokens as Array<TokenInfo>
+const allTokens = uniswapTokenList.tokens as Array<TokenInfo & {
+    logoURI: string;
+}>
 
 export class TokensStore {
     constructor(private storage: UserStorage,
@@ -16,7 +18,7 @@ export class TokensStore {
     }
 
     get chain(){
-        return chains.get(this.accountStore.chainId);
+        return chains[this.accountStore.chainId];
     }
 
     @cell
@@ -64,7 +66,6 @@ export class TokensStore {
                 ...native,
                 address: '',
                 chainId: this.accountStore.chainId,
-                logoURI: '',
             }
         }
         return getTokenByAddress(tokenAddress) ??
@@ -74,10 +75,13 @@ export class TokensStore {
                         _id: tokenAddress,
                         chainId: this.accountStore.chainId,
                         ...info,
-                        logoURI: '',
                     })
                 }
                 return info;
             }).catch(() => undefined);
+    }
+
+    async getTokenImageURL(address: string | null): Promise<string>{
+        return allTokens.find(x => x.address === address)?.logoURI;
     }
 }

@@ -1,6 +1,6 @@
 import {Cell, cell} from "@cmmn/cell/lib";
 import {AccountStore} from "./account.store";
-import {TransactionResponse} from "ethers";
+import type {TransactionResponse} from "ethers";
 import {ObservableDB} from "../helpers/observableDB";
 import {GasEstimator} from "../services/gas.oracle";
 

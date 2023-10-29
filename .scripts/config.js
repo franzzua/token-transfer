@@ -2,6 +2,8 @@ import { htmlPlugin } from '@craftamap/esbuild-plugin-html';
 import {readFileSync, writeFileSync} from "node:fs";
 import { lessLoader } from 'esbuild-plugin-less';
 import * as path from "node:path";
+import {chains} from "eth-chains/dist/src/chains.js";
+
 export const getConfig = ({prod, watch, sourceMaps}) => ({
     entryPoints: [
         { out: 'main', in: 'src/index.tsx'},
@@ -17,7 +19,7 @@ export const getConfig = ({prod, watch, sourceMaps}) => ({
     outdir: 'dist',
     metafile: true,
     platform: 'browser',
-    treeShaking: prod,
+    treeShaking: !!prod,
     tsconfig: 'tsconfig.json',
     jsx: 'automatic',
     define: {
@@ -41,9 +43,32 @@ export const getConfig = ({prod, watch, sourceMaps}) => ({
                 }
             }]
         }),
-        metafilePlugin()
+        metafilePlugin(),
+        chainListPlugin()
     ],
 });
+
+function chainListPlugin(){
+    return {
+        name: 'chainListPlugin',
+        setup(build) {
+            const data = Object.fromEntries(Object.entries(chains).map(([key, value]) =>
+                [key, {
+                    name: value.name,
+                    nativeCurrency: value.nativeCurrency,
+                    infoURL: value.infoURL
+                }]
+            ));
+            build.initialOptions.alias ??= {};
+            const jsonPath = path.join(build.initialOptions.outdir, 'chains.js');
+            build.initialOptions.alias["eth-chains/dist/src/chains.js"] = jsonPath;
+            writeFileSync(
+                jsonPath,
+                `export const chains = ${JSON.stringify(data)};`
+            );
+        },
+    }
+}
 
 function metafilePlugin(){
     return {
@@ -56,6 +81,10 @@ function metafilePlugin(){
                         JSON.stringify(Object.keys(result.metafile.outputs)
                             .map(x => x.replace(build.initialOptions.outdir, build.initialOptions.publicPath ?? ''))
                         ),
+                    );
+                    writeFileSync(
+                        path.join(build.initialOptions.outdir, 'meta.json'),
+                        JSON.stringify(result.metafile),
                     );
                 }
             });

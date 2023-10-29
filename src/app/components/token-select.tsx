@@ -47,16 +47,20 @@ const TokenPreview: FC<{
     token: TokenInfo;
     isSelected: boolean;
     onChange(token: TokenInfo): void;
-}> = ({token, onChange, isSelected}) => <div flex="column" align="center" style={{
-    cursor: 'pointer',
-    background: isSelected ? 'var(--light-blue)' : 'transparent'
-}} onClick={() => onChange(token)}>
-    <img alt={token.name} src={token.logoURI} style={{
-        width: '4em',
-        height: '4em'
-    }}/>
-    <span>{token.symbol}</span>
-</div>;
+}> = ({token, onChange, isSelected}) => {
+    const {tokensStore} = useAppContext();
+    const logoURI = useAsync(() => tokensStore.getTokenImageURL(token.address), [token.address]);
+    return <div flex="column" align="center" style={{
+        cursor: 'pointer',
+        background: isSelected ? 'var(--light-blue)' : 'transparent'
+    }} onClick={() => onChange(token)}>
+        <img alt={token.name} src={logoURI.data} style={{
+            width: '4em',
+            height: '4em'
+        }}/>
+        <span>{token.symbol}</span>
+    </div>;
+};
 
 function filter(query: string, token: TokenInfo){
     return [

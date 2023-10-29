@@ -1,7 +1,8 @@
-import {Contract, ethers, JsonRpcApiProvider} from "ethers";
+import {Contract, JsonRpcApiProvider} from "ethers";
 import {AccountStore} from "../stores/account.store";
-import {abi, ERC20} from "erc20-compiled";
-import {etherium} from "../../test/test.container";
+import {abi} from "erc20-compiled";
+import type {ERC20} from "erc20-compiled";
+
 export class TransferApi {
 
     // private provider = new ethers.BrowserProvider(window.ethereum);
@@ -65,17 +66,6 @@ export class TransferApi {
             return this.provider.getBalance(this.accountStore.me);
         const erc20 = await this.getContract(tokenAddress);
         return erc20.balanceOf(this.accountStore.me);
-    }
-
-    async getFeeData(){
-        const feeData = await this.provider.getFeeData();
-        const currentBlock = await this.provider.getBlock('pending');
-
-        const baseFeePerGas = currentBlock.baseFeePerGas;
-        return {
-            baseFeePerGas,
-            ...feeData,
-        }
     }
 
     async getTokenInfo(tokenAddress: string): Promise<{

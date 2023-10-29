@@ -20,10 +20,9 @@ type Transfer = {
 
 type TokenInfo = {
     chainId: number;
-    address: string;
+    address: string | null;
     symbol: string;
     name: string;
-    logoURI: string;
     decimals: number;
     // extensions?: {
     //     bridgeInfo: Record<string, {
