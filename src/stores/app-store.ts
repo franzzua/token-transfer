@@ -32,6 +32,10 @@ export class AppStore {
     }
 
     @cell({compare})
+    public get NotSentTransfers(){
+        return this.storage.transfers.toArray();
+    }
+    @cell({compare})
     public get SentTransfers(){
         return this.storage.sentTransfers.toArray();
     }
@@ -43,13 +47,11 @@ export class AppStore {
     async createNew() {
         const transfer = {
             _id: Fn.ulid(),
-            id: null,
             amount: null,
             tokenAddress: '',
-            from: null,
             to: null,
             fee: 'average',
-            state: 'initial'
+            state: 'initial',
         } as Transfer;
         await this.storage.transfers.addOrUpdate(transfer);
         return transfer._id;

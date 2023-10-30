@@ -19,3 +19,5 @@ export const SentTransfer: FC<{id: string}> = ({id}) => {
     </div>
 
 }
+
+

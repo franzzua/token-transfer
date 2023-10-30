@@ -13,5 +13,6 @@ export const Label: FC<LabelProps> = (props) => {
     ].filter(x => x).join(' ')} onBlur={() => setIsVisited(true)}>
         <span>{props.title}</span>
         {props.children}
+        <span className="error-text">{props.error}</span>
     </label>
 }

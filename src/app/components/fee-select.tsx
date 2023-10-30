@@ -16,13 +16,14 @@ export const FeeSelect = () => {
     // const transactions = useCell(() => chainStore.transactions);
     if (!info) return 'Loading gas prices...';
     return <Label title="Fee">
-        <div className={style.feeSelect} flex="row" justify="between" gap="1">
+        <div className={style.feeSelect} >
             {fees.map(f => (
                 <label key={f}>
                     <input type="radio" value="slow" name="fee"
                            onChange={e => transferStore.patch({fee: f})}
                            checked={fee == f}/>
-                    <span>around {info[f].time.toFixed(1)} second</span>
+                    <span>{labels[f]}</span>
+                    <span>{info[f].timePercs[0]?.toFixed(0)} - {info[f].timePercs[2]?.toFixed(0)} second</span>
                     <span>{(+formatUnits(info[f].fee, 12)).toFixed(0)} µ{defaultToken}</span>
                 </label>
             ))}
@@ -38,7 +39,7 @@ export const FeeSelect = () => {
 
 const fees = ["slow", "average", "fast"] as const;
 const labels = {
-    slow: '> 1 min',
-    average: '30 - 60 sec',
-    fast: '< 30 sec',
+    slow: 'Cheap',
+    average: 'Average',
+    fast: 'Fast',
 }

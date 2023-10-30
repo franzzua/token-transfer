@@ -1,5 +1,9 @@
 .feeSelect{
   border-radius: 8px;
+  display: flex;
+  flex-direction: row;
+  gap: 2em;
+
 
   label {
     flex: 1;
@@ -34,4 +38,17 @@
     }
 
   }
+
+
+  @media (max-width: 440px){
+    flex-direction: column;
+    gap: 1em;
+
+    label{
+      flex-direction: row;
+      max-width: none;
+      justify-content: space-between;
+    }
+  }
+
 }

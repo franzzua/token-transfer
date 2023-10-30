@@ -3,7 +3,7 @@ import {Timer} from "../helpers/timer";
 import {TransferApi} from "../services/transfer.api";
 import {AccountStore} from "./account.store";
 import {ChainStore} from "./chain.store";
-import {formatUnits, isAddress} from "ethers";
+import {formatUnits, isAddress, toNumber} from "ethers";
 import {UserStorage} from "../services/userStorage";
 import {BaseTransferStore} from "./base.transfer.store";
 import {TokensStore} from "./tokens.store";
@@ -72,24 +72,27 @@ export class TransferStore extends BaseTransferStore {
         const gasData = this.chainStore.gasPrices;
         if (!gasData) return null;
         const fees = {
-            slow: {fee: gasData.slow.maxPriorityFeePerGas * gas, time: gasData.slow.time},
-            average: {fee: gasData.average.maxPriorityFeePerGas * gas, time: gasData.average.time},
-            fast: {fee: gasData.fast.maxPriorityFeePerGas * gas, time: gasData.fast.time},
+            slow: {fee: gasData.slow.maxPriorityFeePerGas * gas, ...gasData.slow},
+            average: {fee: gasData.average.maxPriorityFeePerGas * gas, ...gasData.average},
+            fast: {fee: gasData.fast.maxPriorityFeePerGas * gas, ...gasData.fast},
         }
         return fees;
     });
 
 
-    private validators: Partial<Record<keyof Transfer, (value, transfer: Transfer) => boolean>> = {
-        to: isAddress,
-        tokenAddress: x => !x || isAddress(x),
+    private validators: Partial<Record<keyof Transfer, (value, transfer: Transfer) => string | null>> = {
+        to: x => !isAddress(x) ? 'Invalid address' :
+            x.toLowerCase() === this.accountStore.me.toLowerCase() ? 'You can\'t transfer tokens to yourself' : null,
+        tokenAddress: x => (!x || isAddress(x)) ? null : 'Invalid address',
         amount: (amount, transfer) => {
             const balance = this.myBalance.get();
-            if (balance == null) return true;
-            if (!this.Total) return false;
-            return this.Total <= balance;
+            if (balance == null) return null;
+            if (Number.isNaN(+this.Transfer.amount)) return `Invalid number`;
+            if (+this.Transfer.amount < 0) return `Amount should be positive number`;
+            if (!this.Total) return null;
+            return this.Total <= balance ? null : `Your have not sufficient tokens amount`;
         },
-        fee: () => !!this.Fee.get()
+        fee: () => !!this.Fee.get() ? null : `Wait for loading fees`
     }
     public get Total(): bigint | null{
         if (!this.Amount) return null;
@@ -99,19 +102,12 @@ export class TransferStore extends BaseTransferStore {
     }
 
     public get isValid(){
-        for (let key in this.validators) {
-            if (!this.validators[key](this.Transfer[key], this.Transfer)){
-                return false;
-            }
-        }
-        return true;
+        return Object.values(this.errors).every(x => !x);
     }
     public get errors(): Record<keyof Transfer, string | undefined>{
         const errors = {} as Record<keyof Transfer, string | undefined>;
         for (let key in this.validators) {
-            if (!this.validators[key](this.Transfer[key], this.Transfer)){
-                errors[key] = "error";
-            }
+            errors[key] = this.validators[key](this.Transfer[key], this.Transfer);
         }
         return errors;
     }

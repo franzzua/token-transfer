@@ -36,10 +36,6 @@
     padding: .5em 1em;
   }
 
-  @media(max-width: 400px){
-    padding: 1em .5em;
-    border-radius: 0;
-  }
 }
 
 
@@ -103,6 +99,7 @@ button.primary {
   background: var(--dark-blue);
   margin: .5em -2em;
   box-sizing: border-box;
+
 }
 
 input {
@@ -127,6 +124,7 @@ label{
   display: flex;
   flex-direction: column;
   gap: .5em;
+  position: relative;
   >span{
     margin: 0 8px;
   }
@@ -141,13 +139,26 @@ label{
   border-radius: 8px;
   overflow: hidden;
 }
+.error-text {
+  display: none;
+  position: absolute;
+  color: var(--dark-red);
+  font-size: .75rem;
+  bottom: 4px;
+}
 
 label.visited.error .control {
   background: var(--red);
+  &+.error-text{
+    display: initial;
+  }
 }
 
 label.error .control:not(:placeholder-shown):not(:has(:placeholder-shown)) {
   background: var(--red);
+  &+.error-text{
+    display: initial;
+  }
 }
 
 a{

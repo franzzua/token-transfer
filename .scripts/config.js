@@ -25,7 +25,7 @@ export const getConfig = ({prod, watch, sourceMaps}) => ({
     jsx: 'automatic',
     define: {
         DEBUG: (!prod).toString(),
-        TRANSACTION_WINDOW: '300'
+        TRANSACTION_WINDOW: '60'
     },
     external: ["*.woff2"],
     plugins: [

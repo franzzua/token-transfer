@@ -7,6 +7,6 @@ export const MyBalance: FC = () => {
     const transferStore = useTransferStore<TransferStore>();
     const balance = useCell(() => transferStore.myBalanceFormatted);
     if (balance == null)
-        return <></>
+        return <>Loading balance...</>
     return <span>Balance: {balance}</span>;
 }

@@ -50,9 +50,14 @@ export class GasEstimator extends EventEmitter<{change: void}>{
         }
         return Object.fromEntries(
             Object.entries(this.percentiles).map(([name, percentile]) => {
+                const timeSum = timeSums[name].sort();
+                const time25 = timeSum[Math.floor(timeSum.length*0.25)];
+                const time50 = timeSum[Math.floor(timeSum.length*0.5)];
+                const time75 = timeSum[Math.floor(timeSum.length*0.75)];
                 return [name, {
                     maxPriorityFeePerGas: gas[name],
                     time: timeSums[name].average(),
+                    timePercs: [time25, time50, time75],
                     quality: timeSums[name].length
                 }];
             })
@@ -82,10 +87,12 @@ export class GasEstimator extends EventEmitter<{change: void}>{
 
 
 export type GasInfo = null | {
-    slow: {maxPriorityFeePerGas: bigint, time: number};
-    average: {maxPriorityFeePerGas: bigint, time: number};
-    fast: {maxPriorityFeePerGas: bigint, time: number};
+    slow: GasInfoPerc;
+    average: GasInfoPerc;
+    fast: GasInfoPerc;
 };
+
+export type GasInfoPerc = {maxPriorityFeePerGas: bigint, time: number, timePercs: [number, number, number], quality: number};
 
 
 export type GasEstimatorInfo = {

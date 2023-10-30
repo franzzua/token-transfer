@@ -93,13 +93,12 @@ export class TransactionReader {
         await this.storage.isLoaded;
         await this.pendingTransactions.isLoaded;
         for (let transaction of this.storage.toArray()) {
-            if (transaction.pendingTime > +new Date()/1000 - TRANSACTION_WINDOW) continue;
             if (transaction.timestamp > +new Date()/1000 - TRANSACTION_WINDOW) continue;
             await this.storage.remove(transaction._id);
         }
         for (let transaction of this.pendingTransactions.toArray()) {
             if (transaction.pendingTime > +new Date()/1000 - TRANSACTION_WINDOW*10) continue;
-            await this.storage.remove(transaction._id);
+            await this.pendingTransactions.remove(transaction._id);
         }
 
     }
@@ -115,9 +114,10 @@ export class TransactionReader {
 
     private async readBlock(number: number, withTransactions = false){
         const block = await this.browserProvider.getBlock(number, withTransactions);
-        if (!block) return 0;
+        if (!block) return null;
+        if (block.timestamp < +new Date()/1000 - TRANSACTION_WINDOW) return null;
         for (let transactionOrHash of block.transactions) {
-            if (!this.isConnected) return 0;
+            if (!this.isConnected) return null;
             const transaction = await this.readTransaction(transactionOrHash)
             if (!transaction?.maxPriorityFeePerGas) continue;
             const pending = this.pendingTransactions.get(transaction.hash);
@@ -131,14 +131,15 @@ export class TransactionReader {
             } as TransactionInfo;
             await this.storage.addOrUpdate(data);
         }
-        return block.transactions.length;
+        return block;
     }
     private async preload(){
         try {
             const blockNumber = await this.browserProvider.getBlockNumber();
             for (let i = 0, readTransactionsCount = 0; i < 128 && readTransactionsCount < 300; i++) {
                 if (!this.isConnected) return;
-                readTransactionsCount += await this.readBlock(+blockNumber - i, true);
+                const block = await this.readBlock(+blockNumber - i, true);
+                readTransactionsCount += block.transactions.length;
             }
         } catch (e){
             console.error(e);
