@@ -1,4 +1,5 @@
 import {TransferStore} from "../../stores/transfer.store";
+import {Total} from "../components/total";
 import {TransferContext} from "../contexts/transfer-context";
 import {TargetInput} from "../components/target-input";
 import { useContext} from "react";
@@ -10,6 +11,7 @@ import {FeeSelect} from "../components/fee-select";
 export const TransferForm = () => {
     const transferStore = useContext(TransferContext) as TransferStore;
     const transfer = useCell(() => transferStore.Transfer);
+    const isValid = useCell(() => transferStore.isValid);
     if (!transfer) //TODO: add loader
         return 'Loading...';
     return <div className="frost-card"
@@ -18,10 +20,11 @@ export const TransferForm = () => {
             <AmountInput />
             <TargetInput />
             <FeeSelect />
+            <Total/>
             <div className="divider"/>
             <div flex="row" align="center" justify="between">
                 <button onClick={() => goTo("/main")}>Cancel</button>
-                <button className="primary" onClick={async () => {
+                <button disabled={!isValid} className="primary" onClick={async () => {
                     await transferStore.send();
                     goTo("/main")
                 }}>Send</button>

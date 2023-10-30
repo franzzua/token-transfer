@@ -58,7 +58,7 @@ export class TokensStore {
         }))
     }
 
-    async getTokenInfo(tokenAddress: string, chainId: number = this.accountStore.chainId): Promise<TokenInfo> {
+    async getTokenInfo(tokenAddress: string, chainId: number = this.accountStore.chainId): Promise<TokenInfo | null> {
         if (!tokenAddress){
             const native = chains[chainId].nativeCurrency;
             return  {
@@ -77,10 +77,16 @@ export class TokensStore {
                     })
                 }
                 return info;
-            }).catch(() => undefined);
+            }).catch((e) => {
+                console.error(e);
+                return null;
+            });
     }
 
     async getTokenImageURL(address: string | null): Promise<string>{
+        if (!address){
+            return `https://s2.googleusercontent.com/s2/favicons?domain_url=${this.chain.infoURL}`;
+        }
         return allTokens.find(x => x.address === address)?.logoURI;
     }
 }

@@ -55,8 +55,8 @@ const TokenPreview: FC<{
         background: isSelected ? 'var(--light-blue)' : 'transparent'
     }} onClick={() => onChange(token)}>
         <img alt={token.name} src={logoURI.data} style={{
-            width: '4em',
-            height: '4em'
+            width: '2em',
+            height: '2em'
         }}/>
         <span>{token.symbol}</span>
     </div>;

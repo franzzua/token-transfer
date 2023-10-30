@@ -1,4 +1,4 @@
-import {Contract, JsonRpcApiProvider} from "ethers";
+import {Contract, InfuraProvider, JsonRpcApiProvider} from "ethers";
 import {AccountStore} from "../stores/account.store";
 import {abi} from "erc20-compiled";
 import type {ERC20} from "erc20-compiled";
@@ -8,6 +8,7 @@ export class TransferApi {
     // private provider = new ethers.BrowserProvider(window.ethereum);
     constructor(private providerFactory: (chainId: number) => JsonRpcApiProvider,
                 private accountStore: AccountStore) {
+        this.provider.on('pending', console.log);
     }
 
     private get provider(){
@@ -80,16 +81,10 @@ export class TransferApi {
         name: string;
         symbol: string;
     }> {
-        const contract = new Contract(tokenAddress, abi) as Contract&ERC20;
-        const decimals = await contract.decimals({
-            chainId
-        });
-        const name = await contract.name({
-            chainId
-        });
-        const symbol = await contract.symbol({
-            chainId
-        });
+        const contract = await this.getContract(tokenAddress, this.accountStore.me);
+        const decimals = await contract.decimals({chainId});
+        const name = await contract.name({chainId});
+        const symbol = await contract.symbol({chainId});
         return {
             decimals: Number(decimals), name, symbol
         }

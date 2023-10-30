@@ -2,7 +2,7 @@ import {Cell, cell} from "@cmmn/cell/lib";
 import {AccountStore} from "./account.store";
 import type {TransactionResponse} from "ethers";
 import {ObservableDB} from "../helpers/observableDB";
-import {GasEstimator} from "../services/gas.oracle";
+import {GasEstimator, GasInfo} from "../services/gasEstimator";
 
 export class ChainStore{
 
@@ -15,10 +15,14 @@ export class ChainStore{
                 case "addOrUpdate":
                     const newTransaction = e.value;
                     if (this.transactionFilter(newTransaction))
-                        this.estimator.add(newTransaction);
+                        this.estimator.add({
+                            hash: newTransaction._id,
+                            maxPriorityFeePerGas: newTransaction.maxPriorityFeePerGas,
+                            time: newTransaction.timestamp - newTransaction.pendingTime
+                        });
                     break;
                 case "delete":
-                    this.estimator.removeAll(x => x._id == e.key);
+                    this.estimator.removeAll(x => x.hash == e.key);
                     break;
             }
         })
@@ -26,31 +30,32 @@ export class ChainStore{
     }
 
     @cell
-    private estimator = new GasEstimator(
-        {
-            [0.2]: "slow",
-            [0.5]: "average",
-            [0.8]: "fast"
-        } as const,
-        "maxPriorityFeePerGas",
-        [] as Array<TransactionInfo> );
+    private estimator = new GasEstimator();
 
+    @cell
     private storage = new ObservableDB<TransactionInfo>("transactions");
 
     private init = async () => {
         await this.storage.init();
         this.estimator.removeAll();
-        const stored = this.storage.toArray().filter(this.transactionFilter);
-        console.log(stored.length)
-        this.estimator.add(...stored);
+        this.estimator.add(...this.transactions);
     }
 
-    private transactionFilter = (t: TransactionInfo) => t.timestamp > +new Date()/1000 - 300
+    private transactionFilter = (t: TransactionInfo) => t.timestamp && t.pendingTime
+        && t.timestamp > +new Date()/1000 - 300
         && t.chainId == this.accountStore.chainId
         && t.type == 2;
 
     public get gasPrices(): GasInfo {
-        return this.estimator.Percentiles as GasInfo;
+        return this.estimator.GasInfo;
+    }
+    @cell
+    public get transactions(){
+        return this.storage.toArray().filter(this.transactionFilter).map(x => ({
+            hash: x._id,
+            maxPriorityFeePerGas: x.maxPriorityFeePerGas,
+            time: x.timestamp - x.pendingTime,
+        }))
     }
 
 }
@@ -58,10 +63,6 @@ export class ChainStore{
 type TransactionInfo = Pick<TransactionResponse, "maxPriorityFeePerGas"|"type"> & {
     _id: string;
     timestamp: number;
+    pendingTime?: number;
     chainId: number;
-};
-export type GasInfo = null | {
-    slow: bigint;
-    average: bigint;
-    fast: bigint;
 };

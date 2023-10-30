@@ -1,5 +1,5 @@
 import {test, beforeAll} from "@jest/globals";
-import {GasEstimator} from "../src/services/gas.oracle";
+import {GasEstimator} from "../src/services/gasEstimator";
 import {randomBytes, toBigInt} from "ethers";
 
 const percentileNames = {
@@ -21,7 +21,7 @@ test(`init`,async () => {
     for (let i = 0; i < values.length; i++) {
         expect(Number(values[i])).toEqual((i + 1));
     }
-    const percentiles = gasOracle.Percentiles;
+    const percentiles = gasOracle.GasInfo;
     expect(Math.abs(Number(percentiles.slow - 20000n))).toBeLessThan(3);
     expect(Math.abs(Number(percentiles.average - 50000n))).toBeLessThan(3);
     expect(Math.abs(Number(percentiles.fast - 60000n))).toBeLessThan(3);
@@ -36,7 +36,7 @@ test(`increase`,async () => {
             type: 2
         });
     }
-    const percentiles = gasOracle.Percentiles;
+    const percentiles = gasOracle.GasInfo;
     expect(Math.abs(Number(percentiles.slow - 20000n))).toBeLessThan(3);
     expect(Math.abs(Number(percentiles.average - 50000n))).toBeLessThan(3);
     expect(Math.abs(Number(percentiles.fast - 60000n))).toBeLessThan(3);
@@ -52,7 +52,7 @@ test(`decrease`,async () => {
         })
     }
     gasOracle.removeAll(x => (x.maxPriorityFeePerGas % 2n) == 0n);
-    const percentiles = gasOracle.Percentiles;
+    const percentiles = gasOracle.GasInfo;
     expect(Math.abs(Number(percentiles.slow - 20000n))).toBeLessThan(3);
     expect(Math.abs(Number(percentiles.average - 50000n))).toBeLessThan(3);
     expect(Math.abs(Number(percentiles.fast - 60000n))).toBeLessThan(3);
@@ -66,7 +66,7 @@ test(`increaseModule`,async () => {
     }
     // gasOracle.removeAll(x => (x.value % 2n) == 0n);
     gasOracle.removeAll(x => (x.value % 2n) == 0n);
-    const percentiles = gasOracle.Percentiles;
+    const percentiles = gasOracle.GasInfo;
     expect(Math.abs(Number(percentiles.slow - 20n))).toBeLessThan(3);
     expect(Math.abs(Number(percentiles.average - 50n))).toBeLessThan(3);
     expect(Math.abs(Number(percentiles.fast - 60n))).toBeLessThan(3);
@@ -78,7 +78,7 @@ test(`equal`,async () => {
             value: 100n
         })
     }
-    const percentiles = gasOracle.Percentiles;
+    const percentiles = gasOracle.GasInfo;
     expect(Math.abs(Number(percentiles.slow - 100n))).toBeLessThan(3);
     expect(Math.abs(Number(percentiles.average - 100n))).toBeLessThan(3);
     expect(Math.abs(Number(percentiles.fast - 100n))).toBeLessThan(3);
@@ -91,5 +91,5 @@ test(`random`,async () => {
         })
     }
     gasOracle.removeAll(x => (x.value % 2n) == 0n);
-    console.log(gasOracle.Percentiles);
+    console.log(gasOracle.GasInfo);
 });

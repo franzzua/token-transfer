@@ -35,7 +35,10 @@ export class TransferStore extends BaseTransferStore {
     @bind
     async send() {
         const fee = this.chainStore.gasPrices[this.Transfer.fee];
-        const transferSent = await this.api.run(this.Transfer.tokenAddress, this.Transfer.to, this.Amount, fee);
+        const transferSent = await this.api.run(
+            this.Transfer.tokenAddress, this.Transfer.to,
+            this.Amount, fee.maxPriorityFeePerGas
+        );
         await this.storage.sentTransfers.addOrUpdate(transferSent);
         await this.storage.transfers.remove(this.id);
     }
@@ -55,26 +58,23 @@ export class TransferStore extends BaseTransferStore {
 
 
     public Gas = new AsyncCell(() => {
-        if (!this.isValid) return null;
         return this.api.estimateGas(
             this.Transfer.tokenAddress,
-            this.Transfer.to,
-            this.Amount,
+            this.accountStore.me,
+            0n,
             this.accountStore.me
         ).catch(console.error);
     });
 
     public Fee = new Cell(() => {
-        if (this.errors.tokenAddress) return null;
-        if (this.errors.to) return null;
         const gas = this.Gas.get();
         if (!gas) return null;
         const gasData = this.chainStore.gasPrices;
         if (!gasData) return null;
         const fees = {
-            slow: gasData.slow * gas,
-            average: gasData.average * gas,
-            fast: gasData.fast * gas,
+            slow: {fee: gasData.slow.maxPriorityFeePerGas * gas, time: gasData.slow.time},
+            average: {fee: gasData.average.maxPriorityFeePerGas * gas, time: gasData.average.time},
+            fast: {fee: gasData.fast.maxPriorityFeePerGas * gas, time: gasData.fast.time},
         }
         return fees;
     });
@@ -85,10 +85,17 @@ export class TransferStore extends BaseTransferStore {
         tokenAddress: x => !x || isAddress(x),
         amount: (amount, transfer) => {
             const balance = this.myBalance.get();
-            if (!balance) return true;
-            // if (!transfer.fee) return true;
-            return this.Amount < balance;
-        }
+            if (balance == null) return true;
+            if (!this.Total) return false;
+            return this.Total <= balance;
+        },
+        fee: () => !!this.Fee.get()
+    }
+    public get Total(): bigint | null{
+        if (!this.Amount) return null;
+        const fees = this.Fee.get();
+        const fee = fees?.[this.Transfer.fee]?.fee ?? 0n
+        return this.Amount + fee;
     }
 
     public get isValid(){
