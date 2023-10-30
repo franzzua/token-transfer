@@ -5,8 +5,10 @@ export class AccountStore {
     @cell
     public accounts: string[] = [];
 
-    @cell
-    public me: string;
+    @cell({
+        onExternal: e => localStorage.setItem(selectedAccountKey, e)
+    })
+    public me: string = localStorage.getItem(selectedAccountKey);
 
     @cell
     public chainId: number = Number.parseInt(this.provider.chainId, 16);
@@ -32,3 +34,5 @@ export class AccountStore {
     }
 
 }
+
+const selectedAccountKey = 'selectedAccount';
