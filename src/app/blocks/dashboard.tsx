@@ -4,7 +4,7 @@ import {TransferList} from "./transfer-list";
 
 export const Dashboard = () => {
     return <div flex="column" gap="2">
-        <div flex="row" justify="around" gap="2" wrap="wrap">
+        <div flex="row" gap="2" wrap="wrap">
             <CreateTransferButton/>
             <button onClick={() => goTo("/transferToMe")}>Receive Tokens</button>
         </div>

@@ -33,5 +33,5 @@ export abstract class BaseTransferStore{
 }
 
 function truncateUpTo18DigitsAfterDot(number) {
-    return number.match(/^(\d*[.,]\d{0,18})/g);
+    return number.match(/^(\d*([.,]\d{0,18})?)/g);
 }

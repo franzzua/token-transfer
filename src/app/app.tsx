@@ -8,10 +8,10 @@ export const App = () => {
     const diContainer = container.get<AppStore>(AppStore);
     const route = useRouter();
     return (
-            <AppContext.Provider value={diContainer}>
-                <Layout>
-                    <route.active.page />
-                </Layout>
-            </AppContext.Provider>
+        <AppContext.Provider value={diContainer}>
+            <Layout>
+                <route.active.page />
+            </Layout>
+        </AppContext.Provider>
     );
 }

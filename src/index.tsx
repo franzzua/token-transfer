@@ -16,7 +16,7 @@ window.TokenTransferApp = {
         reactRoot = createRoot(root);
         reactRoot.render(<App/>);
         startElement.remove();
-        root.style.display = 'initial';
+        root.style.display = 'flex';
         transactionReader.start();
     }, stop() {
         if (!this.isStarted) return;

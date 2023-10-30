@@ -42,7 +42,9 @@ export class ObservableDB<T extends { _id: string }> extends EventEmitter<{
   }
 
   private async init() {
+    console.time(this.name);
     await this.loadItems().then((x) => {
+      console.timeEnd(this.name);
       this.emit("loaded");
       this.emit("change");
     });

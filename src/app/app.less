@@ -25,6 +25,12 @@
   }
 }
 
+#root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .frost-card {
   background: #FFF6;
   backdrop-filter: blur(3px);
@@ -36,6 +42,9 @@
     padding: .5em 1em;
   }
 
+  @media (max-width: 440px){
+    border-radius: 0;
+  }
 }
 
 
@@ -92,6 +101,7 @@
 button.primary {
   background: var(--dark-blue);
   color: var(--light-green);
+
 }
 
 .divider{
