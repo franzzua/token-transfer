@@ -1,12 +1,21 @@
 import {TransferApi} from "./services/transfer.api";
 
 export class TransferApiMock extends TransferApi {
-    async* run(transfer: Transfer, fee: bigint): AsyncGenerator<Transfer['state']> {
-        yield 'pending';
+    async run(tokenAddress: string, to: string, amount: bigint, fee: bigint): Promise<TransferSent> {
+        const sentTransfer = {
+            tokenAddress: tokenAddress,
+            chainId: 1,
+            to: to,
+            from: 'me',
+            fee: 0n,
+            amount,
+            state: 'pending',
+            blockHash: '',
+            nonce: 1,
+            _id: undefined,
+        } as TransferSent;
         await new Promise(r => setTimeout(r, 1000));
-        yield 'signed';
-        await new Promise(r => setTimeout(r, 5000));
-        yield 'mined';
+        return sentTransfer;
     }
 
     async getBalance(tokenAddress: string): Promise<bigint> {

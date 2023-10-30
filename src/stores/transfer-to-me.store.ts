@@ -19,11 +19,10 @@ export class TransferToMeStore extends BaseTransferStore {
     private transfer: Transfer = {
         _id: Fn.ulid(),
         fee: 'average',
-        amount: 0n,
+        amount: null,
         tokenAddress: null,
         state: 'initial',
         to: null,
-        id: null
     }
 
     @cell({compare})
@@ -31,7 +30,7 @@ export class TransferToMeStore extends BaseTransferStore {
         return this.transfer;
     }
 
-    public async patch(diff: Partial<Transfer>){
+    public patch(diff: Partial<Transfer>){
         this.transfer = {
            ...this.transfer, ...diff
         };
@@ -39,14 +38,6 @@ export class TransferToMeStore extends BaseTransferStore {
 
     @bind
     async send() {
-    }
-
-    public get Amount(){
-        if (!this.TokenInfo) return '';
-        return formatUnits(this.Transfer.amount, this.TokenInfo.get()?.decimals);
-    }
-    public set Amount(amount: string){
-        this.patch({amount: parseUnits(amount, this.TokenInfo.get()?.decimals )});
     }
 
     public get errors(): Record<keyof Transfer, string | undefined>{
@@ -66,7 +57,7 @@ export class TransferToMeStore extends BaseTransferStore {
         const encoded = pack([
             this.accountStore.me,
             this.transfer.tokenAddress,
-            this.Amount
+            this.transfer.amount
         ]);
         const str = encode(encoded);
         return `${location.origin}/ttm/${str}`;
@@ -76,9 +67,8 @@ export class TransferToMeStore extends BaseTransferStore {
         const buffer = decode(encoded)
         const [to, tokenAddress, amount] = unpack(buffer);
         this.patch({
-            to, tokenAddress
+            to, tokenAddress, amount
         })
-        this.Amount = amount;
         return this.transfer;
     }
 

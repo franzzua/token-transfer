@@ -9,23 +9,19 @@ import {Select} from "../elements/select";
 
 export const AmountInput: FC<{hideMyAmount?: boolean}> = ({hideMyAmount}) => {
     const transferStore = useTransferStore();
-    const amount = useCell(() => transferStore.Amount);
+    const amount = useCell(() => transferStore.Transfer.amount);
     const tokenInfo = useCell(transferStore.TokenInfo);
     const error = useCell(() => transferStore.errors.amount);
-    const [amountLocal, setAmountLocal] = useState(amount);
-    useEffect(() => {
-        setAmountLocal(amount);
-    }, [amount]);
     const onChange = useCallback<ChangeEventHandler<HTMLInputElement>>(e => {
         const value = e.currentTarget.value;
-        setAmountLocal(value);
-        if (Number.isFinite(+value.replace(",", ".")))
-            transferStore.Amount = value.replace(",", ".");
+        transferStore.patch({amount: value.replace(",", ".")});
     }, [])
-    return <Label title="Amount" error={error}>
+    return <Label title={<div flex="row" justify="between">
+        <span>Amount</span>
+        {!hideMyAmount && <MyBalance/>}
+    </div>} error={error}>
         <div className={[style.amount, 'control'].join(' ')}>
-            <input value={amountLocal} onChange={onChange}/>
-            {!hideMyAmount && <MyBalance/>}
+            <input value={amount ?? ''} onChange={onChange} placeholder="Amount of tokens to sent"/>
             <Select className={style.tokenSelect} value={tokenInfo?.symbol}>
                 <TokenSelect value={tokenInfo}
                              onChange={token => transferStore.patch({

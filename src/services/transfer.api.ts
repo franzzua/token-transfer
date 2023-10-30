@@ -20,34 +20,41 @@ export class TransferApi {
 
     }
 
-    private async getTransaction(transfer: Transfer, maxPriorityFeePerGas: bigint){
+    private async getTransaction(transfer: TransferSent){
         const currentBlock = await this.provider.getBlock('pending');
         if (!transfer.tokenAddress){
-            const signer = await this.provider.getSigner(this.accountStore.me);
+            const signer = await this.provider.getSigner(transfer.from);
             return await signer.sendTransaction({
                 to: transfer.to, value: transfer.amount,
-                maxFeePerGas: maxPriorityFeePerGas + currentBlock.baseFeePerGas
+                maxFeePerGas: transfer.fee + currentBlock.baseFeePerGas,
+                maxPriorityFeePerGas: transfer.fee
             });
         }
-        const erc20 = await this.getContract(transfer.tokenAddress, this.accountStore.me);
+        const erc20 = await this.getContract(transfer.tokenAddress, transfer.from);
         return  await erc20.transfer(transfer.to, transfer.amount, {
-            maxFeePerGas: maxPriorityFeePerGas + currentBlock.baseFeePerGas
+            maxFeePerGas: transfer.fee + currentBlock.baseFeePerGas,
+            maxPriorityFeePerGas: transfer.fee
         });
     }
-    async *run(transfer: Transfer, maxPriorityFeePerGas: bigint): AsyncGenerator<Transfer['state']> {
-        yield 'pending';
-        try {
-            const transaction = await this.getTransaction(transfer, maxPriorityFeePerGas);
-            if (transaction.isMined()) {
-                yield 'mined';
-            } else {
-                yield 'signed';
-                await transaction.wait();
-                yield 'mined';
-            }
-        } catch (e) {
-            yield 'rejected';
-        }
+    async run(tokenAddress: string, to: string, amount: bigint, maxPriorityFeePerGas: bigint): Promise<TransferSent> {
+        const sentTransfer = {
+            tokenAddress: tokenAddress,
+            chainId: this.accountStore.chainId,
+            to: to,
+            from: this.accountStore.me,
+            fee: maxPriorityFeePerGas,
+            amount,
+            state: 'pending',
+            blockHash: null,
+            nonce: null,
+            _id: undefined,
+        } as TransferSent;
+        const transaction = await this.getTransaction(sentTransfer);
+        sentTransfer._id = transaction.hash;
+        sentTransfer.blockHash = transaction.blockHash;
+        sentTransfer.nonce = transaction.nonce;
+        sentTransfer.state = 'signed';
+        return sentTransfer;
     }
 
     async estimateGas(tokenAddress: string, to: string, amount: bigint, from: string): Promise<bigint> {
@@ -68,17 +75,32 @@ export class TransferApi {
         return erc20.balanceOf(this.accountStore.me);
     }
 
-    async getTokenInfo(tokenAddress: string): Promise<{
+    async getTokenInfo(tokenAddress: string, chainId: number): Promise<{
         decimals: number;
         name: string;
         symbol: string;
     }> {
-        const contract = await this.getContract(tokenAddress);
-        const decimals = await contract.decimals();
-        const name = await contract.name();
-        const symbol = await contract.symbol();
+        const contract = new Contract(tokenAddress, abi) as Contract&ERC20;
+        const decimals = await contract.decimals({
+            chainId
+        });
+        const name = await contract.name({
+            chainId
+        });
+        const symbol = await contract.symbol({
+            chainId
+        });
         return {
             decimals: Number(decimals), name, symbol
         }
+    }
+
+    async getTransactionState(hash: string): Promise<Pick<TransferSent, "state"|"fee">> {
+        // TODO: get transaction from another chain
+       const transaction = await this.provider.getTransaction(hash);
+       return {
+           state: transaction.isMined() ? 'mined': 'signed',
+           fee: transaction.maxPriorityFeePerGas
+       };
     }
 }

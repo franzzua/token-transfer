@@ -7,6 +7,7 @@ import {ChainStore} from "./chain.store";
 import {TransferToMeStore} from "./transfer-to-me.store";
 import {TokensStore} from "./tokens.store";
 import {TransferStore} from "./transfer.store";
+import {SentTransferStore} from "./sent-transfer.store";
 
 export class AppStore {
     constructor(public storage: UserStorage,
@@ -25,16 +26,14 @@ export class AppStore {
     public getTransferStore(id: string){
         return new TransferStore(id, this.storage, this.accountStore, this.tokensStore, this.api, this.chainStore);
     }
-
+    @bind
+    getTransferSentStore(id: string) {
+        return new SentTransferStore(id, this.storage, this.accountStore, this.tokensStore, this.api, this.chainStore);
+    }
 
     @cell({compare})
     public get Transfers(){
-        return this.storage.transfers.toArray();
-    }
-
-    @cell
-    public get currentTransfer(){
-        return this.Transfers.find(x => x.state == 'initial' || x.state == 'pending');
+        return this.storage.sentTransfers.toArray();
     }
 
     get(id: string) {
@@ -45,7 +44,7 @@ export class AppStore {
         const transfer = {
             _id: Fn.ulid(),
             id: null,
-            amount: 0n,
+            amount: null,
             tokenAddress: '',
             from: null,
             to: null,
@@ -61,4 +60,5 @@ export class AppStore {
         await this.storage.transfers.addOrUpdate(transfer);
         return transfer._id;
     }
+
 }

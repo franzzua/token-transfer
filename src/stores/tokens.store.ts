@@ -3,7 +3,6 @@ import {UserStorage} from "../services/userStorage";
 import {AccountStore} from "./account.store";
 import {cell, Cell} from "@cmmn/cell/lib";
 import uniswapTokenList from "@uniswap/default-token-list";
-import {getTokenByAddress} from "../services/token.info";
 import {chains} from "eth-chains/dist/src/chains.js";
 
 const allTokens = uniswapTokenList.tokens as Array<TokenInfo & {
@@ -59,21 +58,21 @@ export class TokensStore {
         }))
     }
 
-    async getTokenInfo(tokenAddress: string): Promise<TokenInfo> {
+    async getTokenInfo(tokenAddress: string, chainId: number = this.accountStore.chainId): Promise<TokenInfo> {
         if (!tokenAddress){
-            const native = this.defaultToken.get();
+            const native = chains[chainId].nativeCurrency;
             return  {
                 ...native,
                 address: '',
-                chainId: this.accountStore.chainId,
+                chainId,
             }
         }
-        return getTokenByAddress(tokenAddress) ??
-            await this.api.getTokenInfo(tokenAddress).then(info => {
+        return  allTokens.find(x => x.address == tokenAddress) ??
+            await this.api.getTokenInfo(tokenAddress, chainId).then(info => {
                 if (info) {
                     this.storage.tokens.addOrUpdate({
                         _id: tokenAddress,
-                        chainId: this.accountStore.chainId,
+                        chainId,
                         ...info,
                     })
                 }

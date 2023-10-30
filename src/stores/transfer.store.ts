@@ -3,7 +3,7 @@ import {Timer} from "../helpers/timer";
 import {TransferApi} from "../services/transfer.api";
 import {AccountStore} from "./account.store";
 import {ChainStore} from "./chain.store";
-import {formatUnits, parseUnits, isAddress, FeeData, formatEther} from "ethers";
+import {formatUnits, isAddress} from "ethers";
 import {UserStorage} from "../services/userStorage";
 import {BaseTransferStore} from "./base.transfer.store";
 import {TokensStore} from "./tokens.store";
@@ -23,7 +23,7 @@ export class TransferStore extends BaseTransferStore {
 
     @cell({compare})
     public get Transfer(): Transfer{
-        return this.storage.transfers.get(this.id);
+        return this.storage.transfers.get(this.id) ?? ({} as any);
     }
 
     public async patch(diff: Partial<Transfer>){
@@ -34,11 +34,10 @@ export class TransferStore extends BaseTransferStore {
 
     @bind
     async send() {
-        console.log(formatEther(this.Fee.get()?.[this.Transfer.fee]), 'ETH');
         const fee = this.chainStore.gasPrices[this.Transfer.fee];
-        for await (let state of this.api.run(this.Transfer, fee)){
-            await this.patch({ state });
-        }
+        const transferSent = await this.api.run(this.Transfer.tokenAddress, this.Transfer.to, this.Amount, fee);
+        await this.storage.sentTransfers.addOrUpdate(transferSent);
+        await this.storage.transfers.remove(this.id);
     }
 
     private timer = new Timer(5000);
@@ -55,20 +54,12 @@ export class TransferStore extends BaseTransferStore {
     }
 
 
-    public get Amount(){
-        if (!this.TokenInfo.get()) return '';
-        return formatUnits(this.Transfer.amount, this.TokenInfo.get().decimals);
-    }
-    public set Amount(amount: string){
-        if (!this.TokenInfo.get()) return;
-        this.patch({amount: parseUnits(amount, this.TokenInfo.get().decimals )});
-    }
     public Gas = new AsyncCell(() => {
         if (!this.isValid) return null;
         return this.api.estimateGas(
             this.Transfer.tokenAddress,
             this.Transfer.to,
-            this.Transfer.amount,
+            this.Amount,
             this.accountStore.me
         ).catch(console.error);
     });
@@ -96,7 +87,7 @@ export class TransferStore extends BaseTransferStore {
             const balance = this.myBalance.get();
             if (!balance) return true;
             // if (!transfer.fee) return true;
-            return transfer.amount < balance;
+            return this.Amount < balance;
         }
     }
 
@@ -117,4 +108,5 @@ export class TransferStore extends BaseTransferStore {
         }
         return errors;
     }
+
 }

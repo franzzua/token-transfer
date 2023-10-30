@@ -22,7 +22,7 @@ export const TransferForm = () => {
             <div flex="row" align="center" justify="between">
                 <button onClick={() => goTo("/main")}>Cancel</button>
                 <button className="primary" onClick={async () => {
-                    transferStore.send();
+                    await transferStore.send();
                     goTo("/main")
                 }}>Send</button>
             </div>

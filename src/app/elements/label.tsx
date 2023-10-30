@@ -1,9 +1,9 @@
-import {FC, useState} from "react";
+import {FC, ReactNode, useState} from "react";
 
 export type LabelProps = {
     children: any;
     error?: string | undefined;
-    title?: string;
+    title?: ReactNode;
 }
 export const Label: FC<LabelProps> = (props) => {
     const [isVisited, setIsVisited] = useState(false);

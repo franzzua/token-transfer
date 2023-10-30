@@ -11,7 +11,7 @@ export const Select: FC<SelectProps> = (props) => {
         setIsOpen(false);
     }, [props.value]);
     return <>
-        <div flex="row" align="center"
+        <div flex="row" align="center" gap="1"
              className={props.className}
              onClick={() => setIsOpen(x => !x)}>
             {props.value}

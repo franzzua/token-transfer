@@ -10,12 +10,20 @@ declare const DEBUG: boolean;
 
 type Transfer = {
     _id: string;
-    id: string | null;
-    amount: bigint;
+    amount: string;
     tokenAddress: string;
     to: string;
-    state: string;
+    state: 'initial';
     fee: 'slow'|'fast'|'average';
+}
+type TransferSent = Omit<Transfer, 'fee'|'amount'|'state'> & {
+    from: string;
+    chainId: number;
+    amount: bigint;
+    fee: bigint;
+    state: 'pending'|'signed'|'mined'|'rejected';
+    blockHash: string;
+    nonce: number;
 }
 
 type TokenInfo = {
