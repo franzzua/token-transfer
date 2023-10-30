@@ -32,12 +32,12 @@ export class AppStore {
     }
 
     @cell({compare})
-    public get Transfers(){
+    public get SentTransfers(){
         return this.storage.sentTransfers.toArray();
     }
 
     get(id: string) {
-        return this.Transfers.find(x => x._id == id);
+        return this.SentTransfers.find(x => x._id == id);
     }
 
     async createNew() {

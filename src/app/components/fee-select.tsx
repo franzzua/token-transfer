@@ -13,6 +13,7 @@ export const FeeSelect = () => {
     const transferStore = useContext(TransferContext) as TransferStore;
     const fee = useCell(() => transferStore.Transfer.fee);
     const info = useCell(transferStore.Fee);
+    // const transactions = useCell(() => chainStore.transactions);
     if (!info) return 'Loading gas prices...';
     return <Label title="Fee">
         <div className={style.feeSelect} flex="row" justify="between" gap="1">
@@ -21,11 +22,17 @@ export const FeeSelect = () => {
                     <input type="radio" value="slow" name="fee"
                            onChange={e => transferStore.patch({fee: f})}
                            checked={fee == f}/>
-                    <span>~{info[f].time.toFixed(1)} second</span>
+                    <span>around {info[f].time.toFixed(1)} second</span>
                     <span>{(+formatUnits(info[f].fee, 12)).toFixed(0)} µ{defaultToken}</span>
                 </label>
             ))}
         </div>
+        {/*<svg width="500" height="500" viewBox="0 0 1000 1000" style={{border: 'solid 1px'}}>*/}
+        {/*    {transactions.map(x => <circle key={x.hash} r="1"*/}
+        {/*                                   cx={Number(x.maxPriorityFeePerGas/(10n**6n))/2}*/}
+        {/*                                   cy={x.time*6}*/}
+        {/*    />)}*/}
+        {/*</svg>*/}
     </Label>
 }
 

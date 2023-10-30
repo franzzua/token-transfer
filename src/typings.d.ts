@@ -20,9 +20,11 @@ type TransferSent = Omit<Transfer, 'fee'|'amount'|'state'> & {
     from: string;
     chainId: number;
     amount: bigint;
-    fee: bigint;
+    maxPriorityFeePerGas: bigint;
+    initialMaxPriorityFeePerGas: bigint;
     state: 'pending'|'signed'|'mined'|'rejected';
     blockHash: string;
+    blockNumber: number;
     nonce: number;
 }
 

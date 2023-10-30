@@ -58,8 +58,8 @@
   &[justify=between]{
    justify-content: space-between;
   }
-  &[justify=between]{
-    justify-content: space-between;
+  &[justify=around]{
+    justify-content: space-around;
   }
   &[align=center]{
     align-items: center;
@@ -146,7 +146,7 @@ label.visited.error .control {
   background: var(--red);
 }
 
-label.error .control:not(:placeholder-shown) {
+label.error .control:not(:placeholder-shown):not(:has(:placeholder-shown)) {
   background: var(--red);
 }
 

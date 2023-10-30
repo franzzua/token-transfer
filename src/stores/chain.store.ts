@@ -36,7 +36,7 @@ export class ChainStore{
     private storage = new ObservableDB<TransactionInfo>("transactions");
 
     private init = async () => {
-        await this.storage.init();
+        await this.storage.isLoaded;
         this.estimator.removeAll();
         this.estimator.add(...this.transactions);
     }

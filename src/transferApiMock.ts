@@ -7,7 +7,7 @@ export class TransferApiMock extends TransferApi {
             chainId: 1,
             to: to,
             from: 'me',
-            fee: 0n,
+            maxPriorityFeePerGas: 0n,
             amount,
             state: 'pending',
             blockHash: '',

@@ -4,8 +4,10 @@ import {TransferList} from "./transfer-list";
 
 export const Dashboard = () => {
     return <div flex="column" gap="2">
-        <CreateTransferButton/>
-        <button onClick={() => goTo("/transferToMe")}>Receive Tokens</button>
+        <div flex="row" justify="around" gap="2" wrap="wrap">
+            <CreateTransferButton/>
+            <button onClick={() => goTo("/transferToMe")}>Receive Tokens</button>
+        </div>
         <TransferList/>
     </div>
 }

@@ -40,27 +40,15 @@ export class SentTransferStore  {
     }
     public get Fee(){
         if (!this.TokenInfo.get()) return null;
-        if (!this.ActualData.get()) return null;
-        return  formatUnits(this.ActualData.get().fee, this.TokenInfo.get().decimals);
+        return formatUnits(this.Transfer.maxPriorityFeePerGas, this.TokenInfo.get().decimals);
     }
 
     public Info = new Cell(() => ({
         transfer: this.Transfer,
         tokenInfo: this.TokenInfo.get(),
         amount: this.Amount,
-        actualState: this.ActualData.get()?.state,
-        actualFee: this.Fee,
-        isFeeChanged: this.ActualData.get()?.fee != this.Transfer.fee
+        fee: this.Fee,
+        isFeeChanged: this.Transfer.maxPriorityFeePerGas !== this.Transfer.initialMaxPriorityFeePerGas
     }), {compare});
 
-
-    private timer = new Timer(1000);
-    public ActualData = new AsyncCell<Pick<TransferSent, 'state'|'fee'>>(async () => {
-        switch (this.Transfer.state){
-            case "mined":
-            case "rejected":
-                return {state: this.Transfer.state, fee: this.Transfer.fee};
-        }
-        return await this.api.getTransactionState(this.Transfer._id);
-    });
 }

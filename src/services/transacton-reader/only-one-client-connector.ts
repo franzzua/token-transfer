@@ -27,7 +27,7 @@ export class OnlyOneClientConnector extends EventEmitter<Record<string, any> & {
 
     public disconnect(client: Client) {
         this.connectedPorts.delete(client.id);
-        if (this.client.id == client.id) {
+        if (this.client?.id == client.id) {
             this.client = null;
             this.emit('disconnected');
         }

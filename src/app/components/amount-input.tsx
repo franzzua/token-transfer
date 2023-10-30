@@ -19,7 +19,7 @@ export const AmountInput: FC<{hideMyAmount?: boolean}> = ({hideMyAmount}) => {
     const input = useRef<HTMLInputElement>()
     useEffect(() => {
         if (+amount !== +input.current?.value){
-            input.current.value = amount;
+            input.current.value = amount ?? '';
         }
     }, [amount]);
     return <Label title={<div flex="row" justify="between">

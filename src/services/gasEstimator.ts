@@ -4,7 +4,7 @@ import {Tree} from "./tree";
 export class GasEstimator extends EventEmitter<{change: void}>{
 
     private percentiles = {
-        slow: 0.2,
+        slow: 0.1,
         average: 0.6,
         fast: 0.9,
     } as const;
@@ -12,8 +12,6 @@ export class GasEstimator extends EventEmitter<{change: void}>{
     protected sort = (arr: GasEstimatorInfo[]) => arr.sort(
         (a,b) => a.maxPriorityFeePerGas > b.maxPriorityFeePerGas ? 1 : a.maxPriorityFeePerGas == b.maxPriorityFeePerGas ? 0 : -1
     );
-
-
     public add(...values: Array<GasEstimatorInfo>){
         if (values.length == 0)
             return;

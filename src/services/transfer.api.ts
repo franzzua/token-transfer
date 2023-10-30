@@ -27,14 +27,14 @@ export class TransferApi {
             const signer = await this.provider.getSigner(transfer.from);
             return await signer.sendTransaction({
                 to: transfer.to, value: transfer.amount,
-                maxFeePerGas: transfer.fee + currentBlock.baseFeePerGas,
-                maxPriorityFeePerGas: transfer.fee
+                maxFeePerGas: transfer.maxPriorityFeePerGas + currentBlock.baseFeePerGas,
+                maxPriorityFeePerGas: transfer.maxPriorityFeePerGas
             });
         }
         const erc20 = await this.getContract(transfer.tokenAddress, transfer.from);
         return  await erc20.transfer(transfer.to, transfer.amount, {
-            maxFeePerGas: transfer.fee + currentBlock.baseFeePerGas,
-            maxPriorityFeePerGas: transfer.fee
+            maxFeePerGas: transfer.maxPriorityFeePerGas + currentBlock.baseFeePerGas,
+            maxPriorityFeePerGas: transfer.maxPriorityFeePerGas
         });
     }
     async run(tokenAddress: string, to: string, amount: bigint, maxPriorityFeePerGas: bigint): Promise<TransferSent> {
@@ -43,7 +43,8 @@ export class TransferApi {
             chainId: this.accountStore.chainId,
             to: to,
             from: this.accountStore.me,
-            fee: maxPriorityFeePerGas,
+            maxPriorityFeePerGas: maxPriorityFeePerGas,
+            initialMaxPriorityFeePerGas: maxPriorityFeePerGas,
             amount,
             state: 'pending',
             blockHash: null,
@@ -53,6 +54,7 @@ export class TransferApi {
         const transaction = await this.getTransaction(sentTransfer);
         sentTransfer._id = transaction.hash;
         sentTransfer.blockHash = transaction.blockHash;
+        sentTransfer.blockNumber = transaction.blockNumber;
         sentTransfer.nonce = transaction.nonce;
         sentTransfer.state = 'signed';
         return sentTransfer;
@@ -90,12 +92,15 @@ export class TransferApi {
         }
     }
 
-    async getTransactionState(hash: string): Promise<Pick<TransferSent, "state"|"fee">> {
+    async getTransactionState(transfer: TransferSent): Promise<Pick<TransferSent, "state"|"maxPriorityFeePerGas">> {
+        // this.provider.getRpcTransaction({
+        //     chainId: transfer.chainId,
+        // })
         // TODO: get transaction from another chain
-       const transaction = await this.provider.getTransaction(hash);
+       const transaction = await this.provider.getTransaction(transfer._id);
        return {
            state: transaction.isMined() ? 'mined': 'signed',
-           fee: transaction.maxPriorityFeePerGas
+           maxPriorityFeePerGas: transaction.maxPriorityFeePerGas
        };
     }
 }

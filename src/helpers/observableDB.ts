@@ -41,7 +41,7 @@ export class ObservableDB<T extends { _id: string }> extends EventEmitter<{
     });
   }
 
-  async init() {
+  private async init() {
     await this.loadItems().then((x) => {
       this.emit("loaded");
       this.emit("change");
