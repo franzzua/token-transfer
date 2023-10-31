@@ -17,9 +17,9 @@ export const FeeSelect = () => {
     if (!info) return 'Loading gas prices...';
     return <Label title="Fee">
         <div className={style.feeSelect} >
-            {fees.map(f => (
+            {fees.map((f,i) => (
                 <label key={f}>
-                    <input type="radio" value="slow" name="fee"
+                    <input type="radio" value="slow" name="fee" tabIndex={3+i}
                            onChange={e => transferStore.patch({fee: f})}
                            checked={fee == f}/>
                     <span>{labels[f]}</span>

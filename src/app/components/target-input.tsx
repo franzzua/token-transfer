@@ -9,6 +9,7 @@ export const TargetInput = () => {
     const error = useCell(() => transferStore.errors.to);
     return <Label title="To" error={error}>
         <input value={transfer.to ?? ''}
+               tabIndex={2}
                placeholder="Receiver address"
                className={['control', error ? 'error' : ''].filter(x => x).join(' ')}
                onChange={e => transferStore.patch({to: e.currentTarget.value})}/>

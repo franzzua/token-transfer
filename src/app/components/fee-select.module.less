@@ -19,6 +19,9 @@
     transform-origin: center center;
     border: solid transparent;
 
+    &:focus-within{
+      box-shadow: var(--dark) 0 0 3px 3px;
+    }
     &:first-child{
       transform-origin: left center;
     }
@@ -34,7 +37,8 @@
     }
 
     input{
-      display: none;
+      opacity: 0;
+      position: absolute;
     }
 
   }

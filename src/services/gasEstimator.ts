@@ -50,10 +50,10 @@ export class GasEstimator extends EventEmitter<{change: void}>{
         }
         return Object.fromEntries(
             Object.entries(this.percentiles).map(([name, percentile]) => {
-                const timeSum = timeSums[name].sort();
-                const time25 = timeSum[Math.floor(timeSum.length*0.25)];
+                const timeSum = timeSums[name].orderBy(x => x);
+                const time25 = timeSum[Math.floor(timeSum.length*0.1)];
                 const time50 = timeSum[Math.floor(timeSum.length*0.5)];
-                const time75 = timeSum[Math.floor(timeSum.length*0.75)];
+                const time75 = timeSum[Math.floor(timeSum.length*0.9)];
                 return [name, {
                     maxPriorityFeePerGas: gas[name],
                     time: timeSums[name].average(),
