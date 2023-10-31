@@ -26,9 +26,7 @@ export class TransactionReaderWrapper {
                 });
             }
         });
-        window.addEventListener('beforeunload', () => {
-            this.stop();
-        })
+        window.addEventListener('beforeunload', () => this.stop());
     }
 
     public start(){

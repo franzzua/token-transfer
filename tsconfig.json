@@ -9,7 +9,7 @@
     "declarationDir": "dist/typings",
     "declaration": true,
     "jsx": "react-jsx",
-    "jsxImportSource": "react",
+    "jsxImportSource": "preact",
     "allowJs": true,
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,

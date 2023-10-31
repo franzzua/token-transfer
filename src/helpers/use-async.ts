@@ -1,6 +1,6 @@
 import {useCell} from "./use-cell";
 import {AsyncCell, compare} from "@cmmn/cell/lib";
-import {useMemo} from "react";
+import {useMemo} from "preact/hooks";
 
 export function useAsync<TResult>(getResult: () => Promise<TResult>, deps: any[]): AsyncResult<TResult>{
     const cell = useMemo(() => {

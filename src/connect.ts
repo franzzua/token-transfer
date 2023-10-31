@@ -31,6 +31,18 @@ if (!provider){
         }
     }
 
+
+    window.addEventListener('visibilitychange', e => {
+        if (document.visibilityState == 'visible'){
+            provider.request({method: "eth_accounts"}).then(notifyEthereumState);
+        } else {
+            notifyEthereumState([]);
+        }
+    });
+
+    window.addEventListener('resume', () => {
+    })
+
     loader.style.display = 'none';
     provider.request({method: "eth_accounts"}).then(notifyEthereumState);
     button.style.display = 'initial';

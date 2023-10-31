@@ -1,16 +1,20 @@
-import {useContext, useMemo} from "react";
-import {IdInjectionToken} from "../../container";
-import {TransferStore} from "../../stores/transfer.store";
+import {useEffect, useMemo} from "preact/hooks";
+import {useCell} from "../../helpers/use-cell";
 import {TransferForm} from "../blocks/transfer-form";
-import {AppContext} from "../contexts/app-context";
+import {useAppContext} from "../contexts";
 import {TransferContext} from "../contexts/transfer-context";
-import {useRouter} from "../routing";
+import {goTo, useRouter} from "../routing";
 
 
 export function TransferPage(){
-    const appContext = useContext(AppContext);
+    const appContext = useAppContext()
     const {query: {id}} = useRouter();
     const transferStore = useMemo(() => appContext.getTransferStore(id as string), [id]);
+    const transfer = useCell(() => transferStore.Transfer);
+    useEffect(() => {
+        if (transfer) return;
+        goTo('/main');
+    }, [!transfer]);
     return <TransferContext.Provider value={transferStore}>
         <TransferForm/>
     </TransferContext.Provider>

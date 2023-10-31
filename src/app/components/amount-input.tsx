@@ -1,4 +1,5 @@
-import {ChangeEventHandler, FC, useCallback, useEffect, useRef, useState} from "react";
+import {FunctionComponent, JSX} from "preact";
+import {useCallback, useEffect, useRef, useState} from "preact/hooks";
 import {useCell} from "../../helpers/use-cell";
 import {Label} from "../elements/label";
 import {useTransferStore} from "../contexts/useTransferStore";
@@ -7,12 +8,12 @@ import {TokenSelect} from "./token-select";
 import style from "./amount-input.module.less";
 import {Select} from "../elements/select";
 
-export const AmountInput: FC<{hideMyAmount?: boolean}> = ({hideMyAmount}) => {
+export const AmountInput: FunctionComponent<{hideMyAmount?: boolean}> = ({hideMyAmount}) => {
     const transferStore = useTransferStore();
     const amount = useCell(() => transferStore.Transfer.amount);
     const tokenInfo = useCell(transferStore.TokenInfo);
     const error = useCell(() => transferStore.errors.amount);
-    const onChange = useCallback<ChangeEventHandler<HTMLInputElement>>(e => {
+    const onChange = useCallback<JSX.GenericEventHandler<HTMLInputElement>>(e => {
         const value = e.currentTarget.value;
         transferStore.patch({amount: value.replace(",", ".")});
     }, []);
@@ -27,7 +28,7 @@ export const AmountInput: FC<{hideMyAmount?: boolean}> = ({hideMyAmount}) => {
         {!hideMyAmount && <MyBalance/>}
     </div>} error={error}>
         <div className={[style.amount, 'control'].join(' ')}>
-            <input autoFocus tabIndex={1} ref={input} onChange={onChange} placeholder="Amount of tokens"/>
+            <input autoFocus tabIndex={1} ref={input} onInput={onChange} placeholder="Amount of tokens"/>
             <Select className={style.tokenSelect} value={tokenInfo?.symbol}>
                 <TokenSelect value={tokenInfo}
                              onChange={token => transferStore.patch({

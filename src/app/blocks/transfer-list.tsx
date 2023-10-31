@@ -1,11 +1,10 @@
-import {useContext} from "react";
 import {useCell} from "../../helpers/use-cell";
 import {NotSentTransfer} from "../components/not-sent-transfer";
-import {AppContext} from "../contexts/app-context";
+import {useAppContext} from "../contexts";
 import {SentTransfer} from "../components/sent-transfer";
 
 export const TransferList = () => {
-    const appStore = useContext(AppContext);
+    const appStore = useAppContext()
     const sentTransfers = useCell(() => appStore.SentTransfers);
     const notSentTransfers = useCell(() => appStore.NotSentTransfers);
 

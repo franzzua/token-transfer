@@ -1,4 +1,5 @@
-import {FC, useMemo, useState} from "react";
+import {FunctionComponent} from "preact";
+import { useMemo, useState} from "preact/hooks";
 import {useCell} from "../../helpers/use-cell";
 import {useAppContext} from "../contexts";
 import {useAsync} from "../../helpers/use-async";
@@ -8,7 +9,7 @@ export type TokenSelectProps = {
     value: TokenInfo;
     onChange(value?: TokenInfo): void;
 }
-export const TokenSelect: FC<TokenSelectProps> = (props) => {
+export const TokenSelect: FunctionComponent<TokenSelectProps> = (props) => {
     const {tokensStore} = useAppContext();
     const tokens = useCell(() => tokensStore.tokens);
     const [query, setQuery] = useState('');
@@ -24,7 +25,7 @@ export const TokenSelect: FC<TokenSelectProps> = (props) => {
     return <div flex="row" style={{maxHeight: '30vh', overflow: 'auto', width: '100%', background: 'var(--light-blue)'}}
                 justify="around" wrap="wrap" gap="1">
         <div style={{flex: '0 0 100%'}} flex="row">
-            <svg viewBox="-.2 -.2 2.6 2.6" stroke="currentColor" strokeWidth=".3"
+            <svg viewBox="-.2 -.2 2.6 2.6" stroke="currentColor" stroke-width=".3"
                  className="pre-input" fill="none">
                 <path d="M1.7 1.7 L 2.4 2.4"/>
                 <circle cx="1" cy="1" r="1"/>
@@ -43,7 +44,7 @@ export const TokenSelect: FC<TokenSelectProps> = (props) => {
     </div>;
 };
 
-const TokenPreview: FC<{
+const TokenPreview: FunctionComponent<{
     token: TokenInfo;
     isSelected: boolean;
     onChange(token: TokenInfo): void;

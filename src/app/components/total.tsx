@@ -1,12 +1,12 @@
 import {formatEther} from "ethers";
-import {useContext} from "react";
+import {useContext} from "preact/hooks";
 import {useCell} from "../../helpers/use-cell";
 import {TransferStore} from "../../stores/transfer.store";
-import {AppContext} from "../contexts/app-context";
+import {useAppContext} from "../contexts";
 import {TransferContext} from "../contexts/transfer-context";
 
 export const Total = () => {
-    const {tokensStore, chainStore} = useContext(AppContext);
+    const {tokensStore, chainStore} = useAppContext()
     const defaultToken = useCell(tokensStore.defaultToken).symbol;
     const transferStore = useContext(TransferContext) as TransferStore;
     const total = useCell(() => transferStore.Total);

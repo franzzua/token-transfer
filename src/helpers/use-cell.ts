@@ -1,6 +1,6 @@
 import {compare }from "@cmmn/cell/lib";
 import { BaseCell, Cell } from "@cmmn/cell/lib";
-import {useMemo, useReducer, useEffect} from "react";
+import {useMemo, useReducer, useEffect} from "preact/hooks";
 
 export function useCell<T>(
     getter: (() => T) | BaseCell<T> | undefined,
@@ -14,7 +14,7 @@ export function useCell<T>(
     );
     const [, dispatch] = useReducer(x => ({}), {});
     useEffect(() => {
-        dispatch();
+        dispatch(cell.get());
         return cell.on('change', dispatch);
     }, [cell])
     return cell.get();

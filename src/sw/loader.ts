@@ -1,5 +1,7 @@
 "use strict";
 
+import {preloader} from "./preloader";
+
 const sw = "/sw.js";
 if (!DEBUG) {
   const upgradeInterval = 5*60*1000; // 5 minutes
@@ -57,7 +59,6 @@ if (!DEBUG) {
         }, Math.max(3000 - performance.now(), 0))
         break;
       case "new-version":
-        console.log("app has new version");
         navigator.serviceWorker
           .getRegistration()
           .then((x) => x?.unregister())
@@ -105,22 +106,6 @@ async function init() {
   );
     // animateLoading(0);
   window.dispatchEvent(new CustomEvent("init"));
-}
-
-
-function preloader(){
-  const svg = document.getElementById('bg');
-  function addStar(){
-    const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
-    use.setAttribute("href","#star");
-    use.setAttribute("transform", `translate(${Math.random()*100}, ${Math.random()*100}) scale(${Math.random()*0.3})`);
-    svg.appendChild(use);
-    if (Math.random() > 1 - svg.childElementCount/50){
-      svg.querySelector('use').remove();
-    }
-    setTimeout(addStar, Math.random()*1000);
-  }
-  addStar();
 }
 
 preloader();

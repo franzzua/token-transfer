@@ -1,10 +1,12 @@
-import {FC, useContext, useMemo} from "react";
+import {FunctionComponent} from "preact";
+import {useMemo} from "preact/hooks";
 import {useCell} from "../../helpers/use-cell";
+import {useAppContext} from "../contexts";
 import {AppContext} from "../contexts/app-context";
 import {goTo} from "../routing";
 
-export const NotSentTransfer: FC<{ id: string }> = ({id}) => {
-    const appContext = useContext(AppContext);
+export const NotSentTransfer: FunctionComponent<{ id: string }> = ({id}) => {
+    const appContext = useAppContext()
     const store = useMemo(() => appContext.getTransferStore(id), [id]);
     const {
         to, amount

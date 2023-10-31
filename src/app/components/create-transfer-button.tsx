@@ -1,9 +1,9 @@
-import {useCallback, useContext} from "react";
-import {AppContext} from "../contexts/app-context";
+import {useCallback} from "preact/hooks";
+import {useAppContext} from "../contexts";
 import {goTo} from "../routing";
 
 export const CreateTransferButton = () => {
-    const appStore = useContext(AppContext);
+    const appStore = useAppContext()
     const createTransfer = useCallback(async () => {
         const id = await appStore.createNew();
         goTo(['transfer'], {id});

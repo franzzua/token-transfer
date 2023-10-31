@@ -41,13 +41,16 @@ type TokenInfo = {
     // }
 }
 
-declare namespace React {
-    export interface HTMLAttributes<T> {
+declare namespace preact.JSX {
+    interface SVGAttributes<SVGSVGElement>{
+        children?: any;
+    }
+    interface HTMLAttributes<T> {
         // extends React's HTMLAttributes
-        flex?: 'row'|'column';
-        gap?: '0.5'|'1'|'1.5'|'2'|'3'|'4';
-        align?: 'center'|'start'|'end';
-        justify?: 'center'|'between'|'around'|'end';
+        flex?: 'row' | 'column';
+        gap?: '0.5' | '1' | '1.5' | '2' | '3' | '4';
+        align?: 'center' | 'start' | 'end';
+        justify?: 'center' | 'between' | 'around' | 'end';
         wrap?: 'wrap';
     }
 }

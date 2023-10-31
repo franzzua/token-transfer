@@ -1,6 +1,6 @@
-import {Contract, InfuraProvider, JsonRpcApiProvider} from "ethers";
+import {Contract, ContractFactory, InfuraProvider, JsonRpcApiProvider} from "ethers";
 import {AccountStore} from "../stores/account.store";
-import {abi} from "erc20-compiled";
+import {abi, bytecode} from "erc20-compiled";
 import type {ERC20} from "erc20-compiled";
 import {ethereumSw} from "./transacton-reader/ethereum-sw";
 
@@ -93,16 +93,10 @@ export class TransferApi {
         }
     }
 
-    async getTransactionState(transfer: TransferSent): Promise<Pick<TransferSent, "state"|"maxPriorityFeePerGas">> {
-        // this.provider.getRpcTransaction({
-        //     chainId: transfer.chainId,
-        // })
-        // TODO: get transaction from another chain
-       const transaction = await this.provider.getTransaction(transfer._id);
-       return {
-           state: transaction.isMined() ? 'mined': 'signed',
-           maxPriorityFeePerGas: transaction.maxPriorityFeePerGas
-       };
+    async createContract(){
+        const factory = new ContractFactory(abi, bytecode, await this.provider.getSigner());
+        const result = await factory.deploy("AK token", "AKT", 10n**6n);
+        console.log(result);
     }
 
 }

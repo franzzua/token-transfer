@@ -1,11 +1,12 @@
-import {FC, ReactElement, useEffect, useState} from "react";
+import {FunctionComponent, JSX} from "preact";
+import {useEffect, useState} from "preact/hooks";
 
 export type SelectProps = {
     value: string;
-    children: ReactElement;
+    children: JSX.Element;
     className?: string;
 }
-export const Select: FC<SelectProps> = (props) => {
+export const Select: FunctionComponent<SelectProps> = (props) => {
     const [isOpen, setIsOpen] = useState(false);
     useEffect(() => {
         setIsOpen(false);

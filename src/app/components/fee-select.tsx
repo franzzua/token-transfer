@@ -1,19 +1,17 @@
-import {formatEther, formatUnits} from "ethers";
-import {useContext} from "react";
-import {AppContext} from "../contexts/app-context";
-import {TransferContext} from "../contexts/transfer-context";
+import {formatUnits} from "ethers";
+import {useAppContext} from "../contexts";
 import {useCell} from "../../helpers/use-cell";
 import {TransferStore} from "../../stores/transfer.store";
+import {useTransferStore} from "../contexts/useTransferStore";
 import style from "./fee-select.module.less";
 import {Label} from "../elements/label";
 
 export const FeeSelect = () => {
-    const {tokensStore, chainStore} = useContext(AppContext);
+    const {tokensStore, chainStore} = useAppContext()
     const defaultToken = useCell(tokensStore.defaultToken).symbol;
-    const transferStore = useContext(TransferContext) as TransferStore;
+    const transferStore = useTransferStore() as TransferStore;
     const fee = useCell(() => transferStore.Transfer.fee);
     const info = useCell(transferStore.Fee);
-    // const transactions = useCell(() => chainStore.transactions);
     if (!info) return 'Loading gas prices...';
     return <Label title="Fee">
         <div className={style.feeSelect} >
@@ -28,12 +26,6 @@ export const FeeSelect = () => {
                 </label>
             ))}
         </div>
-        {/*<svg width="500" height="500" viewBox="0 0 1000 1000" style={{border: 'solid 1px'}}>*/}
-        {/*    {transactions.map(x => <circle key={x.hash} r="1"*/}
-        {/*                                   cx={Number(x.maxPriorityFeePerGas/(10n**6n))/2}*/}
-        {/*                                   cy={x.time*6}*/}
-        {/*    />)}*/}
-        {/*</svg>*/}
     </Label>
 }
 

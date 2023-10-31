@@ -1,6 +1,6 @@
 import {Cell} from "@cmmn/cell/lib";
 import {compare} from "@cmmn/cell/lib";
-import {useEffect} from "react";
+import {useEffect} from "preact/hooks";
 import {useCell} from "../helpers/use-cell";
 import {routes} from "./pages/routes";
 
@@ -42,12 +42,12 @@ onRoutingChange({
   value: routeCell.get(),
   oldValue: [] as any
 });
-export const goTo = (
+export const goTo = async (
   path: RoutePath | RoutePathString,
   query: Record<string, string> | undefined = undefined,
   replace: boolean = false
 ) => {
-  console.log(path, query)
+  await Promise.resolve();
   if (typeof path === "string") {
     const url = new URL(location.origin + path);
     path = url.pathname.split("/").slice(1) as RoutePath;

@@ -1,11 +1,11 @@
-import {useContext, useEffect, useMemo} from "react";
+import {useEffect, useMemo} from "preact/hooks";
+import {useAppContext} from "../contexts";
 import {TransferContext} from "../contexts/transfer-context";
 import {TransferToMe} from "../blocks/transfer-to-me";
 import {goTo, useRouter} from "../routing";
-import {AppContext} from "../contexts/app-context";
 
 export function TransferToMePage(){
-    const appStore = useContext(AppContext);
+    const appStore = useAppContext()
     const {route: [base, encoded]} = useRouter();
     const transferStore = useMemo(appStore.getTransferToMeStore, []);
     useEffect(() => {

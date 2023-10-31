@@ -1,5 +1,5 @@
-import {FunctionComponent} from "react";
-import {useContext, JSX} from "react";
+import {FunctionComponent} from "preact";
+import {useContext} from "preact/hooks";
 import {AppContext} from "../contexts/app-context";
 import {useCell} from "../../helpers/use-cell";
 import {Select} from "../elements/select";

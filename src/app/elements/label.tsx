@@ -1,11 +1,12 @@
-import {FC, ReactNode, useState} from "react";
+import {FunctionComponent, JSX} from "preact";
+import {useState} from "preact/hooks";
 
 export type LabelProps = {
     children: any;
     error?: string | undefined;
-    title?: ReactNode;
+    title?: JSX.Element | string;
 }
-export const Label: FC<LabelProps> = (props) => {
+export const Label: FunctionComponent<LabelProps> = (props) => {
     const [isVisited, setIsVisited] = useState(false);
     return <label className={[
         !!props.error ? 'error' : '',
