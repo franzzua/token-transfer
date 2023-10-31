@@ -25,11 +25,7 @@ export const TokenSelect: FunctionComponent<TokenSelectProps> = (props) => {
     return <div flex="row" style={{maxHeight: '30vh', overflow: 'auto', width: '100%', background: 'var(--light-blue)'}}
                 justify="around" wrap="wrap" gap="1">
         <div style={{flex: '0 0 100%'}} flex="row">
-            <svg viewBox="-.2 -.2 2.6 2.6" stroke="currentColor" stroke-width=".3"
-                 className="pre-input" fill="none">
-                <path d="M1.7 1.7 L 2.4 2.4"/>
-                <circle cx="1" cy="1" r="1"/>
-            </svg>
+            <SearchIcon/>
             <input value={query}
                    placeholder="Search tokens by name, symbol or address"
                    onChange={e => setQuery(e.currentTarget.value)}
@@ -43,17 +39,24 @@ export const TokenSelect: FunctionComponent<TokenSelectProps> = (props) => {
         {tokenByAddress.isFetching && 'Loading...'}
     </div>;
 };
-
+const SearchIcon = () => (
+    <svg viewBox="-.2 -.2 2.6 2.6" stroke="currentColor" stroke-width=".3"
+         className="pre-input" fill="none">
+        <path d="M1.7 1.7 L 2.4 2.4"/>
+        <circle cx="1" cy="1" r="1"/>
+    </svg>
+);
 const TokenPreview: FunctionComponent<{
     token: TokenInfo;
     isSelected: boolean;
     onChange(token: TokenInfo): void;
 }> = ({token, onChange, isSelected}) => {
+    if (isSelected ) console.log(token, 'selected')
     const {tokensStore} = useAppContext();
     const logoURI = useAsync(() => tokensStore.getTokenImageURL(token.address), [token.address]);
     return <div flex="column" align="center" style={{
         cursor: 'pointer',
-        background: isSelected ? 'var(--light-blue)' : 'transparent'
+        border: isSelected ? 'var(--dark) solid .1px' : 'transparent'
     }} onClick={() => onChange(token)}>
         <img alt={token.name} src={logoURI.data} style={{
             width: '2em',

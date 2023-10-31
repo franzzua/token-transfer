@@ -42,12 +42,11 @@ onRoutingChange({
   value: routeCell.get(),
   oldValue: [] as any
 });
-export const goTo = async (
+export const goTo = (
   path: RoutePath | RoutePathString,
   query: Record<string, string> | undefined = undefined,
   replace: boolean = false
 ) => {
-  await Promise.resolve();
   if (typeof path === "string") {
     const url = new URL(location.origin + path);
     path = url.pathname.split("/").slice(1) as RoutePath;

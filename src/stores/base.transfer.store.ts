@@ -28,6 +28,7 @@ export abstract class BaseTransferStore{
     public abstract patch(diff: Partial<Transfer>);
 
     public TokenInfo = new AsyncCell<TokenInfo | undefined>(async () => {
+        if (!this.Transfer) return null;
         return this.tokensStore.getTokenInfo(this.Transfer.tokenAddress)
     })
 }

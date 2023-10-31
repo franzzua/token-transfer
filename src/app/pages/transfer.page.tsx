@@ -11,10 +11,11 @@ export function TransferPage(){
     const {query: {id}} = useRouter();
     const transferStore = useMemo(() => appContext.getTransferStore(id as string), [id]);
     const transfer = useCell(() => transferStore.Transfer);
+    const isNotExists = useCell(transferStore.isNotExists);
     useEffect(() => {
-        if (transfer) return;
-        goTo('/main');
-    }, [!transfer]);
+        if (isNotExists) goTo('/main');
+    }, [isNotExists]);
+    if (!transfer) return <></>;
     return <TransferContext.Provider value={transferStore}>
         <TransferForm/>
     </TransferContext.Provider>

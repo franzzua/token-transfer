@@ -22,9 +22,14 @@ export class TransferStore extends BaseTransferStore {
     }
 
 
+    public isNotExists = new AsyncCell(async () => {
+        await this.storage.transfers.isLoaded;
+        return !this.storage.transfers.get(this.id);
+    });
+
     @cell({compare})
     public get Transfer(): Transfer{
-        return this.storage.transfers.get(this.id) ?? ({} as any);
+        return this.storage.transfers.get(this.id);
     }
 
     public async patch(diff: Partial<Transfer>){
@@ -46,6 +51,7 @@ export class TransferStore extends BaseTransferStore {
 
     private timer = new Timer(5000);
     public myBalance = new AsyncCell(async () => {
+        if (!this.Transfer) return null;
         this.timer.get();
         return await this.api.getBalance(this.Transfer.tokenAddress)
             .catch(() => null);
