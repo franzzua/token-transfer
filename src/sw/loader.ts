@@ -10,13 +10,6 @@ if (!DEBUG) {
     event: null as BeforeInstallPromptEvent,
     worker: navigator.serviceWorker.controller,
   });
-  setInterval(
-    () =>
-      handle.worker?.postMessage({
-        action: "check",
-      }),
-      upgradeInterval
-  );
 
   if (navigator.serviceWorker.controller) {
     const isIOS = CSS.supports("-webkit-touch-callout", "none");
@@ -50,19 +43,25 @@ if (!DEBUG) {
     });
   }
 
-  navigator.serviceWorker.addEventListener("message", ({ data }) => {
+  navigator.serviceWorker.addEventListener("message", async ({data}) => {
     switch (data.action) {
 
       case "init":
-        setTimeout(async () => {
-          await init();
-        }, Math.max(3000 - performance.now(), 0))
+        await init()
+        handle.worker?.postMessage({
+          action: "check",
+        });
+
+        setInterval(() => handle.worker?.postMessage({
+            action: "check",
+        }), upgradeInterval);
         break;
       case "new-version":
         navigator.serviceWorker
-          .getRegistration()
-          .then((x) => x?.unregister())
-          .then(() => location.reload());
+            .getRegistration()
+            .then((x) => x?.unregister())
+            // TODO: show message about new version
+            .then(() => location.reload());
         break;
     }
   });
@@ -70,6 +69,7 @@ if (!DEBUG) {
   window.addEventListener(
     "beforeinstallprompt",
     (e: BeforeInstallPromptEvent) => {
+      // allows to start install by UI button
       handle.event = e;
     }
   );

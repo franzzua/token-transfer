@@ -1,6 +1,6 @@
 import {test, beforeAll} from "@jest/globals";
 import {GasEstimator} from "../src/services/gasEstimator";
-import {randomBytes, toBigInt} from "ethers";
+import { toBigInt} from "ethers/utils";
 
 const percentileNames = {
     [0.2]: "slow",
@@ -22,9 +22,9 @@ test(`init`,async () => {
         expect(Number(values[i])).toEqual((i + 1));
     }
     const percentiles = gasOracle.GasInfo;
-    expect(Math.abs(Number(percentiles.slow - 20000n))).toBeLessThan(3);
-    expect(Math.abs(Number(percentiles.average - 50000n))).toBeLessThan(3);
-    expect(Math.abs(Number(percentiles.fast - 60000n))).toBeLessThan(3);
+    expect(Math.abs(Number(percentiles.slow.maxPriorityFeePerGas - 20000n))).toBeLessThan(3);
+    expect(Math.abs(Number(percentiles.average.maxPriorityFeePerGas - 50000n))).toBeLessThan(3);
+    expect(Math.abs(Number(percentiles.fast.maxPriorityFeePerGas - 60000n))).toBeLessThan(3);
 });
 
 test(`increase`,async () => {
@@ -37,9 +37,9 @@ test(`increase`,async () => {
         });
     }
     const percentiles = gasOracle.GasInfo;
-    expect(Math.abs(Number(percentiles.slow - 20000n))).toBeLessThan(3);
-    expect(Math.abs(Number(percentiles.average - 50000n))).toBeLessThan(3);
-    expect(Math.abs(Number(percentiles.fast - 60000n))).toBeLessThan(3);
+    expect(Math.abs(Number(percentiles.slow.maxPriorityFeePerGas - 20000n))).toBeLessThan(3);
+    expect(Math.abs(Number(percentiles.average.maxPriorityFeePerGas - 50000n))).toBeLessThan(3);
+    expect(Math.abs(Number(percentiles.fast.maxPriorityFeePerGas - 60000n))).toBeLessThan(3);
 });
 
 test(`decrease`,async () => {
@@ -53,12 +53,12 @@ test(`decrease`,async () => {
     }
     gasOracle.removeAll(x => (x.maxPriorityFeePerGas % 2n) == 0n);
     const percentiles = gasOracle.GasInfo;
-    expect(Math.abs(Number(percentiles.slow - 20000n))).toBeLessThan(3);
-    expect(Math.abs(Number(percentiles.average - 50000n))).toBeLessThan(3);
-    expect(Math.abs(Number(percentiles.fast - 60000n))).toBeLessThan(3);
+    expect(Math.abs(Number(percentiles.slow.maxPriorityFeePerGas - 20000n))).toBeLessThan(3);
+    expect(Math.abs(Number(percentiles.average.maxPriorityFeePerGas - 50000n))).toBeLessThan(3);
+    expect(Math.abs(Number(percentiles.fast.maxPriorityFeePerGas - 60000n))).toBeLessThan(3);
 });
 test(`increaseModule`,async () => {
-    const gasOracle = new GasEstimator(percentileNames, "value");
+    const gasOracle = new GasEstimator();
     for (let i = 1n; i <= 100_000n; i++) {
         gasOracle.add({
             value: i % 100n
@@ -67,9 +67,9 @@ test(`increaseModule`,async () => {
     // gasOracle.removeAll(x => (x.value % 2n) == 0n);
     gasOracle.removeAll(x => (x.value % 2n) == 0n);
     const percentiles = gasOracle.GasInfo;
-    expect(Math.abs(Number(percentiles.slow - 20n))).toBeLessThan(3);
-    expect(Math.abs(Number(percentiles.average - 50n))).toBeLessThan(3);
-    expect(Math.abs(Number(percentiles.fast - 60n))).toBeLessThan(3);
+    expect(Math.abs(Number(percentiles.slow.maxPriorityFeePerGas - 20n))).toBeLessThan(3);
+    expect(Math.abs(Number(percentiles.average.maxPriorityFeePerGas - 50n))).toBeLessThan(3);
+    expect(Math.abs(Number(percentiles.fast.maxPriorityFeePerGas - 60n))).toBeLessThan(3);
 });
 test(`equal`,async () => {
     const gasOracle = new GasEstimator(percentileNames, "value");
@@ -79,9 +79,9 @@ test(`equal`,async () => {
         })
     }
     const percentiles = gasOracle.GasInfo;
-    expect(Math.abs(Number(percentiles.slow - 100n))).toBeLessThan(3);
-    expect(Math.abs(Number(percentiles.average - 100n))).toBeLessThan(3);
-    expect(Math.abs(Number(percentiles.fast - 100n))).toBeLessThan(3);
+    expect(Math.abs(Number(percentiles.slow.maxPriorityFeePerGas - 100n))).toBeLessThan(3);
+    expect(Math.abs(Number(percentiles.average.maxPriorityFeePerGas - 100n))).toBeLessThan(3);
+    expect(Math.abs(Number(percentiles.fast.maxPriorityFeePerGas - 100n))).toBeLessThan(3);
 });
 test(`random`,async () => {
     const gasOracle = new GasEstimator(percentileNames, "value");

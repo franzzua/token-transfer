@@ -2,10 +2,11 @@ import "./polyfills";
 import {render} from "preact";
 
 import {App} from "./app/app";
-import {transactionReader} from "./services/transacton-reader";
+import {TransactionReader} from "@transaction-reader";
 
 const startElement = document.getElementById("start");
 const root = document.getElementById('root');
+const transactionReader = new TransactionReader();
 
 window.TokenTransferApp = {
     isStarted: false,

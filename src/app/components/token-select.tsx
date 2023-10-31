@@ -3,7 +3,7 @@ import { useMemo, useState} from "preact/hooks";
 import {useCell} from "../../helpers/use-cell";
 import {useAppContext} from "../contexts";
 import {useAsync} from "../../helpers/use-async";
-import {isAddress} from "ethers";
+import {isAddress} from "ethers/address";
 
 export type TokenSelectProps = {
     value: TokenInfo;

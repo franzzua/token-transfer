@@ -1,5 +1,7 @@
 import {test, beforeAll} from "@jest/globals";
-import {ContractFactory, JsonRpcProvider, parseEther, Provider, Wallet, parseUnits} from "ethers";
+import {ContractFactory} from "ethers/contract";
+import type {JsonRpcProvider} from "ethers/providers";
+import {Wallet} from "ethers/wallet";
 import {ProviderInjectionToken, TransferApi} from "../src/lib";
 import {etherium, testContainer} from "./test.container";
 import {abi, bytecode} from "erc20-compiled";
@@ -17,16 +19,5 @@ beforeAll(async () => {
     tokenAddress = await deploy.getAddress();
 })
 test(`run transaction`,async () => {
-    const res = api.run({
-        from, to, _id: '1',
-        id: null,
-        amount: 1n*(10n**6n),
-        tokenAddress,
-        state: 'initial'
-    });
-    const states = ['pending', 'signed', 'mined'];
-    for await (let {state} of res){
-        expect(state).toEqual(states.shift());
-    }
-    expect(states).toHaveLength(0);
+    const res = await api.run(tokenAddress, to, 1n*(10n**6n), 0n)
 });

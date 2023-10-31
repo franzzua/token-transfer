@@ -1,7 +1,7 @@
 import {Fn} from "@cmmn/cell/lib";
 import type {Block, TransactionResponse} from "ethers";
 import {ObservableDB} from "../../helpers/observableDB";
-import {InfuraProvider, WebSocketProvider, BrowserProvider} from "ethers";
+import {InfuraProvider, WebSocketProvider, BrowserProvider} from "ethers/providers";
 import {ethereumSw} from "./ethereum-sw";
 export class TransactionReader {
 

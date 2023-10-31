@@ -92,8 +92,6 @@ export class SwStorage {
 
   async load(ignoreErrors = true) {
     await this.cacheOpen;
-    if (await this.cache.match(versionUrl))
-      await this.checkUpdate();
     await Promise.all(
       (this.isIOS
         ? assets.concat(assetsIOS)

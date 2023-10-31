@@ -1,8 +1,8 @@
-import {Contract, ContractFactory, InfuraProvider, JsonRpcApiProvider} from "ethers";
+import type {JsonRpcApiProvider} from "ethers/providers";
+import {Contract} from "ethers/contract";
 import {AccountStore} from "../stores/account.store";
-import {abi, bytecode} from "erc20-compiled";
+import {abi} from "erc20-compiled";
 import type {ERC20} from "erc20-compiled";
-import {ethereumSw} from "./transacton-reader/ethereum-sw";
 
 export class TransferApi {
 
@@ -93,10 +93,5 @@ export class TransferApi {
         }
     }
 
-    async createContract(){
-        const factory = new ContractFactory(abi, bytecode, await this.provider.getSigner());
-        const result = await factory.deploy("AK token", "AKT", 10n**6n);
-        console.log(result);
-    }
 
 }

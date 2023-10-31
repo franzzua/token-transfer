@@ -9,14 +9,14 @@ export const TransferList = () => {
     const notSentTransfers = useCell(() => appStore.NotSentTransfers);
 
     return <div flex="column" gap="2">
-        {notSentTransfers && <div className="frost-card small" flex="column">
+        {notSentTransfers.length > 0 && <div className="frost-card small" flex="column">
         <h3>Saved transfers:</h3>
         {notSentTransfers.map((x,i) => <div key={x._id}>
             {i > 0 && <div className="divider"/>}
             <NotSentTransfer key={x._id} id={x._id}/>
         </div>)}
         </div>}
-        {sentTransfers && <div className="frost-card small" flex="column">
+        {sentTransfers.length > 0 && <div className="frost-card small" flex="column">
             <h3>Sent transfers:</h3>
             {sentTransfers.orderBy(x => -x.timestamp).map((x,i) => <div key={x._id}>
                 {i > 0 && <div className="divider"/>}

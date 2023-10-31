@@ -1,5 +1,5 @@
 import {ServiceWorkerAction} from "../../sw/actions";
-export class TransactionReaderWrapper {
+export class TransactionReader {
     private ethereum = window.ethereum;
     private channel = navigator.serviceWorker;
     // only one tab should be connected

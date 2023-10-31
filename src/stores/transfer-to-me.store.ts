@@ -1,7 +1,7 @@
 import {pack, unpack} from "msgpackr";
 import {bind, cell, compare, Fn} from "@cmmn/cell/lib";
 import {TransferApi} from "../services/transfer.api";
-import {formatUnits, parseUnits, isAddress, FeeData} from "ethers";
+import {isAddress} from "ethers/address";
 import {decode, encode} from "@urlpack/base62";
 import {AccountStore} from "./account.store";
 import {BaseTransferStore} from "./base.transfer.store";

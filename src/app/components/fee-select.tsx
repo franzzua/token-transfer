@@ -1,4 +1,4 @@
-import {formatUnits} from "ethers";
+import {formatUnits} from "ethers/utils";
 import {useAppContext} from "../contexts";
 import {useCell} from "../../helpers/use-cell";
 import {TransferStore} from "../../stores/transfer.store";

@@ -4,6 +4,7 @@ import { lessLoader } from 'esbuild-plugin-less';
 import * as path from "node:path";
 import {chains} from "eth-chains/dist/src/chains.js";
 import {mkdir} from "node:fs/promises";
+import {join} from "node:path";
 
 export const getConfig = ({prod, watch, sourceMaps}) => ({
     entryPoints: [
@@ -28,6 +29,9 @@ export const getConfig = ({prod, watch, sourceMaps}) => ({
         TRANSACTION_WINDOW: '60'
     },
     external: ["*.woff2"],
+    alias: prod ? {
+       "@transaction-reader": "./src/services/transacton-reader/transaction.reader.wrapper.ts"
+    } : {},
     plugins: [
         lessLoader(),
         htmlPlugin({

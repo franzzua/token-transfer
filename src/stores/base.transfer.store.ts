@@ -1,7 +1,7 @@
 import {AsyncCell} from "@cmmn/cell/lib";
 import {TransferApi} from "../services/transfer.api";
 import {TokensStore} from "./tokens.store";
-import {formatUnits, parseUnits} from "ethers";
+import {formatUnits, parseUnits} from "ethers/utils";
 
 export abstract class BaseTransferStore{
 

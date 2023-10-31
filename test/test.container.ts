@@ -1,6 +1,6 @@
 import { Container } from "@cmmn/cell/lib";
-import {BrowserProvider} from "ethers";
-import {Wallet} from "ethers";
+import {BrowserProvider} from "ethers/providers";
+import {Wallet} from "ethers/wallet";
 import ganache from "ganache";
 import {container, ProviderInjectionToken} from "../src/container";
 
