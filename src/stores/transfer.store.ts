@@ -8,8 +8,10 @@ import {isAddress} from "ethers/address";
 import {UserStorage} from "../services/userStorage";
 import {BaseTransferStore} from "./base.transfer.store";
 import {TokensStore} from "./tokens.store";
+import {IFeeSelectStore} from "../app/components/fee-select";
 
-export class TransferStore extends BaseTransferStore {
+export class TransferStore extends BaseTransferStore
+    implements IFeeSelectStore{
     constructor(
         private id: string,
         private storage: UserStorage,
@@ -73,7 +75,7 @@ export class TransferStore extends BaseTransferStore {
         ).catch(console.error);
     });
 
-    public Fee = new Cell(() => {
+    public get Fees(){
         const gas = this.Gas.get();
         if (!gas) return null;
         const gasData = this.chainStore.gasPrices;
@@ -84,7 +86,7 @@ export class TransferStore extends BaseTransferStore {
             fast: {fee: gasData.fast.maxPriorityFeePerGas * gas, ...gasData.fast},
         }
         return fees;
-    });
+    }
 
 
     private validators: Partial<Record<keyof Transfer, (value, transfer: Transfer) => string | null>> = {
@@ -99,11 +101,11 @@ export class TransferStore extends BaseTransferStore {
             if (!this.Total) return null;
             return this.Total <= balance ? null : `Your have not sufficient tokens amount`;
         },
-        fee: () => !!this.Fee.get() ? null : `Wait for loading fees`
+        fee: () => !!this.Fees ? null : `Wait for loading fees`
     }
     public get Total(): bigint | null{
         if (!this.Amount) return null;
-        const fees = this.Fee.get();
+        const fees = this.Fees;
         const fee = fees?.[this.Transfer.fee]?.fee ?? 0n
         return this.Amount + fee;
     }

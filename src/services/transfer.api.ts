@@ -33,7 +33,7 @@ export class TransferApi {
             return await signer.sendTransaction({
                 to: transfer.to, value: transfer.amount,
                 maxFeePerGas: transfer.maxPriorityFeePerGas + currentBlock.baseFeePerGas,
-                maxPriorityFeePerGas: transfer.maxPriorityFeePerGas
+                maxPriorityFeePerGas: transfer.maxPriorityFeePerGas,
             });
         }
         const erc20 = await this.getContract(transfer.tokenAddress, transfer.from);
@@ -97,5 +97,16 @@ export class TransferApi {
         }
     }
 
-
+    async replace(hash: string,
+            from: string,
+            maxPriorityFeePerGas: bigint) {
+        const block = await this.provider.getBlock('pending');
+        const transaction = await this.provider.getTransaction(hash);
+        const signer = await this.provider.getSigner(from);
+        await signer.sendTransaction({
+            ...transaction,
+            maxPriorityFeePerGas: maxPriorityFeePerGas,
+            maxFeePerGas: maxPriorityFeePerGas + block.baseFeePerGas
+        });
+    }
 }
