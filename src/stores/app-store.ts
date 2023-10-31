@@ -1,4 +1,4 @@
-import {bind, cell, compare, Fn} from "@cmmn/cell/lib";
+import {bind, cell, compare, Fn, Inject, Injectable} from "@cmmn/cell/lib";
 import {Container} from "@cmmn/cell/lib";
 import {UserStorage} from "../services/userStorage";
 import {TransferApi} from "../services/transfer.api";
@@ -9,13 +9,14 @@ import {TokensStore} from "./tokens.store";
 import {TransferStore} from "./transfer.store";
 import {SentTransferStore} from "./sent-transfer.store";
 
+@Injectable()
 export class AppStore {
-    constructor(public storage: UserStorage,
-                public api: TransferApi,
-                public accountStore: AccountStore,
-                public chainStore: ChainStore,
-                public tokensStore: TokensStore,
-                public container: Container) {
+    constructor(@Inject(UserStorage) public storage: UserStorage,
+                @Inject(TransferApi) public api: TransferApi,
+                @Inject(AccountStore) public accountStore: AccountStore,
+                @Inject(ChainStore) public chainStore: ChainStore,
+                @Inject(TokensStore) public tokensStore: TokensStore,
+                @Inject(Container) public container: Container) {
     }
 
     @bind

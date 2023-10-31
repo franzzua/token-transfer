@@ -1,14 +1,18 @@
+import {Injectable} from "@cmmn/cell/lib";
+import {Inject} from "@cmmn/cell/lib";
 import type {JsonRpcApiProvider} from "ethers/providers";
 import {Contract} from "ethers/contract";
+import {ProviderInjectionToken} from "../container";
 import {AccountStore} from "../stores/account.store";
 import {abi} from "erc20-compiled";
 import type {ERC20} from "erc20-compiled";
 
+@Injectable()
 export class TransferApi {
 
     // private provider = new ethers.BrowserProvider(window.ethereum);
-    constructor(private providerFactory: (chainId: number) => JsonRpcApiProvider,
-                private accountStore: AccountStore) {
+    constructor(@Inject(ProviderInjectionToken) private providerFactory: (chainId: number) => JsonRpcApiProvider,
+                @Inject(AccountStore) private accountStore: AccountStore) {
         this.provider.on('pending', console.log);
     }
 

@@ -1,7 +1,7 @@
 import {TransferApi} from "../services/transfer.api";
 import {UserStorage} from "../services/userStorage";
 import {AccountStore} from "./account.store";
-import {cell, Cell} from "@cmmn/cell/lib";
+import {cell, Cell, Inject} from "@cmmn/cell/lib";
 import uniswapTokenList from "@uniswap/default-token-list";
 import {chains} from "eth-chains/dist/src/chains.js";
 
@@ -10,9 +10,9 @@ const allTokens = uniswapTokenList.tokens as Array<TokenInfo & {
 }>
 
 export class TokensStore {
-    constructor(private storage: UserStorage,
-                private accountStore: AccountStore,
-                private api: TransferApi) {
+    constructor(@Inject(UserStorage) private storage: UserStorage,
+                @Inject(AccountStore) private accountStore: AccountStore,
+                @Inject(TransferApi) private api: TransferApi) {
 
     }
 

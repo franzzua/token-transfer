@@ -1,6 +1,8 @@
+import {Injectable} from "@cmmn/cell/lib";
 import {cell} from "@cmmn/cell/lib";
 import {ObservableDB} from "../helpers/observableDB";
 
+@Injectable()
 export class UserStorage {
 
     @cell

@@ -1,4 +1,4 @@
-import {Cell, cell} from "@cmmn/cell/lib";
+import {Cell, cell, Inject} from "@cmmn/cell/lib";
 import {AccountStore} from "./account.store";
 import type {TransactionResponse} from "ethers";
 import {ObservableDB} from "../helpers/observableDB";
@@ -7,8 +7,7 @@ import {chains} from "eth-chains/dist/src/chains.js";
 
 export class ChainStore{
 
-
-    constructor(private accountStore: AccountStore) {
+    constructor(@Inject(AccountStore) private accountStore: AccountStore) {
 
         Cell.OnChange(() => this.accountStore.chainId, this.init);
         this.storage.on('change', e => {
