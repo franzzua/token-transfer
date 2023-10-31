@@ -1,10 +1,10 @@
 import {FC} from "react";
 import {Header} from "../components/header";
-
+import style from "./layout.module.less";
 export const Layout: FC<{children: any}> = ({children}) => {
-    return <div flex="column" gap="2">
+    return <div className={style.layout}>
         <Header/>
-        <div>
+        <div className={style.content}>
         {children}
         </div>
     </div>

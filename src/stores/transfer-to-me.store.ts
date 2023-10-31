@@ -21,7 +21,6 @@ export class TransferToMeStore extends BaseTransferStore {
         fee: 'average',
         amount: null,
         tokenAddress: null,
-        state: 'initial',
         to: null,
     }
 

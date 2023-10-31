@@ -33,6 +33,12 @@ export class AccountStore {
         })
     }
 
+    async switchToChain(chainId: number) {
+        return this.provider.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: '0x'+chainId.toString(16) }],
+        });
+    }
 }
 
 const selectedAccountKey = 'selectedAccount';

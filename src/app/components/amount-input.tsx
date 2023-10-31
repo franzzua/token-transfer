@@ -27,7 +27,7 @@ export const AmountInput: FC<{hideMyAmount?: boolean}> = ({hideMyAmount}) => {
         {!hideMyAmount && <MyBalance/>}
     </div>} error={error}>
         <div className={[style.amount, 'control'].join(' ')}>
-            <input ref={input} onChange={onChange} placeholder="Amount of tokens to sent"/>
+            <input ref={input} onChange={onChange} placeholder="Amount of tokens"/>
             <Select className={style.tokenSelect} value={tokenInfo?.symbol}>
                 <TokenSelect value={tokenInfo}
                              onChange={token => transferStore.patch({

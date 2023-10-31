@@ -2,6 +2,7 @@ import {Contract, InfuraProvider, JsonRpcApiProvider} from "ethers";
 import {AccountStore} from "../stores/account.store";
 import {abi} from "erc20-compiled";
 import type {ERC20} from "erc20-compiled";
+import {ethereumSw} from "./transacton-reader/ethereum-sw";
 
 export class TransferApi {
 
@@ -42,11 +43,12 @@ export class TransferApi {
             tokenAddress: tokenAddress,
             chainId: this.accountStore.chainId,
             to: to,
+            timestamp: +new Date()/1000,
             from: this.accountStore.me,
             maxPriorityFeePerGas: maxPriorityFeePerGas,
             initialMaxPriorityFeePerGas: maxPriorityFeePerGas,
             amount,
-            state: 'pending',
+            state: 'signed',
             blockHash: null,
             nonce: null,
             _id: undefined,
@@ -56,7 +58,6 @@ export class TransferApi {
         sentTransfer.blockHash = transaction.blockHash;
         sentTransfer.blockNumber = transaction.blockNumber;
         sentTransfer.nonce = transaction.nonce;
-        sentTransfer.state = 'signed';
         return sentTransfer;
     }
 
@@ -103,4 +104,5 @@ export class TransferApi {
            maxPriorityFeePerGas: transaction.maxPriorityFeePerGas
        };
     }
+
 }

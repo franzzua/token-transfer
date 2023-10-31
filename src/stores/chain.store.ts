@@ -3,6 +3,7 @@ import {AccountStore} from "./account.store";
 import type {TransactionResponse} from "ethers";
 import {ObservableDB} from "../helpers/observableDB";
 import {GasEstimator, GasInfo} from "../services/gasEstimator";
+import {chains} from "eth-chains/dist/src/chains.js";
 
 export class ChainStore{
 
@@ -58,6 +59,9 @@ export class ChainStore{
         }))
     }
 
+    getChain(chainId) {
+        return chains[chainId];
+    }
 }
 
 type TransactionInfo = Pick<TransactionResponse, "maxPriorityFeePerGas"|"type"> & {

@@ -38,8 +38,18 @@
   box-shadow: #465d8f 0 0 6px 6px;
   padding: 2em;
   border-radius: 8px;
+  transition: color .3s ease;
   &.small{
     padding: .5em 1em;
+  }
+  &.green{
+    background: var(--light-green);
+  }
+  &.yellow{
+    background: var(--yellow);
+  }
+  &.red{
+    background: var(--red);
   }
 
   @media (max-width: 440px){
@@ -65,6 +75,9 @@
   }
   &[justify=around]{
     justify-content: space-around;
+  }
+  &[justify=end]{
+    justify-content: flex-end;
   }
   &[align=center]{
     align-items: center;
@@ -175,4 +188,8 @@ a{
   text-decoration: underline;
   cursor: pointer;
   color: inherit;
+}
+
+h3{
+  margin: 0;
 }

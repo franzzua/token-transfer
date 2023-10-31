@@ -112,4 +112,7 @@ export class TransferStore extends BaseTransferStore {
         return errors;
     }
 
+    remove() {
+        return this.storage.transfers.remove(this.id);
+    }
 }

@@ -13,16 +13,16 @@ type Transfer = {
     amount: string;
     tokenAddress: string;
     to: string;
-    state: 'initial';
     fee: 'slow'|'fast'|'average';
 }
 type TransferSent = Omit<Transfer, 'fee'|'amount'|'state'> & {
     from: string;
     chainId: number;
     amount: bigint;
+    timestamp: number;
     maxPriorityFeePerGas: bigint;
     initialMaxPriorityFeePerGas: bigint;
-    state: 'pending'|'signed'|'mined'|'rejected';
+    state: 'signed'|'mined'|'rejected';
     blockHash: string;
     blockNumber: number;
     nonce: number;
@@ -47,7 +47,7 @@ declare namespace React {
         flex?: 'row'|'column';
         gap?: '0.5'|'1'|'1.5'|'2'|'3'|'4';
         align?: 'center'|'start'|'end';
-        justify?: 'center'|'between'|'around';
+        justify?: 'center'|'between'|'around'|'end';
         wrap?: 'wrap';
     }
 }
