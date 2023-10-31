@@ -23,8 +23,8 @@ export const FeeSelect = () => {
                            onChange={e => transferStore.patch({fee: f})}
                            checked={fee == f}/>
                     <span>{labels[f]}</span>
-                    <span>{info[f].timePercs[0]?.toFixed(0)} - {info[f].timePercs[2]?.toFixed(0)} seconds</span>
-                    <span>{(+formatUnits(info[f].fee, 12)).toFixed(0)} µ{defaultToken}</span>
+                    <span className="text-sm">{info[f].timePercs[0]?.toFixed(0)} - {info[f].timePercs[2]?.toFixed(0)} seconds</span>
+                    <b>{(+formatUnits(info[f].fee, 12)).toFixed(0)} µ{defaultToken}</b>
                 </label>
             ))}
         </div>

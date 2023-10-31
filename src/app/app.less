@@ -42,19 +42,20 @@
   &.small{
     padding: .5em 1em;
   }
-  &.green{
-    background: var(--light-green);
-  }
-  &.yellow{
-    background: var(--yellow);
-  }
-  &.red{
-    background: var(--red);
-  }
 
   @media (max-width: 440px){
     border-radius: 0;
   }
+}
+
+.bg-green{
+  background: var(--light-green);
+}
+.bg-yellow{
+  background: var(--yellow);
+}
+.bg-red{
+  background: var(--red);
 }
 
 
@@ -114,12 +115,12 @@
 button.primary {
   background: var(--dark-blue);
   color: var(--light-green);
-
+  font-weight: 590;
 }
 
 .divider{
   height: .1px;
-  background: var(--dark-blue);
+  background: var(--blue);
   margin: .5em -2em;
   box-sizing: border-box;
 
@@ -188,8 +189,4 @@ a{
   text-decoration: underline;
   cursor: pointer;
   color: inherit;
-}
-
-h3{
-  margin: 0;
 }

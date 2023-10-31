@@ -10,7 +10,7 @@ export const NotSentTransfer: FC<{ id: string }> = ({id}) => {
         to, amount
     } = useCell(() => store.Transfer);
     const tokenInfo = useCell(store.TokenInfo)
-    return <div className="frost-card small">
+    return <div style={{padding: '1em', margin: '1em', borderRadius: '8px'}} className="bg-yello2w">
         <div flex="column" gap="1">
             <div>To {to}</div>
             <div>Amount {amount} {amount && tokenInfo?.symbol}</div>

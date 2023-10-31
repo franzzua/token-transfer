@@ -24,7 +24,8 @@ export const SentTransfer: FC<{id: string}> = ({id}) => {
         });
         goTo('/transfer', {id});
     }, [transfer, amount])
-    return <div className={['frost-card small', colors[transfer.state]].join(' ')}
+    return <div className={[colors[transfer.state]].join(' ')}
+                style={{padding: '1em', margin: '1em', borderRadius: '8px'}}
                 flex="column" gap="0.5">
         <div>From: {transfer.from}</div>
         <div>To: {transfer.to}</div>
@@ -39,7 +40,7 @@ export const SentTransfer: FC<{id: string}> = ({id}) => {
 
 
 const colors: Record<TransferSent['state'], string> = {
-    rejected: 'red',
-    mined: 'green',
-    signed: 'yellow'
+    rejected: 'bg-red',
+    mined: 'bg-green',
+    signed: 'bg-yellow'
 }
