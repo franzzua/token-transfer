@@ -63,7 +63,7 @@ export class TokensStore {
             const native = chains[chainId].nativeCurrency;
             return  {
                 ...native,
-                address: '',
+                address: null,
                 chainId,
             }
         }

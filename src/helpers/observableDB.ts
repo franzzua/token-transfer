@@ -16,27 +16,29 @@ export class ObservableDB<T extends { _id: string }> extends EventEmitter<{
   private channel = new BroadcastChannel(this.name);
 
   public isLoaded: Promise<void> = this.onceAsync("loaded");
-  constructor(public name: string) {
+  constructor(public name: string, private broadcast = true) {
     super();
     globalThis[name] = this;
     this.init();
-    this.channel.addEventListener('message', async e => {
-      if (e.data?.key != 'change') return;
-      switch (e.data.event?.type){
-        case "addOrUpdate":
-          await this.addOrUpdate(e.data.event.value, true);
-          super.emit("change", e.data.event);
-          break;
-        case "delete":
-          await this.remove(e.data.event.key, true);
-          super.emit("change", e.data.event);
-          break;
-      }
-    })
+    if (broadcast) {
+      this.channel.addEventListener('message', async e => {
+        if (e.data?.key != 'change') return;
+        switch (e.data.event?.type) {
+          case "addOrUpdate":
+            await this.addOrUpdate(e.data.event.value, true);
+            super.emit("change", e.data.event);
+            break;
+          case "delete":
+            await this.remove(e.data.event.key, true);
+            super.emit("change", e.data.event);
+            break;
+        }
+      });
+    }
   }
   public emit(key, event?){
     super.emit(key, event);
-    this.channel.postMessage({
+    this.broadcast && this.channel.postMessage({
       key, event
     });
   }

@@ -12,7 +12,7 @@ export class TransactionReader {
     }
     private infuraProvider: WebSocketProvider;
     private browserProvider: BrowserProvider;
-    private pendingTransactions = new ObservableDB<TransactionInfo>("pendingTransactions");
+    private pendingTransactions = new ObservableDB<TransactionInfo>("pendingTransactions", false);
     private storage = new ObservableDB<TransactionInfo>("transactions");
     private sentTransfers = new ObservableDB<TransferSent>("sentTransfers");
     private isConnected = false;

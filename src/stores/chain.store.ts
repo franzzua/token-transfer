@@ -46,6 +46,7 @@ export class ChainStore{
         && t.chainId == this.accountStore.chainId
         && t.type == 2;
 
+
     public get gasPrices(): GasInfo {
         return this.estimator.GasInfo;
     }

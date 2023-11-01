@@ -1,4 +1,4 @@
-import {TransferApi} from "./services/transfer.api";
+import {TransferApi} from "../services/transfer.api";
 
 export class TransferApiMock extends TransferApi {
     async run(tokenAddress: string, to: string, amount: bigint, fee: bigint): Promise<TransferSent> {

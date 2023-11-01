@@ -4,6 +4,8 @@ import {useCell} from "../../helpers/use-cell";
 import {useAppContext} from "../contexts";
 import {useAsync} from "../../helpers/use-async";
 import {isAddress} from "ethers/address";
+import style from "./token-select.module.less";
+
 
 export type TokenSelectProps = {
     value: TokenInfo;
@@ -54,10 +56,9 @@ const TokenPreview: FunctionComponent<{
     if (isSelected ) console.log(token, 'selected')
     const {tokensStore} = useAppContext();
     const logoURI = useAsync(() => tokensStore.getTokenImageURL(token.address), [token.address]);
-    return <div flex="column" align="center" style={{
-        cursor: 'pointer',
-        border: isSelected ? 'var(--dark) solid .1px' : 'transparent'
-    }} onClick={() => onChange(token)}>
+    return <div className={[
+        isSelected ? style.tokenPreviewSelected : style.tokenPreview
+    ]} onClick={() => onChange(token)}>
         <img alt={token.name} src={logoURI.data} style={{
             width: '2em',
             height: '2em'

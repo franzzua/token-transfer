@@ -11,7 +11,9 @@ export const FeeSelect = () => {
     const defaultToken = useCell(tokensStore.defaultToken).symbol;
     const transferStore = useTransferStore() as TransferStore;
     const fee = useCell(() => transferStore.Transfer.fee);
-    const info = useCell(transferStore.Fee);
+    const info = useCell(transferStore.Fee, [], {
+        throttle: 3000
+    });
     if (!info) return 'Loading gas prices...';
     return <Label title="Fee">
         <div className={style.feeSelect} >
@@ -21,12 +23,19 @@ export const FeeSelect = () => {
                            onChange={e => transferStore.patch({fee: f})}
                            checked={fee == f}/>
                     <span>{labels[f]}</span>
-                    <span className="text-sm">{info[f].timePercs[0]?.toFixed(0)} - {info[f].timePercs[2]?.toFixed(0)} seconds</span>
-                    <b>{(+formatUnits(info[f].fee, 12)).toFixed(0)} µ{defaultToken}</b>
+                    <span className="text-xs">{info[f].timePercs[0]?.toFixed(0)} - {info[f].timePercs[2]?.toFixed(0)} seconds</span>
+                    <b>{formatFee(info[f].fee/10n, defaultToken)}</b>
                 </label>
             ))}
         </div>
     </Label>
+}
+
+function formatFee(fee: bigint, token: string) {
+    const value = +formatUnits(fee, 12);
+    if (value > 1)
+        return `${value.toFixed(0)} µ${token}`
+    return `${value.toPrecision(3)} µ${token}`
 }
 
 const fees = ["slow", "average", "fast"] as const;

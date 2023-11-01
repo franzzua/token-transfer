@@ -56,7 +56,7 @@ export class Tree<
         }
     }
 
-    public add(value: TValue): Tree<TKey, TValue> {
+    public add<TValue2 extends TValue>(value: TValue2): Tree<TKey, TValue> {
         if (value[this.key] >= this.data[this.key]) {
             this.right = this.right?.add(value) ?? new Tree<TKey, TValue>([value], this.key);
         } else {

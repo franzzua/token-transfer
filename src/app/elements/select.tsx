@@ -11,6 +11,14 @@ export const Select: FunctionComponent<SelectProps> = (props) => {
     useEffect(() => {
         setIsOpen(false);
     }, [props.value]);
+    useEffect(() => {
+        const escListener = (e: KeyboardEvent) => {
+            if (e.key != 'Escape') return;
+            setIsOpen(false);
+        };
+        document.addEventListener('keyup', escListener);
+        return () => document.removeEventListener('keyup', escListener);
+    }, []);
     return <>
         <div flex="row" align="center" gap="1"
              className={props.className}
