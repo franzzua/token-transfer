@@ -1,5 +1,4 @@
-import {bind, cell, compare, Fn, Inject, Injectable} from "@cmmn/cell/lib";
-import {Container} from "@cmmn/cell/lib";
+import {bind, cell, compare, Container, Inject, Injectable} from "@cmmn/cell/lib";
 import {IdInjectionToken} from "../container";
 import {UserStorage} from "../services/userStorage";
 import {TransferApi} from "../services/transfer.api";
@@ -9,6 +8,7 @@ import {TransferToMeStore} from "./transfer-to-me.store";
 import {TokensStore} from "./tokens.store";
 import {TransferStore} from "./transfer.store";
 import {SentTransferStore} from "./sent-transfer.store";
+import {id} from "./id";
 
 @Injectable()
 export class AppStore {
@@ -77,7 +77,7 @@ export class AppStore {
 
     async createNew() {
         const transfer = {
-            _id: Fn.ulid(),
+            _id: id(),
             amount: null,
             tokenAddress: '',
             to: null,
@@ -89,9 +89,10 @@ export class AppStore {
     }
 
     async create(transfer: Transfer) {
-        transfer._id = Fn.ulid();
+        transfer._id = id();
         await this.storage.transfers.addOrUpdate(transfer);
         return transfer._id;
     }
 
 }
+

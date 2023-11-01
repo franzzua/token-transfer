@@ -9,13 +9,16 @@ export const AccountSelect: FunctionComponent = () => {
     const accounts = useCell(() => accountStore.accounts);
     const me = useCell(() => accountStore.me);
     return (
-        <div flex="column" className="frost-card small"
-             style={{margin: '1em', gap: '1em'}} align="start">
+        <div flex="column" className="frost-card small" align="start">
             <Select value={me}>
-                <div>
-                    {accounts.filter(x => x !== me).map(x => <div onClick={e => accountStore.me = x} key={x}>
-                        {x}
-                    </div>)}
+                <div flex="column" gap="0.5">
+                    <div></div>
+                    {accounts.filter(x => x !== me).map(x =>
+                        <button className="text" onClick={e => accountStore.me = x} key={x}>
+                            {x}
+                        </button>
+                    )}
+                    <div></div>
                 </div>
             </Select>
         </div>

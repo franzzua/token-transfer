@@ -61,7 +61,8 @@ function chainListPlugin(){
                 [key, {
                     name: value.name,
                     nativeCurrency: value.nativeCurrency,
-                    infoURL: value.infoURL
+                    infoURL: value.infoURL,
+                    explorers: value.explorers
                 }]
             ));
             build.initialOptions.alias ??= {};

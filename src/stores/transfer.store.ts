@@ -92,12 +92,20 @@ export class TransferStore extends BaseTransferStore
 
 
     private validators: Partial<Record<keyof Transfer, (value, transfer: Transfer) => string | null>> = {
-        to: x => !isAddress(x) ? 'Invalid address' :
-            x.toLowerCase() === this.accountStore.me.toLowerCase() ? 'You can\'t transfer tokens to yourself' : null,
+        to: x => {
+            if (!x)
+                return 'Address is required';
+            if (!isAddress(x))
+                return 'Invalid address';
+            if (x.toLowerCase() === this.accountStore.me.toLowerCase())
+                return 'You can\'t transfer tokens to yourself';
+            return null;
+        },
         tokenAddress: x => (!x || isAddress(x)) ? null : 'Invalid address',
         amount: (amount, transfer) => {
             const balance = this.myBalance.get();
             if (balance == null) return null;
+            if (!this.Transfer.amount) return `Amount is required`;
             if (Number.isNaN(+this.Transfer.amount)) return `Invalid number`;
             if (+this.Transfer.amount < 0) return `Amount should be positive number`;
             if (!this.Total) return null;

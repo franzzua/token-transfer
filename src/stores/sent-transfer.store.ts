@@ -6,6 +6,7 @@ import {formatUnits} from "ethers/utils";
 import {UserStorage} from "../services/userStorage";
 import {TokensStore} from "./tokens.store";
 import {IFeeSelectStore} from "../ui/components/fee-select";
+import {id} from "./id";
 
 export class SentTransferStore
     implements IFeeSelectStore {
@@ -95,7 +96,7 @@ export class SentTransferStore
             to: this.Transfer.to,
             tokenAddress: this.Transfer.tokenAddress,
             fee: "average",
-            _id: Fn.ulid()
+            _id: id()
         } as Transfer;
         await this.storage.transfers.addOrUpdate(clone);
         return clone._id;

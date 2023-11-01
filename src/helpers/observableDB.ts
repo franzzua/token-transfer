@@ -12,7 +12,7 @@ export class ObservableDB<T extends { _id: string }> extends EventEmitter<{
 }> {
   private db = new IndexedDatabase(this.name);
 
-  protected items = new Map<string, T & { version: string }>();
+  protected items = new Map<string, T>();
   private channel = new BroadcastChannel(this.name);
 
   public isLoaded: Promise<void> = this.onceAsync("loaded");
@@ -72,18 +72,14 @@ export class ObservableDB<T extends { _id: string }> extends EventEmitter<{
     });
   }
 
-  async set(value: T & { version: string }) {
+  async set(value: T) {
     await this.db.set(value._id, value);
     this.items.set(value._id, value);
   }
 
   async addOrUpdate(value: T, skipChange = false) {
     await this.isLoaded;
-    const valueWithVersion = {
-      ...value,
-      version: Fn.ulid(),
-    };
-    await this.set(valueWithVersion);
+    await this.set(value);
     if (!skipChange) {
       this.emit("change", {
         type: "addOrUpdate",

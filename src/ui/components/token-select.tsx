@@ -30,7 +30,7 @@ export const TokenSelect: FunctionComponent<TokenSelectProps> = (props) => {
             <SearchIcon/>
             <input value={query}
                    placeholder="Search tokens by name, symbol or address"
-                   onChange={e => setQuery(e.currentTarget.value)}
+                   onInput={e => setQuery(e.currentTarget.value)}
                    />
         </div>
         {filteredTokens.concat(tokenByAddress.data).filter(x => x)
@@ -59,10 +59,11 @@ const TokenPreview: FunctionComponent<{
     return <div className={[
         isSelected ? style.tokenPreviewSelected : style.tokenPreview
     ]} onClick={() => onChange(token)}>
-        <img alt={token.name} src={logoURI.data} style={{
-            width: '2em',
-            height: '2em'
-        }}/>
+        {
+            logoURI.data
+                ? <img alt={token.name} src={logoURI.data} className={style.img}/>
+                : <div className={style.img}>{token.name}</div>
+        }
         <span>{token.symbol}</span>
     </div>;
 };

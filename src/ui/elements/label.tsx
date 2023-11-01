@@ -11,7 +11,7 @@ export const Label: FunctionComponent<LabelProps> = (props) => {
     return <label className={[
         !!props.error ? 'error' : '',
         isVisited ? 'visited' : ''
-    ].filter(x => x).join(' ')} onBlur={() => setIsVisited(true)}>
+    ].filter(x => x).join(' ')} onfocusout={() => setIsVisited(true)}>
         <span>{props.title}</span>
         {props.children}
         <span className="error-text">{props.error}</span>

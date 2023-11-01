@@ -44,7 +44,11 @@
   }
 
   @media (max-width: 440px){
+    padding: .5em;
     border-radius: 0;
+    .small{
+
+    }
   }
 }
 
@@ -112,11 +116,6 @@
   }
 }
 
-button.primary {
-  background: var(--dark-blue);
-  color: var(--light-green);
-  font-weight: 590;
-}
 
 .divider{
   height: .1px;
@@ -135,6 +134,11 @@ input {
   font-size: 1.5rem;
   min-width: 0;
   box-sizing: border-box;
+
+  @media (max-width: 440px){
+    padding: 0.3rem 1rem 1em;
+    font-size: 1.25em;
+  }
 }
 .pre-input{
   font-size: 1.5rem;

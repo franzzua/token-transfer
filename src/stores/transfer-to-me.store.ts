@@ -5,7 +5,6 @@ import {isAddress} from "ethers/address";
 import {decode, encode} from "@urlpack/base62";
 import {AccountStore} from "./account.store";
 import {BaseTransferStore} from "./base.transfer.store";
-import {ChainStore} from "./chain.store";
 import {TokensStore} from "./tokens.store";
 
 export class TransferToMeStore extends BaseTransferStore {
@@ -17,7 +16,7 @@ export class TransferToMeStore extends BaseTransferStore {
 
     @cell
     private transfer: Transfer = {
-        _id: Fn.ulid(),
+        _id: '',
         fee: 'average',
         amount: null,
         tokenAddress: null,

@@ -3,6 +3,7 @@ import {useCallback, useContext, useMemo} from "preact/hooks";
 import {useCell} from "../helpers/use-cell";
 import {AppContext} from "../contexts/app-context";
 import {goTo} from "../routing";
+import style from "./sent-transfer.module.css";
 
 export const SentTransfer: FunctionComponent<{id: string}> = ({id}) => {
     const appContext = useContext(AppContext);
@@ -11,20 +12,34 @@ export const SentTransfer: FunctionComponent<{id: string}> = ({id}) => {
         transfer, amount, tokenInfo, fee, isFeeChanged
     } = useCell(store.Info);
     const needToSwitchChainId = useCell(() => appContext.accountStore.chainId !== transfer.chainId);
-    const chainName = useMemo(() => appContext.chainStore.getChain(transfer.chainId), [transfer.chainId]).name;
+    const chain = useMemo(() => appContext.chainStore.getChain(transfer.chainId), [transfer.chainId]);
     const sendAgain = useCallback(async () => {
         const id = await store.clone();
         goTo('/transfer', {id});
     }, [transfer, amount]);
-    return <div className={[colors[transfer.state]].join(' ')}
-                style={{padding: '1em', margin: '1em', borderRadius: '8px'}}
+    return <div className={[colors[transfer.state], style.sentTransfer].join(' ')}
                 flex="column" gap="0.5">
-        <div>From: {transfer.from}</div>
-        <div>To: {transfer.to}</div>
-        <div>Amount: {amount} {tokenInfo?.symbol}</div>
-        <div>State: {transfer.state} {isFeeChanged ? ', fee have been changed' : ''}</div>
-        <div flex="row" justify="end">
-            <button className="primary" onClick={sendAgain}>{needToSwitchChainId ? `Switch To ${chainName} and `:''}Send again</button>
+        <div flex="row" justify="between">
+            <div>
+                <span className="text-lg">{amount}</span>
+                <span className="text-sm"> {tokenInfo?.symbol}</span>
+            </div>
+            <div flex="column" align="end" className="text-xs">
+                {isFeeChanged && <div>fee changed</div>}
+                <div>{transfer.state} at {new Date(transfer.timestamp*1000).toUTCString()}</div>
+            </div>
+        </div>
+        <div className={style.address}>
+            <div><span>From</span> <a>{transfer.from}</a></div>
+            <div><span>To</span> <a>{transfer.to}</a></div>
+        </div>
+        {/*<div>State: {transfer.state} {isFeeChanged ? ', fee have been changed' : ''}</div>*/}
+        <div flex="row" justify="between">
+            {chain.explorers?.length > 0 ? <a rel="noreferrer"
+               className="button text"
+               href={`${chain.explorers[0].url}/tx/${transfer._id}`}
+               target="_blank">Open in {chain.explorers[0].name}</a> : <span></span>}
+            <button className="text" onClick={sendAgain}>{needToSwitchChainId ? `Switch To ${chain.name} and `:''}Send again</button>
         </div>
     </div>
 

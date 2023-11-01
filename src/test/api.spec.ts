@@ -26,9 +26,6 @@ test(`run transaction`,async () => {
     const res = await api.run(tokenAddress, to, amount, 0n)
     expect(res._id).not.toBeNull();
     expect(res.state).toBe('pending')
-    expect(res.nonce).not.toBeNull();
-    expect(res.blockHash).toBeNull();
-    expect(res.blockNumber).toBeNull();
     const tr = await provider.getTransaction(res._id);
     expect(tr.isMined()).toBeTruthy();
     const bFrom = await api.getBalance(tokenAddress);

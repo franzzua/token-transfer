@@ -16,7 +16,7 @@ body {
   overflow-x: hidden;
   overflow-y: auto;
 }
-button{
+button, .button{
   font-family: inherit;
   color: inherit;
   background: var(--light-green);
@@ -25,6 +25,11 @@ button{
   padding: 1em 2em;
   min-width: 8em;
   cursor: pointer;
+  &.primary {
+    background: var(--dark-blue);
+    color: var(--light-green);
+    font-weight: 590;
+  }
   &[disabled]{
     color: var(--dark-blue);
     background: gray;
@@ -34,6 +39,23 @@ button{
   &:hover{
     box-shadow: #465d8f 0 0 2px 2px;
   }
+  &:active{
+    box-shadow: #465d8f 0 0 3px 3px;
+  }
+  &.text{
+    background: none;
+    padding: .5em 0;
+    text-decoration: underline;
+    box-shadow: none;
+    color: var(--dark-blue);
+    &:hover{
+
+    }
+    &.primary{
+      font-weight: bold;
+    }
+  }
+
 }
 
 .text-lg{
