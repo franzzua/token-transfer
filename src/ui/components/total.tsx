@@ -1,4 +1,5 @@
 import {formatEther} from "ethers/utils";
+import {TotalStore} from "../../stores/interfaces";
 import {useCell} from "../helpers/use-cell";
 import {useAppContext} from "../contexts";
 import {FunctionComponent} from "preact";
@@ -12,8 +13,4 @@ export const Total: FunctionComponent<{store: TotalStore}> = ({store}) => {
     return total && <div flex="column" align="end">
         Total: {formatEther(total)} {defaultToken}
     </div>;
-}
-
-export interface TotalStore {
-    get Total(): bigint;
 }

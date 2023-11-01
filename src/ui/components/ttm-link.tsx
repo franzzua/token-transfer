@@ -1,4 +1,5 @@
 import {useEffect, useRef} from "preact/hooks";
+import {TtmLinkStore} from "../../stores/interfaces";
 import {useCell} from "../helpers/use-cell";
 import {toCanvas} from 'qrcode/lib/index.js'
 import {FunctionComponent} from "preact";
@@ -23,8 +24,4 @@ export const TtmLink: FunctionComponent<{store: TtmLinkStore}> = ({store}) => {
         }} href={url} target="_blank" rel="noreferrer">{url}</a>
         <canvas ref={ref}/>
     </div>
-}
-
-export interface TtmLinkStore {
-    get URL(): string;
 }

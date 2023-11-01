@@ -1,4 +1,8 @@
 import {ServiceWorkerAction} from "../../sw/actions";
+
+/**
+ * TransactionReader Proxy for connecting with service worker instance
+ */
 export class TransactionReader {
     private ethereum = window.ethereum;
     private channel = navigator.serviceWorker;

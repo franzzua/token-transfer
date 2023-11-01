@@ -1,6 +1,9 @@
 import {EventEmitter} from "@cmmn/cell/lib";
 declare var self: ServiceWorkerGlobalScope;
 
+/**
+ * Handles connection to only one client from service-worker
+ */
 export class OnlyOneClientConnector extends EventEmitter<Record<string, any> & {
     connected: void;
     disconnected: void;

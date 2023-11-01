@@ -2,27 +2,27 @@ import {AsyncCell, bind, cell, compare, Inject, Injectable} from "@cmmn/cell/lib
 import {IdInjectionToken} from "../container";
 import {Timer} from "../helpers/timer";
 import {TransferApi} from "../services/transfer.api";
-import {AccountStore} from "./account.store";
+import {AccountService} from "../services/accountService";
 import {ChainStore} from "./chain.store";
 import {formatUnits} from "ethers/utils";
 import {isAddress} from "ethers/address";
 import {UserStorage} from "../services/userStorage";
 import {BaseTransferStore} from "./base.transfer.store";
+import {AmountInputStore, IFeeSelectStore, TotalStore} from "./interfaces";
 import {TokensStore} from "./tokens.store";
-import {IFeeSelectStore} from "../ui/components/fee-select";
 
 @Injectable(true)
 export class TransferStore extends BaseTransferStore
-    implements IFeeSelectStore{
+    implements IFeeSelectStore, AmountInputStore, TotalStore{
     constructor(
         @Inject(IdInjectionToken) private id: string,
         @Inject(UserStorage) private storage: UserStorage,
-        @Inject(AccountStore) private accountStore: AccountStore,
+        @Inject(AccountService) private accountStore: AccountService,
         @Inject(TokensStore) tokensStore: TokensStore,
-        @Inject(TransferApi) api: TransferApi,
+        @Inject(TransferApi) private api: TransferApi,
         @Inject(ChainStore) private chainStore: ChainStore
     ) {
-        super(api, tokensStore)
+        super(tokensStore)
     }
 
 
@@ -47,7 +47,7 @@ export class TransferStore extends BaseTransferStore
         const fee = this.chainStore.gasPrices[this.Transfer.fee];
         const transferSent = await this.api.run(
             this.Transfer.tokenAddress, this.Transfer.to,
-            this.Amount, fee.maxPriorityFeePerGas
+            this.Amount.get(), fee.maxPriorityFeePerGas
         );
         await this.storage.sentTransfers.addOrUpdate(transferSent);
         await this.storage.transfers.remove(this.id);
@@ -114,10 +114,10 @@ export class TransferStore extends BaseTransferStore
         fee: () => !!this.Fees ? null : `Wait for loading fees`
     }
     public get Total(): bigint | null{
-        if (!this.Amount) return null;
+        if (!this.Amount.get()) return null;
         const fees = this.Fees;
         const fee = fees?.[this.Transfer.fee]?.fee ?? 0n
-        return this.Amount + fee;
+        return this.Amount.get() + fee;
     }
 
     public get isValid(){

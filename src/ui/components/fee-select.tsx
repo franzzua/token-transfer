@@ -1,5 +1,6 @@
 import {FunctionalComponent} from "preact";
 import {formatUnits} from "ethers/utils";
+import {IFeeSelectStore} from "../../stores/interfaces";
 import {useAppContext} from "../contexts";
 import {useCell} from "../helpers/use-cell";
 import style from "./fee-select.module.less";
@@ -46,13 +47,4 @@ const labels = {
     slow: 'Cheap',
     average: 'Average',
     fast: 'Fast',
-}
-
-export interface IFeeSelectStore{
-    patch(diff: Pick<Transfer, "fee">): void;
-    Transfer: Pick<Transfer, "fee">;
-    Fees: Record<Transfer["fee"], {
-        fee: bigint;
-        timePercs: [number, number, number]
-    }>
 }

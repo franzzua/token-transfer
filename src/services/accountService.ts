@@ -1,6 +1,6 @@
 import {Cell, cell} from "@cmmn/cell/lib";
 
-export class AccountStore {
+export class AccountService {
     private provider = globalThis.ethereum;
     @cell
     public accounts: string[] = [];

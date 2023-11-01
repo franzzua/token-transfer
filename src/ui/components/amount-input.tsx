@@ -1,9 +1,10 @@
 import {FunctionComponent, JSX} from "preact";
 import {useCallback, useEffect, useRef} from "preact/hooks";
+import {AmountInputStore} from "../../stores/interfaces";
 import {useCell} from "../helpers/use-cell";
 import {Label} from "../elements/label";
 import {MyBalance} from "./my-balance";
-import {TokenSelect} from "./token-select";
+import {TokenSelect} from "./token-select/token-select";
 import style from "./amount-input.module.less";
 import {Select} from "../elements/select";
 import {Cell} from "@cmmn/cell/lib";
@@ -28,7 +29,7 @@ export const AmountInput: FunctionComponent<AmountInputProps> = ({hideMyAmount, 
         {!hideMyAmount && <MyBalance balance={balance}/>}
     </div>} error={error}>
         <div className={[style.amount, 'control'].join(' ')}>
-            <input autoFocus tabIndex={1} ref={input} onInput={onChange} placeholder="Amount of tokens"/>
+            <input autoFocus tabIndex={1} ref={input} onInput={onChange} placeholder="Token Amount"/>
             <Select className={style.tokenSelect} value={tokenInfo?.symbol}>
                 <TokenSelect value={tokenInfo}
                              onChange={token => store.patch({
@@ -45,13 +46,4 @@ export type AmountInputProps = {
 } | {
     store: AmountInputStore;
     hideMyAmount?: true;
-}
-
-interface AmountInputStore {
-    get Transfer(): { amount: string; }
-    TokenInfo: Cell<TokenInfo>;
-    get errors(): {amount: string | null;};
-    balance?: string;
-    patch(diff: Partial<Pick<Transfer, "amount"|"tokenAddress">>): void;
-
 }

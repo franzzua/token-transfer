@@ -1,19 +1,19 @@
 import {AsyncCell, bind, Cell, cell, compare, Fn} from "@cmmn/cell/lib";
 import {TransferApi} from "../services/transfer.api";
-import {AccountStore} from "./account.store";
+import {AccountService} from "../services/accountService";
 import {ChainStore} from "./chain.store";
 import {formatUnits} from "ethers/utils";
 import {UserStorage} from "../services/userStorage";
 import {TokensStore} from "./tokens.store";
 import {IFeeSelectStore} from "../ui/components/fee-select";
-import {id} from "./id";
+import {id} from "../helpers/id";
 
 export class SentTransferStore
     implements IFeeSelectStore {
     constructor(
         private id: string,
         private storage: UserStorage,
-        private accountStore: AccountStore,
+        private accountStore: AccountService,
         private tokensStore: TokensStore,
         private api: TransferApi,
         private chainStore: ChainStore

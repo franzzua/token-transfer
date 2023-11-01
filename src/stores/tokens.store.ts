@@ -1,6 +1,7 @@
+import {parseUnits} from "ethers/utils";
 import {TransferApi} from "../services/transfer.api";
 import {UserStorage} from "../services/userStorage";
-import {AccountStore} from "./account.store";
+import {AccountService} from "../services/accountService";
 import {cell, Cell, Inject} from "@cmmn/cell/lib";
 import uniswapTokenList from "@uniswap/default-token-list";
 import {chains} from "eth-chains/dist/src/chains.js";
@@ -11,7 +12,7 @@ const allTokens = uniswapTokenList.tokens as Array<TokenInfo & {
 
 export class TokensStore {
     constructor(@Inject(UserStorage) private storage: UserStorage,
-                @Inject(AccountStore) private accountStore: AccountStore,
+                @Inject(AccountService) private accountStore: AccountService,
                 @Inject(TransferApi) private api: TransferApi) {
 
     }
@@ -45,19 +46,6 @@ export class TokensStore {
 
     public defaultToken = new Cell(() => this.chain.nativeCurrency as TokenInfo);
 
-
-
-    public get Tokens() {
-        return this.storage.tokens;
-    }
-
-    public get Balances(){
-        return this.savedTokens.map(x => ({
-            token: x.address,
-            amount: this.api.getBalance(x.address)
-        }))
-    }
-
     async getTokenInfo(tokenAddress: string, chainId: number = this.accountStore.chainId): Promise<TokenInfo | null> {
         if (!tokenAddress){
             const native = chains[chainId].nativeCurrency;
@@ -89,4 +77,19 @@ export class TokensStore {
         }
         return allTokens.find(x => x.address === address)?.logoURI;
     }
+
+    public async parseTokenAmount(tokenAddress: string, amount: string){
+        const info = await this.getTokenInfo(tokenAddress);
+        if (!info) return null;
+        const truncate = truncateUpTo18DigitsAfterDot(amount.replace(",","."))?.[0];
+        try {
+            return parseUnits(truncate, info.decimals);
+        }catch (e){
+            return null;
+        }
+    }
+}
+
+function truncateUpTo18DigitsAfterDot(number: string) {
+    return number.match(/^(\d*([.,]\d{0,18})?)/g);
 }
