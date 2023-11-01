@@ -1,12 +1,10 @@
 import {useEffect, useRef} from "preact/hooks";
 import {useCell} from "../helpers/use-cell";
-import {TransferToMeStore} from "../../stores/transfer-to-me.store";
 import {toCanvas} from 'qrcode/lib/index.js'
-import {useTransferStore} from "../contexts/useTransferStore";
+import {FunctionComponent} from "preact";
 
-export const TtmLink = () => {
-    const transferStore = useTransferStore<TransferToMeStore>();
-    const url = useCell(() => transferStore.URL);
+export const TtmLink: FunctionComponent<{store: TtmLinkStore}> = ({store}) => {
+    const url = useCell(() => store.URL);
     const ref = useRef<HTMLCanvasElement>();
     useEffect(() => {
         if (!ref.current || !url) return;
@@ -25,4 +23,8 @@ export const TtmLink = () => {
         }} href={url} target="_blank" rel="noreferrer">{url}</a>
         <canvas ref={ref}/>
     </div>
+}
+
+export interface TtmLinkStore {
+    get URL(): string;
 }

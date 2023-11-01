@@ -61,7 +61,7 @@ export class TransferStore extends BaseTransferStore
             .catch(() => null);
     });
 
-    public get myBalanceFormatted(){
+    public get balance(){
         if (!this.TokenInfo.get() || this.myBalance.get() == null)
             return null;
         return formatUnits(this.myBalance.get(), this.TokenInfo.get().decimals);
