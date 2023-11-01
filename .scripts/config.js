@@ -49,33 +49,8 @@ export const getConfig = ({prod, watch, sourceMaps}) => ({
             }]
         }),
         metafilePlugin(),
-        chainListPlugin()
     ],
 });
-
-function chainListPlugin(){
-    return {
-        name: 'chainListPlugin',
-        setup(build) {
-            const data = Object.fromEntries(Object.entries(chains).map(([key, value]) =>
-                [key, {
-                    name: value.name,
-                    nativeCurrency: value.nativeCurrency,
-                    infoURL: value.infoURL,
-                    explorers: value.explorers
-                }]
-            ));
-            build.initialOptions.alias ??= {};
-            const jsonPath = path.join(build.initialOptions.outdir, 'chains.js');
-            build.initialOptions.alias["eth-chains/dist/src/chains.js"] = jsonPath;
-            mkdir('dist',{recursive: true});
-            writeFileSync(
-                jsonPath,
-                `export const chains = ${JSON.stringify(data)};`
-            );
-        },
-    }
-}
 
 function metafilePlugin(){
     return {
