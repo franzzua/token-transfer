@@ -1,5 +1,6 @@
-import {Injectable} from "@cmmn/cell/lib";
+import {EventEmitter, Injectable} from "@cmmn/cell/lib";
 import {Inject} from "@cmmn/cell/lib";
+import {TransactionResponse} from "ethers";
 import type {JsonRpcApiProvider} from "ethers/providers";
 import {Contract} from "ethers/contract";
 import {ProviderInjectionToken} from "../container";
@@ -8,12 +9,16 @@ import {abi} from "erc20-compiled";
 import type {ERC20} from "erc20-compiled";
 
 @Injectable()
-export class TransferApi {
+export class TransferApi extends EventEmitter<{
+    tx_replacement: {oldHash: string, newHash: string, newTransaction: TransactionResponse}
+    tx_cancelled: {oldHash: string}
+    tx_mined: {hash: string}
+}>{
 
     // private provider = new ethers.BrowserProvider(window.ethereum);
     constructor(@Inject(ProviderInjectionToken) private providerFactory: (chainId: number) => JsonRpcApiProvider,
                 @Inject(AccountStore) private accountStore: AccountStore) {
-        this.provider.on('pending', console.log);
+        super();
     }
 
     private get provider(){
@@ -52,16 +57,30 @@ export class TransferApi {
             maxPriorityFeePerGas: maxPriorityFeePerGas,
             initialMaxPriorityFeePerGas: maxPriorityFeePerGas,
             amount,
-            state: 'signed',
+            state: 'pending',
             blockHash: null,
             nonce: null,
             _id: undefined,
         } as TransferSent;
         const transaction = await this.getTransaction(sentTransfer);
         sentTransfer._id = transaction.hash;
-        sentTransfer.blockHash = transaction.blockHash;
-        sentTransfer.blockNumber = transaction.blockNumber;
-        sentTransfer.nonce = transaction.nonce;
+        transaction.wait().then(res => {
+            this.emit('tx_mined', {
+                hash: transaction.hash,
+            });
+        }).catch(err => {
+            if (err.cancelled) {
+                this.emit('tx_cancelled', {
+                    oldHash: transaction.hash,
+                });
+            } else if (err.replacement) {
+                this.emit('tx_replacement', {
+                    oldHash: transaction.hash,
+                    newHash: err.replacement.hash,
+                    newTransaction: err.replacement
+                });
+            }
+        });
         return sentTransfer;
     }
 
@@ -69,7 +88,7 @@ export class TransferApi {
         if (!tokenAddress){
             const signer = await this.provider.getSigner(from);
             return await signer.estimateGas({
-                to, value: amount
+                to, value: 0n
             });
         }
         const erc20 = await this.getContract(tokenAddress, from);
@@ -103,8 +122,18 @@ export class TransferApi {
         const block = await this.provider.getBlock('pending');
         const transaction = await this.provider.getTransaction(hash);
         const signer = await this.provider.getSigner(from);
+        console.log(transaction);
         await signer.sendTransaction({
-            ...transaction,
+            to: transaction.to,
+            value: transaction.value,
+            from: transaction.from,
+            chainId: transaction.chainId,
+            nonce: transaction.nonce,
+            type: transaction.type,
+            data: transaction.data,
+            accessList: transaction.accessList,
+            gasLimit: transaction.gasLimit,
+            gasPrice: undefined,
             maxPriorityFeePerGas: maxPriorityFeePerGas,
             maxFeePerGas: maxPriorityFeePerGas + block.baseFeePerGas
         });

@@ -1,5 +1,6 @@
 import {bind, cell, compare, Fn, Inject, Injectable} from "@cmmn/cell/lib";
 import {Container} from "@cmmn/cell/lib";
+import {IdInjectionToken} from "../container";
 import {UserStorage} from "../services/userStorage";
 import {TransferApi} from "../services/transfer.api";
 import {AccountStore} from "./account.store";
@@ -17,6 +18,33 @@ export class AppStore {
                 @Inject(ChainStore) public chainStore: ChainStore,
                 @Inject(TokensStore) public tokensStore: TokensStore,
                 @Inject(Container) public container: Container) {
+        this.api.on('tx_replacement', async e => {
+            const transfer = this.storage.sentTransfers.get(e.oldHash);
+            await this.storage.sentTransfers.remove(e.oldHash);
+            await this.storage.sentTransfers.addOrUpdate({
+                ...transfer,
+                state: 'mined',
+                maxPriorityFeePerGas: e.newTransaction.maxPriorityFeePerGas,
+                _id: e.newHash,
+                timestamp: +new Date()/1000
+            })
+        });
+        this.api.on('tx_cancelled', async e => {
+            const transfer = this.storage.sentTransfers.get(e.oldHash);
+            await this.storage.sentTransfers.addOrUpdate({
+                ...transfer,
+                state: 'rejected',
+                timestamp: +new Date()/1000
+            })
+        });
+        this.api.on('tx_mined', async e => {
+            const transfer = this.storage.sentTransfers.get(e.hash);
+            await this.storage.sentTransfers.addOrUpdate({
+                ...transfer,
+                state: 'mined',
+                timestamp: +new Date()/1000
+            })
+        });
     }
 
     @bind
@@ -25,7 +53,9 @@ export class AppStore {
     }
     @bind
     public getTransferStore(id: string){
-        return new TransferStore(id, this.storage, this.accountStore, this.tokensStore, this.api, this.chainStore);
+        return this.container.get<TransferStore>(TransferStore, [
+            {provide: IdInjectionToken, useValue: id},
+        ]);
     }
     @bind
     getTransferSentStore(id: string) {

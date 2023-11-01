@@ -1,6 +1,6 @@
 import {formatEther} from "ethers/utils";
 import {useContext} from "preact/hooks";
-import {useCell} from "../../helpers/use-cell";
+import {useCell} from "../helpers/use-cell";
 import {TransferStore} from "../../stores/transfer.store";
 import {useAppContext} from "../contexts";
 import {TransferContext} from "../contexts/transfer-context";

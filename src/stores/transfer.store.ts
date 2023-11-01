@@ -1,24 +1,26 @@
-import {AsyncCell, bind, Cell, cell, compare, debounce, Fn, throttle, throttled} from "@cmmn/cell/lib";
+import {AsyncCell, bind, cell, compare, Inject, Injectable} from "@cmmn/cell/lib";
+import {IdInjectionToken} from "../container";
 import {Timer} from "../helpers/timer";
 import {TransferApi} from "../services/transfer.api";
 import {AccountStore} from "./account.store";
 import {ChainStore} from "./chain.store";
-import {formatUnits, toNumber} from "ethers/utils";
+import {formatUnits} from "ethers/utils";
 import {isAddress} from "ethers/address";
 import {UserStorage} from "../services/userStorage";
 import {BaseTransferStore} from "./base.transfer.store";
 import {TokensStore} from "./tokens.store";
-import {IFeeSelectStore} from "../app/components/fee-select";
+import {IFeeSelectStore} from "../ui/components/fee-select";
 
+@Injectable(true)
 export class TransferStore extends BaseTransferStore
     implements IFeeSelectStore{
     constructor(
-        private id: string,
-        private storage: UserStorage,
-        private accountStore: AccountStore,
-        tokensStore: TokensStore,
-        api: TransferApi,
-        private chainStore: ChainStore
+        @Inject(IdInjectionToken) private id: string,
+        @Inject(UserStorage) private storage: UserStorage,
+        @Inject(AccountStore) private accountStore: AccountStore,
+        @Inject(TokensStore) tokensStore: TokensStore,
+        @Inject(TransferApi) api: TransferApi,
+        @Inject(ChainStore) private chainStore: ChainStore
     ) {
         super(api, tokensStore)
     }

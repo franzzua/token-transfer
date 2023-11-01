@@ -1,5 +1,5 @@
 import {useEffect, useMemo} from "preact/hooks";
-import {useCell} from "../../helpers/use-cell";
+import {useCell} from "../helpers/use-cell";
 import {TransferForm} from "../blocks/transfer-form";
 import {useAppContext} from "../contexts";
 import {TransferContext} from "../contexts/transfer-context";

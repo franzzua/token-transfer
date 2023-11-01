@@ -1,5 +1,5 @@
 import {useEffect, useRef} from "preact/hooks";
-import {useCell} from "../../helpers/use-cell";
+import {useCell} from "../helpers/use-cell";
 import {TransferToMeStore} from "../../stores/transfer-to-me.store";
 import {toCanvas} from 'qrcode/lib/index.js'
 import {useTransferStore} from "../contexts/useTransferStore";

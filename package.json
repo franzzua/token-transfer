@@ -14,8 +14,8 @@
   },
   "type": "module",
   "dependencies": {
-    "@cmmn/cell": "1.8.4",
-    "@cmmn/tools": "1.8.1",
+    "@cmmn/cell": "1.8.6",
+    "@cmmn/tools": "1.8.6",
     "@metamask/sdk": "0.10.0",
     "@uniswap/default-token-list": "11.9.0",
     "@urlpack/base62": "1.1.0",

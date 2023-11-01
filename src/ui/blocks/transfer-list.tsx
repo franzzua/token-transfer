@@ -1,4 +1,4 @@
-import {useCell} from "../../helpers/use-cell";
+import {useCell} from "../helpers/use-cell";
 import {NotSentTransfer} from "../components/not-sent-transfer";
 import {useAppContext} from "../contexts";
 import {SentTransfer} from "../components/sent-transfer";

@@ -1,5 +1,5 @@
 import {FunctionComponent} from "preact";
-import {useCell} from "../../helpers/use-cell";
+import {useCell} from "../helpers/use-cell";
 import {TransferStore} from "../../stores/transfer.store";
 import {useTransferStore} from "../contexts/useTransferStore";
 

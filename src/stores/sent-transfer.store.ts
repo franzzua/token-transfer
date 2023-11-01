@@ -5,7 +5,7 @@ import {ChainStore} from "./chain.store";
 import {formatUnits} from "ethers/utils";
 import {UserStorage} from "../services/userStorage";
 import {TokensStore} from "./tokens.store";
-import {IFeeSelectStore} from "../app/components/fee-select";
+import {IFeeSelectStore} from "../ui/components/fee-select";
 
 export class SentTransferStore
     implements IFeeSelectStore {
@@ -77,6 +77,7 @@ export class SentTransferStore
         return fees;
     }
 
+    @bind
     public async replace(){
         if (this.Transfer.chainId !== this.accountStore.chainId){
             await this.accountStore.switchToChain(this.Transfer.chainId);

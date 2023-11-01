@@ -2,6 +2,7 @@ import {Container, InjectionToken} from "@cmmn/cell/lib";
 import {BrowserProvider} from "ethers/providers";
 
 export const ProviderInjectionToken = new InjectionToken("provider");
+export const IdInjectionToken = new InjectionToken("id");
 export const container = Container.withProviders(
     {
         provide: ProviderInjectionToken,

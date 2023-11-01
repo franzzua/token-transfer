@@ -25,7 +25,7 @@ test(`run transaction`,async () => {
     const bFromBefore = await api.getBalance(tokenAddress);
     const res = await api.run(tokenAddress, to, amount, 0n)
     expect(res._id).not.toBeNull();
-    expect(res.state).toBe('signed')
+    expect(res.state).toBe('pending')
     expect(res.nonce).not.toBeNull();
     expect(res.blockHash).toBeNull();
     expect(res.blockNumber).toBeNull();

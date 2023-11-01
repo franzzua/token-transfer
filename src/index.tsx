@@ -1,7 +1,7 @@
 import "./polyfills";
 import {render} from "preact";
 
-import {App} from "./app/app";
+import {App} from "./ui/app";
 import {TransactionReader} from "@transaction-reader";
 
 const startElement = document.getElementById("start");

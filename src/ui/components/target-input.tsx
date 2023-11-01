@@ -1,7 +1,7 @@
 import {JSX} from "preact";
 import {useCallback, useContext} from "preact/hooks";
 import {TransferContext} from "../contexts/transfer-context";
-import {useCell} from "../../helpers/use-cell";
+import {useCell} from "../helpers/use-cell";
 import {Label} from "../elements/label";
 
 export const TargetInput = () => {

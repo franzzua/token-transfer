@@ -22,10 +22,7 @@ type TransferSent = Omit<Transfer, 'fee'|'amount'|'state'> & {
     timestamp: number;
     maxPriorityFeePerGas: bigint;
     initialMaxPriorityFeePerGas: bigint;
-    state: 'signed'|'mined'|'rejected';
-    blockHash: string;
-    blockNumber: number;
-    nonce: number;
+    state: 'pending'|'mined'|'rejected';
 }
 
 type TokenInfo = {

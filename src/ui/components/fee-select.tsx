@@ -1,7 +1,7 @@
 import {FunctionalComponent} from "preact";
 import {formatUnits} from "ethers/utils";
 import {useAppContext} from "../contexts";
-import {useCell} from "../../helpers/use-cell";
+import {useCell} from "../helpers/use-cell";
 import style from "./fee-select.module.less";
 import {Label} from "../elements/label";
 
@@ -21,7 +21,7 @@ export const FeeSelect: FunctionalComponent<{store: IFeeSelectStore}> = ({store}
                            onChange={e => store.patch({fee: f})}
                            checked={fee == f}/>
                     <span>{labels[f]}</span>
-                    <span className="text-xs">{info[f].timePercs[0]?.toFixed(0)} - {info[f].timePercs[2]?.toFixed(0)} seconds</span>
+                    <span className="text-xs">{formatTimes(info[f].timePercs)}</span>
                     <b>{formatFee(info[f].fee/10n, defaultToken)}</b>
                 </label>
             ))}
@@ -29,6 +29,11 @@ export const FeeSelect: FunctionalComponent<{store: IFeeSelectStore}> = ({store}
     </Label>
 }
 
+function formatTimes(times: [number, number, number]){
+    if (Number.isNaN(+times[0]) || Number.isNaN(+times[1]))
+        return '';
+    return `${times[0]?.toFixed(0)} - ${times[2]?.toFixed(0)} seconds`;
+}
 function formatFee(fee: bigint, token: string) {
     const value = +formatUnits(fee, 12);
     if (value > 1)

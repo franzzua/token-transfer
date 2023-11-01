@@ -1,6 +1,6 @@
 import {FunctionComponent, JSX} from "preact";
 import {useCallback, useEffect, useRef, useState} from "preact/hooks";
-import {useCell} from "../../helpers/use-cell";
+import {useCell} from "../helpers/use-cell";
 import {Label} from "../elements/label";
 import {useTransferStore} from "../contexts/useTransferStore";
 import {MyBalance} from "./my-balance";

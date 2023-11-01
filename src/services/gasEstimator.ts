@@ -21,6 +21,7 @@ export class GasEstimator extends EventEmitter<{change: void}>{
         }
         values.forEach(x => this.insert(x));
         this.emit("change");
+        // console.log(this.Size);
     }
 
     public removeAll(filter?: (t: GasEstimatorInfo) => boolean, tree = this.tree){
@@ -32,7 +33,7 @@ export class GasEstimator extends EventEmitter<{change: void}>{
         this.emit("change");
     }
     public get GasInfo(): GasInfo {
-        if (this.Size < 100)
+        if (this.Size < 10)
             return null;
         const gas = Object.fromEntries(Object.entries(this.percentiles).map(([key, perc]) =>
             [key, this.tree.get(Math.floor(perc*this.Size)).maxPriorityFeePerGas]
@@ -44,7 +45,7 @@ export class GasEstimator extends EventEmitter<{change: void}>{
             for (let key of Object.keys(this.percentiles)) {
                 if (value.maxPriorityFeePerGas*10n > gas[key]*9n &&
                     value.maxPriorityFeePerGas*10n < gas[key]*11n){
-                    timeSums[key].push(value.time)
+                    value.time && timeSums[key].push(value.time)
                 }
             }
         }

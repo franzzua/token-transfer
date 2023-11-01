@@ -12,7 +12,7 @@ export class TransferApiMock extends TransferApi {
             from: 'me',
             maxPriorityFeePerGas: 0n,
             amount,
-            state: 'signed',
+            state: 'pending',
             blockHash: '',
             nonce: 1,
             _id: undefined,

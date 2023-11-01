@@ -1,8 +1,8 @@
 import {FunctionComponent} from "preact";
 import { useMemo, useState} from "preact/hooks";
-import {useCell} from "../../helpers/use-cell";
+import {useCell} from "../helpers/use-cell";
 import {useAppContext} from "../contexts";
-import {useAsync} from "../../helpers/use-async";
+import {useAsync} from "../helpers/use-async";
 import {isAddress} from "ethers/address";
 import style from "./token-select.module.less";
 

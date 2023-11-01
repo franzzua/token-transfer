@@ -1,7 +1,7 @@
 import {Cell} from "@cmmn/cell/lib";
 import {compare} from "@cmmn/cell/lib";
 import {useEffect} from "preact/hooks";
-import {useCell} from "../helpers/use-cell";
+import {useCell} from "./helpers/use-cell";
 import {routes} from "./pages/routes";
 
 export type RoutePath =

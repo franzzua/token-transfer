@@ -1,6 +1,6 @@
 import {FunctionComponent} from "preact";
 import {useMemo} from "preact/hooks";
-import {useCell} from "../../helpers/use-cell";
+import {useCell} from "../helpers/use-cell";
 import {useAppContext} from "../contexts";
 import {AppContext} from "../contexts/app-context";
 import {goTo} from "../routing";

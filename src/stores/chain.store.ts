@@ -41,7 +41,7 @@ export class ChainStore{
         this.estimator.add(...this.transactions);
     }
 
-    private transactionFilter = (t: TransactionInfo) => t.timestamp && t.pendingTime
+    private transactionFilter = (t: TransactionInfo) => t.timestamp
         && t.timestamp > +new Date()/1000 - 300
         && t.chainId == this.accountStore.chainId
         && t.type == 2;
