@@ -24,9 +24,10 @@ export const SentTransfer: FunctionComponent<{id: string}> = ({id}) => {
                 <span className="text-lg">{amount}</span>
                 <span className="text-sm"> {tokenInfo?.symbol}</span>
             </div>
-            <div flex="column" align="end" className="text-xs">
-                {isFeeChanged && <div>fee changed</div>}
-                <div>{transfer.state} at {new Date(transfer.timestamp*1000).toUTCString()}</div>
+            <div flex="column" align="end">
+                <b>{transfer.state}</b>
+                {isFeeChanged && <div className="text-xs">fee changed</div>}
+                <div className="text-xs">{new Date(transfer.timestamp*1000).toUTCString()}</div>
             </div>
         </div>
         <div className={style.address}>

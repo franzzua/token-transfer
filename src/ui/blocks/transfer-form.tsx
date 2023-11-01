@@ -11,8 +11,7 @@ import {FeeSelect} from "../components/fee-select";
 export const TransferForm = () => {
     const transferStore = useContext(TransferContext) as TransferStore;
     const isValid = useCell(() => transferStore.isValid);
-    return <div className="frost-card"
-                style={{maxWidth: 600, margin: 'auto'}} title={"Send tokens"}>
+    return <div className="frost-card" title={"Send tokens"}>
         <div flex="column" gap="1">
             <AmountInput />
             <TargetInput />
