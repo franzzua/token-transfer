@@ -1,5 +1,5 @@
 import {FunctionComponent, JSX} from "preact";
-import {useCallback, useEffect, useRef, useState} from "preact/hooks";
+import {useCallback, useEffect, useRef} from "preact/hooks";
 import {useCell} from "../helpers/use-cell";
 import {Label} from "../elements/label";
 import {MyBalance} from "./my-balance";
@@ -8,10 +8,7 @@ import style from "./amount-input.module.less";
 import {Select} from "../elements/select";
 import {Cell} from "@cmmn/cell/lib";
 
-export const AmountInput: FunctionComponent<{
-    hideMyAmount?: boolean;
-    store: AmountInputStore;
-}> = ({hideMyAmount, store}) => {
+export const AmountInput: FunctionComponent<AmountInputProps> = ({hideMyAmount, store}) => {
     const amount = useCell(() => store.Transfer.amount);
     const tokenInfo = useCell(store.TokenInfo);
     const error = useCell(() => store.errors.amount);
@@ -40,6 +37,14 @@ export const AmountInput: FunctionComponent<{
             </Select>
         </div>
     </Label>
+}
+
+export type AmountInputProps = {
+    store: AmountInputStore & {amount: string;}
+    hideMyAmount?: false;
+} | {
+    store: AmountInputStore;
+    hideMyAmount?: true;
 }
 
 interface AmountInputStore {
