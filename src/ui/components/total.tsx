@@ -1,18 +1,19 @@
 import {formatEther} from "ethers/utils";
-import {useContext} from "preact/hooks";
 import {useCell} from "../helpers/use-cell";
-import {TransferStore} from "../../stores/transfer.store";
 import {useAppContext} from "../contexts";
-import {TransferContext} from "../contexts/transfer-context";
+import {FunctionComponent} from "preact";
 
-export const Total = () => {
-    const {tokensStore, chainStore} = useAppContext()
+export const Total: FunctionComponent<{store: TotalStore}> = ({store}) => {
+    const {tokensStore} = useAppContext()
     const defaultToken = useCell(tokensStore.defaultToken).symbol;
-    const transferStore = useContext(TransferContext) as TransferStore;
-    const total = useCell(() => transferStore.Total, [], {
+    const total = useCell(() => store.Total, [], {
         throttle: 3000
     });
     return total && <div flex="column" align="end">
         Total: {formatEther(total)} {defaultToken}
     </div>;
+}
+
+export interface TotalStore {
+    get Total(): bigint;
 }

@@ -2,7 +2,6 @@ import {useEffect, useMemo} from "preact/hooks";
 import {useCell} from "../helpers/use-cell";
 import {TransferForm} from "../blocks/transfer-form";
 import {useAppContext} from "../contexts";
-import {TransferContext} from "../contexts/transfer-context";
 import {goTo, useRouter} from "../routing";
 
 
@@ -16,7 +15,5 @@ export function TransferPage(){
         if (isNotExists) goTo('/main');
     }, [isNotExists]);
     if (!transfer) return <></>;
-    return <TransferContext.Provider value={transferStore}>
-        <TransferForm/>
-    </TransferContext.Provider>
+    return <TransferForm store={transferStore}/>;
 }

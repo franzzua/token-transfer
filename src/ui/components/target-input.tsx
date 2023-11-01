@@ -1,15 +1,13 @@
-import {JSX} from "preact";
-import {useCallback, useContext} from "preact/hooks";
-import {TransferContext} from "../contexts/transfer-context";
+import {FunctionalComponent, JSX} from "preact";
+import {useCallback} from "preact/hooks";
 import {useCell} from "../helpers/use-cell";
 import {Label} from "../elements/label";
 
-export const TargetInput = () => {
-    const transferStore = useContext(TransferContext);
-    const transfer = useCell(() => transferStore.Transfer);
-    const error = useCell(() => transferStore.errors.to);
+export const TargetInput: FunctionalComponent<{store: TargetInputStore}> = ({store}) => {
+    const transfer = useCell(() => store.Transfer);
+    const error = useCell(() => store.errors.to);
     const onInput = useCallback<JSX.GenericEventHandler<HTMLInputElement>>(
-        e => transferStore.patch({to: e.currentTarget.value}),
+        e => store.patch({to: e.currentTarget.value}),
         []
     )
     return <Label title="To" error={error}>
@@ -19,4 +17,10 @@ export const TargetInput = () => {
                className={['control', error ? 'error' : ''].filter(x => x).join(' ')}
                onInput={onInput}/>
     </Label>;
+}
+
+export interface TargetInputStore {
+    get Transfer(): Pick<Transfer, "to">;
+    get errors(): {to: string | null};
+    patch(diff: Pick<Transfer, "to">): void;
 }
