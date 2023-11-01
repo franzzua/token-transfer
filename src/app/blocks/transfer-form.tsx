@@ -16,7 +16,7 @@ export const TransferForm = () => {
         <div flex="column" gap="1">
             <AmountInput />
             <TargetInput />
-            <FeeSelect />
+            <FeeSelect store={transferStore}/>
             <Total/>
             <div className="divider"/>
             <div flex="row" align="center" justify="between">

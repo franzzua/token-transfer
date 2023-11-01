@@ -3,7 +3,7 @@ import {useEffect, useState} from "preact/hooks";
 
 export type SelectProps = {
     value: string;
-    children: JSX.Element;
+    children: JSX.Element | JSX.Element[];
     className?: string;
 }
 export const Select: FunctionComponent<SelectProps> = (props) => {

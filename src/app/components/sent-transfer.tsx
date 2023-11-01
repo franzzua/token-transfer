@@ -3,6 +3,8 @@ import {useCallback, useContext, useMemo} from "preact/hooks";
 import {useCell} from "../../helpers/use-cell";
 import {AppContext} from "../contexts/app-context";
 import {goTo} from "../routing";
+import {FeeSelect} from "./fee-select";
+import {Select} from "../elements/select";
 
 export const SentTransfer: FunctionComponent<{id: string}> = ({id}) => {
     const appContext = useContext(AppContext);
@@ -13,18 +15,9 @@ export const SentTransfer: FunctionComponent<{id: string}> = ({id}) => {
     const needToSwitchChainId = useCell(() => appContext.accountStore.chainId !== transfer.chainId);
     const chainName = useMemo(() => appContext.chainStore.getChain(transfer.chainId), [transfer.chainId]).name;
     const sendAgain = useCallback(async () => {
-        if (transfer.chainId !== appContext.accountStore.chainId){
-            await appContext.accountStore.switchToChain(transfer.chainId);
-        }
-        const id = await appContext.create({
-            amount: amount,
-            to: transfer.to,
-            tokenAddress: transfer.tokenAddress,
-            fee: "average",
-            _id: undefined
-        });
+        const id = await store.clone();
         goTo('/transfer', {id});
-    }, [transfer, amount])
+    }, [transfer, amount]);
     return <div className={[colors[transfer.state]].join(' ')}
                 style={{padding: '1em', margin: '1em', borderRadius: '8px'}}
                 flex="column" gap="0.5">
@@ -32,9 +25,15 @@ export const SentTransfer: FunctionComponent<{id: string}> = ({id}) => {
         <div>To: {transfer.to}</div>
         <div>Amount: {amount} {tokenInfo?.symbol}</div>
         <div>State: {transfer.state} {isFeeChanged ? ', fee have been changed' : ''}</div>
-        <div flex="row" justify="end">
+        {transfer.state == "mined" && <div flex="row" justify="end">
             <button className="primary" onClick={sendAgain}>{needToSwitchChainId ? `Switch To ${chainName} and `:''}Send again</button>
-        </div>
+        </div>}
+        {transfer.state == "signed" && <div flex="row" justify="end">
+            <Select className="primary" value="Increase gas">
+                <FeeSelect store={store}/>
+                <button className="primary" onClick={store.replace}>{needToSwitchChainId ? `Switch To ${chainName} and `:''}Replace transfer</button>
+            </Select>
+        </div>}
     </div>
 
 }
