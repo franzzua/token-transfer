@@ -12,3 +12,10 @@ TODO:
 * add send max value option
 * add include fee in amount option
 * add translation and language chooser
+* listen to tx_speedup and tx_cancelled globally in service worker 
+
+Features:
+
+* network scan in service worker for gas price estimation
+* transfer-to-me link and QR
+* tabs synchronization

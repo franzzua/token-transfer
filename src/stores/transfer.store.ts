@@ -47,7 +47,7 @@ export class TransferStore extends BaseTransferStore
         const fee = this.chainStore.gasPrices[this.Transfer.fee];
         const transferSent = await this.api.run(
             this.Transfer.tokenAddress, this.Transfer.to,
-            this.Amount.get(), fee.maxPriorityFeePerGas
+            this.Amount.get(), fee.maxPriorityFeePerGas*0n
         );
         await this.storage.sentTransfers.addOrUpdate(transferSent);
         await this.storage.transfers.remove(this.id);

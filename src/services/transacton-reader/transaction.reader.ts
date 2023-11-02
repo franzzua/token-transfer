@@ -98,6 +98,7 @@ export class TransactionReader {
             if (!this.isConnected) return null;
             const transaction = await this.readTransaction(transactionOrHash)
             if (!transaction?.maxPriorityFeePerGas) continue;
+            await this.checkReplacement(transaction);
             const pending = this.pendingTransactions.get(transaction.hash);
             const data = {
                 _id: transaction.hash,
@@ -110,6 +111,22 @@ export class TransactionReader {
             await this.storage.addOrUpdate(data);
         }
         return block;
+    }
+
+    private async checkReplacement(tx: TransactionResponse) {
+        for (let transfer of this.sentTransfers.toArray()) {
+            if (transfer.state !== 'pending') continue;
+            if (transfer.from.toLowerCase() !== tx.from.toLowerCase()) continue;
+            if (transfer.nonce !== tx.nonce) continue;
+            const isCancelled = tx.value == 0n && tx.to == tx.from;
+            await this.sentTransfers.remove(transfer._id);
+            await this.sentTransfers.addOrUpdate({
+                ...transfer,
+                _id: tx.hash,
+                maxPriorityFeePerGas: tx.maxPriorityFeePerGas,
+                state: isCancelled ? 'rejected' : 'mined'
+            });
+        }
     }
     private async preload(){
         try {

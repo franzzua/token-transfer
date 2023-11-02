@@ -4,7 +4,9 @@ const loader = document.getElementById('loader');
 
 if (!provider){
     button.disabled = true;
-
+    button.innerHTML = `Please install MetaMask extension to use TokenTransfer`;
+    button.style.display = 'initial';
+    loader.style.display = 'none';
 } else {
     provider.addListener('accountsChanged', notifyEthereumState);
     async function connect(){

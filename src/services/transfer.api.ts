@@ -1,6 +1,5 @@
-import {EventEmitter, Injectable} from "@cmmn/cell/lib";
+import {Injectable} from "@cmmn/cell/lib";
 import {Inject} from "@cmmn/cell/lib";
-import {TransactionResponse} from "ethers";
 import type {JsonRpcApiProvider} from "ethers/providers";
 import {Contract} from "ethers/contract";
 import {ProviderInjectionToken} from "../container";
@@ -9,16 +8,11 @@ import {abi} from "erc20-compiled";
 import type {ERC20} from "erc20-compiled";
 
 @Injectable()
-export class TransferApi extends EventEmitter<{
-    tx_replacement: {oldHash: string, newHash: string, newTransaction: TransactionResponse}
-    tx_cancelled: {oldHash: string}
-    tx_mined: {hash: string}
-}>{
+export class TransferApi {
 
     // private provider = new ethers.BrowserProvider(window.ethereum);
     constructor(@Inject(ProviderInjectionToken) private providerFactory: (chainId: number) => JsonRpcApiProvider,
                 @Inject(AccountService) private accountStore: AccountService) {
-        super();
     }
 
     private get provider(){
@@ -64,23 +58,7 @@ export class TransferApi extends EventEmitter<{
         } as TransferSent;
         const transaction = await this.getTransaction(sentTransfer);
         sentTransfer._id = transaction.hash;
-        transaction.wait().then(res => {
-            this.emit('tx_mined', {
-                hash: transaction.hash,
-            });
-        }).catch(err => {
-            if (err.cancelled) {
-                this.emit('tx_cancelled', {
-                    oldHash: transaction.hash,
-                });
-            } else if (err.replacement) {
-                this.emit('tx_replacement', {
-                    oldHash: transaction.hash,
-                    newHash: err.replacement.hash,
-                    newTransaction: err.replacement
-                });
-            }
-        });
+        sentTransfer.nonce = transaction.nonce;
         return sentTransfer;
     }
 

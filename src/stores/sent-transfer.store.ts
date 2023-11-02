@@ -1,4 +1,4 @@
-import {AsyncCell, bind, Cell, cell, compare, Fn} from "@cmmn/cell/lib";
+import {AsyncCell, bind, Cell, cell, compare, Fn, Inject, Injectable} from "@cmmn/cell/lib";
 import {TransferApi} from "../services/transfer.api";
 import {AccountService} from "../services/accountService";
 import {ChainStore} from "./chain.store";
@@ -7,15 +7,17 @@ import {UserStorage} from "../services/userStorage";
 import {TokensStore} from "./tokens.store";
 import {id} from "../helpers/id";
 import {IFeeSelectStore} from "./interfaces";
+import {IdInjectionToken} from "../container";
 
+@Injectable(true)
 export class SentTransferStore implements IFeeSelectStore {
     constructor(
-        private id: string,
-        private storage: UserStorage,
-        private accountStore: AccountService,
-        private tokensStore: TokensStore,
-        private api: TransferApi,
-        private chainStore: ChainStore
+        @Inject(IdInjectionToken) private id: string,
+        @Inject(UserStorage) private storage: UserStorage,
+        @Inject(AccountService) private accountStore: AccountService,
+        @Inject(TokensStore) private tokensStore: TokensStore,
+        @Inject(TransferApi) private api: TransferApi,
+        @Inject(ChainStore) private chainStore: ChainStore
     ) {
     }
 

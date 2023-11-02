@@ -17,6 +17,7 @@ type Transfer = {
 }
 type TransferSent = Omit<Transfer, 'fee'|'amount'|'state'> & {
     from: string;
+    nonce: number;
     chainId: number;
     amount: bigint;
     timestamp: number;

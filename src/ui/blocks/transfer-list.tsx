@@ -10,7 +10,7 @@ export const TransferList = () => {
 
     return <div flex="column" gap="2">
         {notSentTransfers.length > 0 && <div className="frost-card small" flex="column" gap="1">
-            <h3>Saved transfers:</h3>
+            <h3>In progress:</h3>
             {notSentTransfers.map(x => <NotSentTransfer key={x._id} id={x._id}/>)}
         </div>}
         {sentTransfers.length > 0 && <div className="frost-card small" flex="column" gap="1">
