@@ -21,6 +21,7 @@
     "@urlpack/base62": "1.1.0",
     "@walletconnect/ethereum-provider": "^2.10.4",
     "@walletconnect/modal-sign-html": "^2.6.2",
+    "@web3modal/ethers5": "^3.2.0",
     "erc20-compiled": "1.0.2",
     "eth-chains": "2.0.0",
     "ethers": "5.7.2",
