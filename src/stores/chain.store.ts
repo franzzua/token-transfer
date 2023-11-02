@@ -1,9 +1,9 @@
 import {Cell, cell, Inject} from "@cmmn/cell/lib";
 import {AccountService} from "../services/accountService";
-import type {TransactionResponse} from "ethers";
 import {ObservableDB} from "../helpers/observableDB";
 import {GasEstimator, GasInfo} from "../services/gasEstimator";
 import {chains} from "eth-chains/dist/src/chains.js";
+import {Transaction} from "ethers";
 
 export class ChainStore{
 
@@ -64,7 +64,9 @@ export class ChainStore{
     }
 }
 
-type TransactionInfo = Pick<TransactionResponse, "maxPriorityFeePerGas"|"type"> & {
+type TransactionInfo = {
+    type: number;
+    maxPriorityFeePerGas: bigint;
     _id: string;
     timestamp: number;
     pendingTime?: number;

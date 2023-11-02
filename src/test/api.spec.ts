@@ -1,7 +1,7 @@
 import {test, beforeAll} from "@jest/globals";
-import {ContractFactory} from "ethers/contract";
-import type {JsonRpcProvider} from "ethers/providers";
-import {Wallet} from "ethers/wallet";
+import {ContractFactory} from "ethers/lib/ethers";
+import {providers} from "ethers";
+import {Wallet} from "ethers";
 import {ProviderInjectionToken, TransferApi} from "../lib";
 import {AccountService} from "../services/accountService";
 import {ethereum, testContainer} from "./test.container";
@@ -9,7 +9,7 @@ import {abi, bytecode} from "erc20-compiled";
 
 
 const api = testContainer.get<TransferApi>(TransferApi);
-const provider = testContainer.get<() => JsonRpcProvider>(ProviderInjectionToken)();
+const provider = testContainer.get<() => providers.JsonRpcProvider>(ProviderInjectionToken)();
 const accounts = ethereum.getInitialAccounts();
 const [from, to] = Object.keys(accounts);
 let tokenAddress: string = '';
@@ -27,7 +27,7 @@ test(`run transaction`,async () => {
     expect(res._id).not.toBeNull();
     expect(res.state).toBe('pending')
     const tr = await provider.getTransaction(res._id);
-    expect(tr.isMined()).toBeTruthy();
+    expect(tr.confirmations > 0).toBeTruthy();
     const bFrom = await api.getBalance(tokenAddress);
     expect(bFromBefore - bFrom).toEqual(amount);
 });

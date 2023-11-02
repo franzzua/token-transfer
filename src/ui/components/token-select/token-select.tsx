@@ -1,4 +1,4 @@
-import {isAddress} from "ethers/address";
+import {utils} from "ethers";
 import {FunctionComponent} from "preact";
 import {useMemo, useState} from "preact/hooks";
 import {useAppContext} from "../../contexts";
@@ -21,7 +21,7 @@ export const TokenSelect: FunctionComponent<TokenSelectProps> = (props) => {
     );
     const tokenByAddress = useAsync<TokenInfo | null>(() => {
         if (filteredTokens.length > 0) return null;
-        if (!isAddress(query)) return null;
+        if (!utils.isAddress(query)) return null;
         return tokensStore.getTokenInfo(query);
     }, [filteredTokens.length, query]);
     return <div flex="row" style={{maxHeight: '30vh', overflow: 'auto', width: '100%', background: 'var(--light-blue)'}}

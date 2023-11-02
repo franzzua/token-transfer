@@ -1,4 +1,4 @@
-import {parseUnits} from "ethers/utils";
+import {parseUnits} from "ethers/lib/utils";
 import {TransferApi} from "../services/transfer.api";
 import {UserStorage} from "../services/userStorage";
 import {AccountService} from "../services/accountService";
@@ -83,7 +83,7 @@ export class TokensStore {
         if (!info) return null;
         const truncate = truncateUpTo18DigitsAfterDot(amount.replace(",","."))?.[0];
         try {
-            return parseUnits(truncate, info.decimals);
+            return parseUnits(truncate, info.decimals).toBigInt();
         }catch (e){
             return null;
         }

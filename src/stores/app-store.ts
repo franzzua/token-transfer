@@ -24,7 +24,7 @@ export class AppStore {
             await this.storage.sentTransfers.addOrUpdate({
                 ...transfer,
                 state: 'mined',
-                maxPriorityFeePerGas: e.newTransaction.maxPriorityFeePerGas,
+                maxPriorityFeePerGas: e.newTransaction.maxPriorityFeePerGas.toBigInt(),
                 _id: e.newHash,
                 timestamp: +new Date()/1000
             })

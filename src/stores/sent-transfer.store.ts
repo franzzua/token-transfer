@@ -2,7 +2,7 @@ import {AsyncCell, bind, Cell, cell, compare, Fn} from "@cmmn/cell/lib";
 import {TransferApi} from "../services/transfer.api";
 import {AccountService} from "../services/accountService";
 import {ChainStore} from "./chain.store";
-import {formatUnits} from "ethers/utils";
+import {utils} from "ethers";
 import {UserStorage} from "../services/userStorage";
 import {TokensStore} from "./tokens.store";
 import {id} from "../helpers/id";
@@ -38,11 +38,11 @@ export class SentTransferStore implements IFeeSelectStore {
 
     public get Amount(){
         if (!this.TokenInfo.get()) return null;
-        return  formatUnits(this.Transfer.amount, this.TokenInfo.get().decimals);
+        return  utils.formatUnits(this.Transfer.amount, this.TokenInfo.get().decimals);
     }
     public get Fee(){
         if (!this.TokenInfo.get()) return null;
-        return formatUnits(this.Transfer.maxPriorityFeePerGas, this.TokenInfo.get().decimals);
+        return utils.formatUnits(this.Transfer.maxPriorityFeePerGas, this.TokenInfo.get().decimals);
     }
 
     public Info = new Cell(() => ({

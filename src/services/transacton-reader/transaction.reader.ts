@@ -1,7 +1,6 @@
 import {Fn} from "@cmmn/cell/lib";
-import type {Block, TransactionResponse} from "ethers";
 import {ObservableDB} from "../../helpers/observableDB";
-import {InfuraProvider, WebSocketProvider, BrowserProvider} from "ethers/providers";
+import {providers, Transaction} from "ethers";
 import {ethereumSw} from "./ethereum-sw";
 
 /**
@@ -13,8 +12,8 @@ export class TransactionReader {
         ethereumSw.connector.on('connected', () => this.start());
         ethereumSw.connector.on('disconnected', () => this.stop());
     }
-    private infuraProvider: WebSocketProvider;
-    private browserProvider: BrowserProvider;
+    private infuraProvider: providers.WebSocketProvider;
+    private browserProvider: providers.Web3Provider;
     private pendingTransactions = new ObservableDB<TransactionInfo>("pendingTransactions", false);
     private storage = new ObservableDB<TransactionInfo>("transactions");
     private sentTransfers = new ObservableDB<TransferSent>("sentTransfers");
@@ -30,8 +29,8 @@ export class TransactionReader {
         this.isConnected = true;
         await this.removeOld();
         const startChainId = await ethereumSw.getChainId();
-        this.infuraProvider = InfuraProvider.getWebSocketProvider(+startChainId);
-        this.browserProvider = new BrowserProvider(ethereumSw, +startChainId);
+        this.infuraProvider = providers.InfuraProvider.getWebSocketProvider(+startChainId);
+        this.browserProvider = new providers.Web3Provider(ethereumSw, +startChainId);
         await this.infuraProvider.on('pending', this.onPending);
         await this.infuraProvider.on('block', this.onBlock);
 
@@ -58,7 +57,7 @@ export class TransactionReader {
     }
 
     private onBlock = (blockId: number) => {
-        return this.readBlock(blockId, true);
+        return this.readBlock(blockId);
     };
     private onPending = async txhash => {
         return this.pendingTransactions.addOrUpdate({
@@ -81,7 +80,7 @@ export class TransactionReader {
 
     }
 
-    private async readTransaction(transactionOrHash: string | TransactionResponse): Promise<TransactionResponse | null>{
+    private async readTransaction(transactionOrHash: string | providers.TransactionResponse): Promise<providers.TransactionResponse | null>{
         if (typeof transactionOrHash === "string"){
             if (this.storage.get(transactionOrHash)) return null;
             return this.browserProvider.getTransaction(transactionOrHash);
@@ -90,8 +89,8 @@ export class TransactionReader {
         return transactionOrHash;
     }
 
-    private async readBlock(number: number, withTransactions = false){
-        const block = await this.browserProvider.getBlock(number, withTransactions);
+    private async readBlock(number: number){
+        const block = await this.browserProvider.getBlockWithTransactions(number);
         if (!block) return null;
         if (block.timestamp < +new Date()/1000 - TRANSACTION_WINDOW) return null;
         for (let transactionOrHash of block.transactions) {
@@ -104,7 +103,7 @@ export class TransactionReader {
                 pendingTime: pending?.pendingTime,
                 type: transaction.type,
                 chainId: Number(await ethereumSw.getChainId()),
-                maxPriorityFeePerGas: BigInt(transaction.maxPriorityFeePerGas),
+                maxPriorityFeePerGas: BigInt(transaction.maxPriorityFeePerGas.toBigInt()),
                 timestamp: +new Date()/1000,//Number(block.timestamp)
             } as TransactionInfo;
             await this.storage.addOrUpdate(data);
@@ -116,7 +115,7 @@ export class TransactionReader {
             const blockNumber = await this.browserProvider.getBlockNumber();
             for (let i = 0; i < 4; i++) {
                 if (!this.isConnected) return;
-                await this.readBlock(+blockNumber - i, true);
+                await this.readBlock(+blockNumber - i);
             }
         } catch (e){
             console.error(e);
@@ -125,7 +124,9 @@ export class TransactionReader {
 
 }
 
-export type TransactionInfo = Pick<TransactionResponse, "maxPriorityFeePerGas"|"type"> & {
+export type TransactionInfo = {
+    type: number;
+    maxPriorityFeePerGas: bigint;
     _id: string;
     timestamp: number;
     chainId: number;

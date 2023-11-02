@@ -19,9 +19,11 @@
     "@metamask/sdk": "0.10.0",
     "@uniswap/default-token-list": "11.9.0",
     "@urlpack/base62": "1.1.0",
+    "@walletconnect/ethereum-provider": "^2.10.4",
+    "@walletconnect/modal-sign-html": "^2.6.2",
     "erc20-compiled": "1.0.2",
     "eth-chains": "2.0.0",
-    "ethers": "6.8.0",
+    "ethers": "5.7.2",
     "events": "3.3.0",
     "preact": "10.18.1",
     "qrcode": "1.5.3"

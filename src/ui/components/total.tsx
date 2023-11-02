@@ -1,4 +1,4 @@
-import {formatEther} from "ethers/utils";
+import {utils} from "ethers";
 import {TotalStore} from "../../stores/interfaces";
 import {useCell} from "../helpers/use-cell";
 import {useAppContext} from "../contexts";
@@ -11,6 +11,6 @@ export const Total: FunctionComponent<{store: TotalStore}> = ({store}) => {
         throttle: 3000
     });
     return total && <div flex="column" align="end">
-        Total: {formatEther(total)} {defaultToken}
+        Total: {utils.formatEther(total)} {defaultToken}
     </div>;
 }

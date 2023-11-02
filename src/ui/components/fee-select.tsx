@@ -1,5 +1,5 @@
 import {FunctionalComponent} from "preact";
-import {formatUnits} from "ethers/utils";
+import {utils} from "ethers";
 import {IFeeSelectStore} from "../../stores/interfaces";
 import {useAppContext} from "../contexts";
 import {useCell} from "../helpers/use-cell";
@@ -36,7 +36,7 @@ function formatTimes(times: [number, number, number]){
     return `${times[0]?.toFixed(0)} - ${times[2]?.toFixed(0)} seconds`;
 }
 function formatFee(fee: bigint, token: string) {
-    const value = +formatUnits(fee, 12);
+    const value = +utils.formatUnits(fee, 12);
     if (value > 1)
         return `${value.toFixed(0)} µ${token}`
     return `${value.toPrecision(3)} µ${token}`

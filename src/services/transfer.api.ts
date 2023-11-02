@@ -1,8 +1,8 @@
 import {EventEmitter, Injectable} from "@cmmn/cell/lib";
 import {Inject} from "@cmmn/cell/lib";
-import {TransactionResponse} from "ethers";
-import type {JsonRpcApiProvider} from "ethers/providers";
-import {Contract} from "ethers/contract";
+import {ContractTransaction, Transaction} from "ethers";
+import {providers} from "ethers";
+import {Contract} from "ethers";
 import {ProviderInjectionToken} from "../container";
 import {AccountService} from "./accountService";
 import {abi} from "erc20-compiled";
@@ -10,15 +10,27 @@ import type {ERC20} from "erc20-compiled";
 
 @Injectable()
 export class TransferApi extends EventEmitter<{
-    tx_replacement: {oldHash: string, newHash: string, newTransaction: TransactionResponse}
+    tx_replacement: {oldHash: string, newHash: string, newTransaction: Transaction}
     tx_cancelled: {oldHash: string}
     tx_mined: {hash: string}
 }>{
 
     // private provider = new ethers.BrowserProvider(window.ethereum);
-    constructor(@Inject(ProviderInjectionToken) private providerFactory: (chainId: number) => JsonRpcApiProvider,
+    constructor(@Inject(ProviderInjectionToken) private providerFactory: (chainId: number) => providers.JsonRpcProvider,
                 @Inject(AccountService) private accountStore: AccountService) {
         super();
+        this.provider.on('tx_cancelled', e => {
+            console.log(e);
+            this.emit('tx_cancelled', e)
+        });
+        this.provider.on('tx_mined', e => {
+            console.log(e);
+            this.emit('tx_mined', e)
+        });
+        this.provider.on('tx_replacement', e => {
+            console.log(e);
+            this.emit('tx_replacement', e)
+        });
     }
 
     private get provider(){
@@ -31,19 +43,19 @@ export class TransferApi extends EventEmitter<{
 
     }
 
-    private async getTransaction(transfer: TransferSent){
+    private async getTransaction(transfer: TransferSent): Promise<providers.TransactionResponse>{
         const currentBlock = await this.provider.getBlock('pending');
         if (!transfer.tokenAddress){
             const signer = await this.provider.getSigner(transfer.from);
             return await signer.sendTransaction({
                 to: transfer.to, value: transfer.amount,
-                maxFeePerGas: transfer.maxPriorityFeePerGas + currentBlock.baseFeePerGas,
+                maxFeePerGas: transfer.maxPriorityFeePerGas + currentBlock.baseFeePerGas.toBigInt(),
                 maxPriorityFeePerGas: transfer.maxPriorityFeePerGas,
             });
         }
         const erc20 = await this.getContract(transfer.tokenAddress, transfer.from);
         return  await erc20.transfer(transfer.to, transfer.amount, {
-            maxFeePerGas: transfer.maxPriorityFeePerGas + currentBlock.baseFeePerGas,
+            maxFeePerGas: transfer.maxPriorityFeePerGas + currentBlock.baseFeePerGas.toBigInt(),
             maxPriorityFeePerGas: transfer.maxPriorityFeePerGas
         });
     }
@@ -89,15 +101,15 @@ export class TransferApi extends EventEmitter<{
             const signer = await this.provider.getSigner(from);
             return await signer.estimateGas({
                 to, value: 0n
-            });
+            }).then(x => x.toBigInt());
         }
         const erc20 = await this.getContract(tokenAddress, from);
         return await erc20.transfer.estimateGas(to, amount);
     }
 
-    async getBalance(tokenAddress: string) {
+    async getBalance(tokenAddress: string): Promise<bigint> {
         if (!tokenAddress)
-            return this.provider.getBalance(this.accountStore.me);
+            return this.provider.getBalance(this.accountStore.me).then(x => x.toBigInt());
         const erc20 = await this.getContract(tokenAddress);
         return erc20.balanceOf(this.accountStore.me);
     }
@@ -135,7 +147,7 @@ export class TransferApi extends EventEmitter<{
             gasLimit: transaction.gasLimit,
             gasPrice: undefined,
             maxPriorityFeePerGas: maxPriorityFeePerGas,
-            maxFeePerGas: maxPriorityFeePerGas + block.baseFeePerGas
+            maxFeePerGas: maxPriorityFeePerGas + block.baseFeePerGas.toBigInt()
         });
     }
 }

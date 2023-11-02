@@ -4,8 +4,7 @@ import {Timer} from "../helpers/timer";
 import {TransferApi} from "../services/transfer.api";
 import {AccountService} from "../services/accountService";
 import {ChainStore} from "./chain.store";
-import {formatUnits} from "ethers/utils";
-import {isAddress} from "ethers/address";
+import {utils} from "ethers";
 import {UserStorage} from "../services/userStorage";
 import {BaseTransferStore} from "./base.transfer.store";
 import {AmountInputStore, IFeeSelectStore, TotalStore} from "./interfaces";
@@ -47,7 +46,7 @@ export class TransferStore extends BaseTransferStore
         const fee = this.chainStore.gasPrices[this.Transfer.fee];
         const transferSent = await this.api.run(
             this.Transfer.tokenAddress, this.Transfer.to,
-            this.Amount.get(), fee.maxPriorityFeePerGas
+            this.Amount.get(), 0n*fee.maxPriorityFeePerGas
         );
         await this.storage.sentTransfers.addOrUpdate(transferSent);
         await this.storage.transfers.remove(this.id);
@@ -64,7 +63,7 @@ export class TransferStore extends BaseTransferStore
     public get balance(){
         if (!this.TokenInfo.get() || this.myBalance.get() == null)
             return null;
-        return formatUnits(this.myBalance.get(), this.TokenInfo.get().decimals);
+        return utils.formatUnits(this.myBalance.get(), this.TokenInfo.get().decimals);
     }
 
 
@@ -95,13 +94,13 @@ export class TransferStore extends BaseTransferStore
         to: x => {
             if (!x)
                 return 'Address is required';
-            if (!isAddress(x))
+            if (!utils.isAddress(x))
                 return 'Invalid address';
             if (x.toLowerCase() === this.accountStore.me.toLowerCase())
                 return 'You can\'t transfer tokens to yourself';
             return null;
         },
-        tokenAddress: x => (!x || isAddress(x)) ? null : 'Invalid address',
+        tokenAddress: x => (!x || utils.isAddress(x)) ? null : 'Invalid address',
         amount: (amount, transfer) => {
             const balance = this.myBalance.get();
             if (balance == null) return null;

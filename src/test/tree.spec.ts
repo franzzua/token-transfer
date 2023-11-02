@@ -1,6 +1,6 @@
 import {test, beforeAll} from "@jest/globals";
 import * as crypto from "crypto";
-import { toBigInt} from "ethers/utils";
+import { utils, BigNumber} from "ethers";
 import {Tree} from "../services/tree";
 
 const percentileNames = {
@@ -91,7 +91,7 @@ test(`random`,async () => {
     let tree = new Tree([{value: 0n}], "value");
     for (let i = 1n; i <= 100_000n; i++) {
         tree = tree.add({
-            value: toBigInt(crypto.getRandomValues(new Uint8Array(6))),
+            value: BigNumber.from(crypto.getRandomValues(new Uint8Array(6))).toBigInt(),
         })
     }
     tree = tree.removeAll(x => (x.value % 2n) == 0n);

@@ -1,6 +1,6 @@
 import {pack, unpack} from "msgpackr";
 import {bind, cell, compare, Fn, Inject, Injectable} from "@cmmn/cell/lib";
-import {isAddress} from "ethers/address";
+import {utils} from "ethers";
 import {decode, encode} from "@urlpack/base62";
 import {AccountService} from "../services/accountService";
 import {BaseTransferStore} from "./base.transfer.store";
@@ -38,7 +38,7 @@ export class TransferToMeStore extends BaseTransferStore
 
     public get errors(): Record<keyof Transfer, string | undefined>{
         const errors = {} as Record<keyof Transfer, string | undefined>;
-        if (!isAddress(this.Transfer.tokenAddress)){
+        if (!utils.isAddress(this.Transfer.tokenAddress)){
             errors.tokenAddress = `Invalid address`;
         }
         return errors;

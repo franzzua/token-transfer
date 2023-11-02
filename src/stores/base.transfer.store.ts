@@ -9,7 +9,7 @@ export abstract class BaseTransferStore{
     }
 
     public abstract get Transfer(): Pick<Transfer, "amount"|"tokenAddress">;
-    public Amount = new AsyncCell(() => this.tokensStore.parseTokenAmount(
+    public Amount = new AsyncCell<bigint>(() => this.tokensStore.parseTokenAmount(
         this.Transfer.tokenAddress, this.Transfer.amount
     ))
 
