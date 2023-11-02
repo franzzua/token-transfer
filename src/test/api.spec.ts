@@ -3,7 +3,7 @@ import {ContractFactory} from "ethers/contract";
 import type {JsonRpcProvider} from "ethers/providers";
 import {Wallet} from "ethers/wallet";
 import {ProviderInjectionToken, TransferApi} from "../lib";
-import {AccountStore} from "../stores/account.store";
+import {AccountService} from "../services/accountService";
 import {ethereum, testContainer} from "./test.container";
 import {abi, bytecode} from "erc20-compiled";
 
@@ -18,7 +18,7 @@ beforeAll(async () => {
     const factory = new ContractFactory(abi, bytecode, signer);
     const deploy = await factory.deploy("TEST", "TST", 10*(10**6));
     tokenAddress = await deploy.getAddress();
-    testContainer.get<AccountStore>(AccountStore).me = from;
+    testContainer.get<AccountService>(AccountService).me = from;
 })
 test(`run transaction`,async () => {
     const amount = 1n*(10n**6n);

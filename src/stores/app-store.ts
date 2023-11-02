@@ -2,19 +2,19 @@ import {bind, cell, compare, Container, Inject, Injectable} from "@cmmn/cell/lib
 import {IdInjectionToken} from "../container";
 import {UserStorage} from "../services/userStorage";
 import {TransferApi} from "../services/transfer.api";
-import {AccountStore} from "./account.store";
+import {AccountService} from "../services/accountService";
 import {ChainStore} from "./chain.store";
 import {TransferToMeStore} from "./transfer-to-me.store";
 import {TokensStore} from "./tokens.store";
 import {TransferStore} from "./transfer.store";
 import {SentTransferStore} from "./sent-transfer.store";
-import {id} from "./id";
+import {id} from "../helpers/id";
 
 @Injectable()
 export class AppStore {
     constructor(@Inject(UserStorage) public storage: UserStorage,
                 @Inject(TransferApi) public api: TransferApi,
-                @Inject(AccountStore) public accountStore: AccountStore,
+                @Inject(AccountService) public accountStore: AccountService,
                 @Inject(ChainStore) public chainStore: ChainStore,
                 @Inject(TokensStore) public tokensStore: TokensStore,
                 @Inject(Container) public container: Container) {

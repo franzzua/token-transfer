@@ -1,30 +1,28 @@
 import {pack, unpack} from "msgpackr";
-import {bind, cell, compare, Fn} from "@cmmn/cell/lib";
-import {TransferApi} from "../services/transfer.api";
+import {bind, cell, compare, Fn, Inject, Injectable} from "@cmmn/cell/lib";
 import {isAddress} from "ethers/address";
 import {decode, encode} from "@urlpack/base62";
-import {AccountStore} from "./account.store";
+import {AccountService} from "../services/accountService";
 import {BaseTransferStore} from "./base.transfer.store";
+import {AmountInputStore, TtmLinkStore} from "./interfaces";
 import {TokensStore} from "./tokens.store";
 
-export class TransferToMeStore extends BaseTransferStore {
-    constructor(api: TransferApi,
-                private accountStore: AccountStore,
-                tokensStore: TokensStore) {
-        super(api, tokensStore);
+@Injectable(true)
+export class TransferToMeStore extends BaseTransferStore
+    implements TtmLinkStore, AmountInputStore{
+    constructor(@Inject(AccountService) private accountService: AccountService,
+                @Inject(AccountService) tokensStore: TokensStore) {
+        super(tokensStore);
     }
 
     @cell
-    private transfer: Transfer = {
-        _id: '',
-        fee: 'average',
+    private transfer: Pick<Transfer, "amount"|"tokenAddress"> = {
         amount: null,
         tokenAddress: null,
-        to: null,
     }
 
     @cell({compare})
-    public get Transfer(): Transfer{
+    public get Transfer(){
         return this.transfer;
     }
 
@@ -40,9 +38,6 @@ export class TransferToMeStore extends BaseTransferStore {
 
     public get errors(): Record<keyof Transfer, string | undefined>{
         const errors = {} as Record<keyof Transfer, string | undefined>;
-        if (!isAddress(this.Transfer.to)){
-            errors.to = `Invalid address`;
-        }
         if (!isAddress(this.Transfer.tokenAddress)){
             errors.tokenAddress = `Invalid address`;
         }
@@ -50,10 +45,10 @@ export class TransferToMeStore extends BaseTransferStore {
     }
 
     public get URL(){
-        if (!this.Amount)
+        if (!this.Amount.get())
             return null;
         const encoded = pack([
-            this.accountStore.me,
+            this.accountService.me,
             this.transfer.tokenAddress,
             this.transfer.amount
         ]);

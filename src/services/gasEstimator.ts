@@ -4,9 +4,9 @@ import {Tree} from "./tree";
 export class GasEstimator extends EventEmitter<{change: void}>{
 
     private percentiles = {
-        slow: 0.1,
-        average: 0.6,
-        fast: 0.9,
+        slow: 0.25,
+        average: 0.5,
+        fast: 0.75,
     } as const;
 
     protected sort = (arr: GasEstimatorInfo[]) => arr.sort(

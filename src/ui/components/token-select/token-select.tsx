@@ -1,11 +1,11 @@
-import {FunctionComponent} from "preact";
-import { useMemo, useState} from "preact/hooks";
-import {useCell} from "../helpers/use-cell";
-import {useAppContext} from "../contexts";
-import {useAsync} from "../helpers/use-async";
 import {isAddress} from "ethers/address";
-import style from "./token-select.module.less";
-
+import {FunctionComponent} from "preact";
+import {useMemo, useState} from "preact/hooks";
+import {useAppContext} from "../../contexts";
+import {useAsync} from "../../helpers/use-async";
+import {useCell} from "../../helpers/use-cell";
+import {SearchIcon} from "./search-icon";
+import {TokenPreview} from "./token-preview";
 
 export type TokenSelectProps = {
     value: TokenInfo;
@@ -39,32 +39,6 @@ export const TokenSelect: FunctionComponent<TokenSelectProps> = (props) => {
                                     token={t}
                                     key={t.address ?? t.symbol}/>)}
         {tokenByAddress.isFetching && 'Loading...'}
-    </div>;
-};
-const SearchIcon = () => (
-    <svg viewBox="-.2 -.2 2.6 2.6" stroke="currentColor" stroke-width=".3"
-         className="pre-input" fill="none">
-        <path d="M1.7 1.7 L 2.4 2.4"/>
-        <circle cx="1" cy="1" r="1"/>
-    </svg>
-);
-const TokenPreview: FunctionComponent<{
-    token: TokenInfo;
-    isSelected: boolean;
-    onChange(token: TokenInfo): void;
-}> = ({token, onChange, isSelected}) => {
-    if (isSelected ) console.log(token, 'selected')
-    const {tokensStore} = useAppContext();
-    const logoURI = useAsync(() => tokensStore.getTokenImageURL(token.address), [token.address]);
-    return <div className={[
-        isSelected ? style.tokenPreviewSelected : style.tokenPreview
-    ]} onClick={() => onChange(token)}>
-        {
-            logoURI.data
-                ? <img alt={token.name} src={logoURI.data} className={style.img}/>
-                : <div className={style.img}>{token.name}</div>
-        }
-        <span>{token.symbol}</span>
     </div>;
 };
 

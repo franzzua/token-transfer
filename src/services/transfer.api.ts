@@ -4,7 +4,7 @@ import {TransactionResponse} from "ethers";
 import type {JsonRpcApiProvider} from "ethers/providers";
 import {Contract} from "ethers/contract";
 import {ProviderInjectionToken} from "../container";
-import {AccountStore} from "../stores/account.store";
+import {AccountService} from "./accountService";
 import {abi} from "erc20-compiled";
 import type {ERC20} from "erc20-compiled";
 
@@ -17,7 +17,7 @@ export class TransferApi extends EventEmitter<{
 
     // private provider = new ethers.BrowserProvider(window.ethereum);
     constructor(@Inject(ProviderInjectionToken) private providerFactory: (chainId: number) => JsonRpcApiProvider,
-                @Inject(AccountStore) private accountStore: AccountStore) {
+                @Inject(AccountService) private accountStore: AccountService) {
         super();
     }
 

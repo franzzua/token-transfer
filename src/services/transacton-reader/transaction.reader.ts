@@ -3,10 +3,13 @@ import type {Block, TransactionResponse} from "ethers";
 import {ObservableDB} from "../../helpers/observableDB";
 import {InfuraProvider, WebSocketProvider, BrowserProvider} from "ethers/providers";
 import {ethereumSw} from "./ethereum-sw";
+
+/**
+ * Reads new mined and pending transactions
+ */
 export class TransactionReader {
 
     constructor() {
-
         ethereumSw.connector.on('connected', () => this.start());
         ethereumSw.connector.on('disconnected', () => this.stop());
     }
