@@ -10,7 +10,11 @@ export function TransferToMePage(){
     useEffect(() => {
         if (base !== 'ttm') return;
         const transfer = transferStore.parse(encoded as string);
-        appStore.create(transfer).then(id => goTo(['transfer'], {id}));
+        appStore.create({
+            _id: null,
+            fee: "average",
+            ...transfer,
+        }).then(id => goTo(['transfer'], {id}));
     }, [base, encoded]);
     return <TransferToMe store={transferStore}/>;
 }

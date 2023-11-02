@@ -5,11 +5,10 @@ import {ChainStore} from "./chain.store";
 import {formatUnits} from "ethers/utils";
 import {UserStorage} from "../services/userStorage";
 import {TokensStore} from "./tokens.store";
-import {IFeeSelectStore} from "../ui/components/fee-select";
 import {id} from "../helpers/id";
+import {IFeeSelectStore} from "./interfaces";
 
-export class SentTransferStore
-    implements IFeeSelectStore {
+export class SentTransferStore implements IFeeSelectStore {
     constructor(
         private id: string,
         private storage: UserStorage,

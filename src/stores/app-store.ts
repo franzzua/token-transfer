@@ -49,7 +49,7 @@ export class AppStore {
 
     @bind
     public getTransferToMeStore(){
-        return new TransferToMeStore(this.api, this.accountStore, this.tokensStore);
+        return this.container.get<TransferToMeStore>(TransferToMeStore);
     }
     @bind
     public getTransferStore(id: string){

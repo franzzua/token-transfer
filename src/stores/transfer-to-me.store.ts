@@ -62,7 +62,9 @@ export class TransferToMeStore extends BaseTransferStore
         this.patch({
             to, tokenAddress, amount
         })
-        return this.transfer;
+        return {
+            to, tokenAddress, amount
+        };
     }
 
 
